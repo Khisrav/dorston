@@ -81,6 +81,19 @@ services:
       - mysql-data-development:/var/lib/mysql
     networks:
       - laravel-development
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-root}
+    ports:
+      - "3307:80"
+    networks:
+      - laravel-development
 
   redis:
     image: redis:alpine

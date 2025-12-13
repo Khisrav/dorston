@@ -1,7 +1,7 @@
 .PHONY: help build up down restart logs shell artisan migrate fresh install clean
 
 # Default environment file
-ENV_FILE ?= .env.docker.local
+ENV_FILE ?= .env.example
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
