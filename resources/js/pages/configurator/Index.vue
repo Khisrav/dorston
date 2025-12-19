@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useDoorCalc } from '@/composables/useDoorCalc';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
@@ -13,6 +14,8 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: dashboard().url,
     },
 ];
+
+const doorCalcStore = useDoorCalc()
 
 // Door component arrays
 const panels = [
