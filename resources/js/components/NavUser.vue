@@ -27,15 +27,15 @@ const { isMobile, state } = useSidebar();
                 <DropdownMenuTrigger as-child>
                     <SidebarMenuButton
                         size="lg"
-                        class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                        class="elegant-user-button border border-black/10 hover:border-black/20 hover:bg-black/5 data-[state=open]:bg-black/5 data-[state=open]:border-black/20"
                         data-test="sidebar-menu-button"
                     >
-                        <UserInfo :user="user" />
-                        <ChevronsUpDown class="ml-auto size-4" />
+                        <UserInfo :user="user" class="elegant-user-info" />
+                        <ChevronsUpDown class="ml-auto size-4 text-black/50" />
                     </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                    class="w-(--reka-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                    class="elegant-dropdown w-(--reka-dropdown-menu-trigger-width) min-w-56 rounded-none border-black/20"
                     :side="
                         isMobile
                             ? 'bottom'
@@ -52,3 +52,24 @@ const { isMobile, state } = useSidebar();
         </SidebarMenuItem>
     </SidebarMenu>
 </template>
+
+<style scoped>
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+:deep(.elegant-user-button) {
+    font-family: 'Playfair Display', serif;
+    transition: all 0.3s ease;
+    border-radius: 0;
+    background: white;
+}
+
+:deep(.elegant-user-info) {
+    font-family: 'Playfair Display', serif;
+}
+
+:deep(.elegant-dropdown) {
+    font-family: 'Playfair Display', serif;
+    background: white;
+}
+</style>

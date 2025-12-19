@@ -22,19 +22,20 @@ defineProps<Props>();
         :class="`group-data-[collapsible=icon]:p-0 ${$props.class || ''}`"
     >
         <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu class="space-y-1">
                 <SidebarMenuItem v-for="item in items" :key="item.title">
                     <SidebarMenuButton
-                        class="text-neutral-600 hover:text-neutral-800 dark:text-neutral-300 dark:hover:text-neutral-100"
+                        class="elegant-footer-button text-black/50 hover:text-black hover:bg-black/5 font-serif"
                         as-child
                     >
                         <a
                             :href="toUrl(item.href)"
                             target="_blank"
                             rel="noopener noreferrer"
+                            class="flex items-center gap-3"
                         >
-                            <component :is="item.icon" />
-                            <span>{{ item.title }}</span>
+                            <component :is="item.icon" class="w-4 h-4" />
+                            <span class="text-sm tracking-wide">{{ item.title }}</span>
                         </a>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -42,3 +43,14 @@ defineProps<Props>();
         </SidebarGroupContent>
     </SidebarGroup>
 </template>
+
+<style scoped>
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+:deep(.elegant-footer-button) {
+    font-family: 'Playfair Display', serif;
+    transition: all 0.3s ease;
+    border-radius: 0;
+}
+</style>

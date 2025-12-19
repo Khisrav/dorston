@@ -18,21 +18,44 @@ const page = usePage();
 </script>
 
 <template>
-    <SidebarGroup class="px-2 py-0">
-        <SidebarGroupLabel>Platform</SidebarGroupLabel>
-        <SidebarMenu>
+    <SidebarGroup class="px-2 py-4">
+        <SidebarGroupLabel class="elegant-label text-xs tracking-[0.2em] uppercase text-black/50 mb-3 font-serif">
+            Platform
+        </SidebarGroupLabel>
+        <SidebarMenu class="space-y-1">
             <SidebarMenuItem v-for="item in items" :key="item.title">
                 <SidebarMenuButton
                     as-child
                     :is-active="urlIsActive(item.href, page.url)"
                     :tooltip="item.title"
+                    class="elegant-menu-button"
+                    :class="[
+                        urlIsActive(item.href, page.url) 
+                            ? 'bg-black text-white hover:bg-black' 
+                            : 'text-black/70 hover:bg-black/5 hover:text-black'
+                    ]"
                 >
-                    <Link :href="item.href">
-                        <component :is="item.icon" />
-                        <span>{{ item.title }}</span>
+                    <Link :href="item.href" class="flex items-center gap-3 font-serif">
+                        <component :is="item.icon" class="w-4 h-4" />
+                        <span class="text-sm tracking-wide">{{ item.title }}</span>
                     </Link>
                 </SidebarMenuButton>
             </SidebarMenuItem>
         </SidebarMenu>
     </SidebarGroup>
 </template>
+
+<style scoped>
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+:deep(.elegant-label) {
+    font-family: 'Playfair Display', serif;
+}
+
+:deep(.elegant-menu-button) {
+    font-family: 'Playfair Display', serif;
+    transition: all 0.3s ease;
+    border-radius: 0;
+}
+</style>

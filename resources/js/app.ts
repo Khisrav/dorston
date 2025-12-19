@@ -8,6 +8,7 @@ import { initializeTheme } from './composables/useAppearance';
 import VueKonva from 'vue-konva';
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
+import { createPinia } from 'pinia';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -27,6 +28,7 @@ createInertiaApp({
                     preset: Aura,
                 },
             })
+            .use(createPinia())
             .mount(el);
     },
     progress: {

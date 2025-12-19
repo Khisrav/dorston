@@ -56,8 +56,8 @@ const isCurrentRoute = computed(
 const activeItemStyles = computed(
     () => (url: NonNullable<InertiaLinkProps['href']>) =>
         isCurrentRoute.value(toUrl(url))
-            ? 'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100'
-            : '',
+            ? 'text-black bg-black/5'
+            : 'text-black/70',
 );
 
 const mainNavItems: NavItem[] = [
@@ -83,8 +83,8 @@ const rightNavItems: NavItem[] = [
 </script>
 
 <template>
-    <div>
-        <div class="border-b border-sidebar-border/80">
+    <div class="elegant-header-wrapper">
+        <div class="border-b border-black/10 bg-white">
             <div class="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
                 <!-- Mobile Menu -->
                 <div class="lg:hidden">
@@ -111,20 +111,20 @@ const rightNavItems: NavItem[] = [
                                 class="flex h-full flex-1 flex-col justify-between space-y-4 py-6"
                             >
                                 <nav class="-mx-3 space-y-1">
-                                    <Link
-                                        v-for="item in mainNavItems"
-                                        :key="item.title"
-                                        :href="item.href"
-                                        class="flex items-center gap-x-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent"
-                                        :class="activeItemStyles(item.href)"
-                                    >
-                                        <component
-                                            v-if="item.icon"
-                                            :is="item.icon"
-                                            class="h-5 w-5"
-                                        />
-                                        {{ item.title }}
-                                    </Link>
+                                <Link
+                                    v-for="item in mainNavItems"
+                                    :key="item.title"
+                                    :href="item.href"
+                                    class="flex items-center gap-x-3 px-3 py-2 text-sm font-serif tracking-wide hover:bg-black/5 transition-colors"
+                                    :class="activeItemStyles(item.href)"
+                                >
+                                    <component
+                                        v-if="item.icon"
+                                        :is="item.icon"
+                                        class="h-5 w-5"
+                                    />
+                                    {{ item.title }}
+                                </Link>
                                 </nav>
                                 <div class="flex flex-col space-y-4">
                                     <a
@@ -133,7 +133,7 @@ const rightNavItems: NavItem[] = [
                                         :href="toUrl(item.href)"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="flex items-center space-x-2 text-sm font-medium"
+                                        class="flex items-center space-x-2 text-sm font-serif tracking-wide text-black/70 hover:text-black transition-colors"
                                     >
                                         <component
                                             v-if="item.icon"
@@ -167,7 +167,7 @@ const rightNavItems: NavItem[] = [
                                     :class="[
                                         navigationMenuTriggerStyle(),
                                         activeItemStyles(item.href),
-                                        'h-9 cursor-pointer px-3',
+                                        'h-9 cursor-pointer px-3 font-serif tracking-wide hover:bg-black/5',
                                     ]"
                                     :href="item.href"
                                 >
@@ -180,7 +180,7 @@ const rightNavItems: NavItem[] = [
                                 </Link>
                                 <div
                                     v-if="isCurrentRoute(item.href)"
-                                    class="absolute bottom-0 left-0 h-0.5 w-full translate-y-px bg-black dark:bg-white"
+                                    class="absolute bottom-0 left-0 h-px w-full translate-y-px bg-black"
                                 ></div>
                             </NavigationMenuItem>
                         </NavigationMenuList>
@@ -270,13 +270,26 @@ const rightNavItems: NavItem[] = [
 
         <div
             v-if="props.breadcrumbs.length > 1"
-            class="flex w-full border-b border-sidebar-border/70"
+            class="flex w-full border-b border-black/10 bg-white"
         >
             <div
-                class="mx-auto flex h-12 w-full items-center justify-start px-4 text-neutral-500 md:max-w-7xl"
+                class="mx-auto flex h-12 w-full items-center justify-start px-4 text-black/50 md:max-w-7xl"
             >
                 <Breadcrumbs :breadcrumbs="breadcrumbs" />
             </div>
         </div>
     </div>
 </template>
+
+<style scoped>
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+.elegant-header-wrapper {
+    font-family: 'Playfair Display', serif;
+}
+
+:deep(.font-serif) {
+    font-family: 'Playfair Display', serif;
+}
+</style>

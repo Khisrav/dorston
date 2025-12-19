@@ -12,5 +12,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Button: typeof import('primevue/button')['default']
+    InputMask: typeof import('primevue/inputmask')['default']
   }
 }

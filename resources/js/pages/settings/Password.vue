@@ -14,7 +14,7 @@ import { type BreadcrumbItem } from '@/types';
 
 const breadcrumbItems: BreadcrumbItem[] = [
     {
-        title: 'Password settings',
+        title: 'Настройки пароля',
         href: edit().url,
     },
 ];
@@ -22,13 +22,13 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Password settings" />
+        <Head title="Настройки пароля" />
 
         <SettingsLayout>
-            <div class="space-y-6">
+            <div class="space-y-8">
                 <HeadingSmall
-                    title="Update password"
-                    description="Ensure your account is using a long, random password to stay secure"
+                    title="Обновление пароля"
+                    description="Убедитесь, что ваш аккаунт использует длинный случайный пароль для безопасности"
                 />
 
                 <Form
@@ -45,52 +45,53 @@ const breadcrumbItems: BreadcrumbItem[] = [
                     class="space-y-6"
                     v-slot="{ errors, processing, recentlySuccessful }"
                 >
-                    <div class="grid gap-2">
-                        <Label for="current_password">Current password</Label>
+                    <div class="grid gap-3">
+                        <Label for="current_password" class="font-serif text-sm tracking-wide text-black/70">Текущий пароль</Label>
                         <Input
                             id="current_password"
                             name="current_password"
                             type="password"
-                            class="mt-1 block w-full"
+                            class="elegant-input mt-1 block w-full font-serif border-black/20 focus:border-black"
                             autocomplete="current-password"
-                            placeholder="Current password"
+                            placeholder="Текущий пароль"
                         />
                         <InputError :message="errors.current_password" />
                     </div>
 
-                    <div class="grid gap-2">
-                        <Label for="password">New password</Label>
+                    <div class="grid gap-3">
+                        <Label for="password" class="font-serif text-sm tracking-wide text-black/70">Новый пароль</Label>
                         <Input
                             id="password"
                             name="password"
                             type="password"
-                            class="mt-1 block w-full"
+                            class="elegant-input mt-1 block w-full font-serif border-black/20 focus:border-black"
                             autocomplete="new-password"
-                            placeholder="New password"
+                            placeholder="Новый пароль"
                         />
                         <InputError :message="errors.password" />
                     </div>
 
-                    <div class="grid gap-2">
-                        <Label for="password_confirmation"
-                            >Confirm password</Label
+                    <div class="grid gap-3">
+                        <Label for="password_confirmation" class="font-serif text-sm tracking-wide text-black/70"
+                            >Подтверждение пароля</Label
                         >
                         <Input
                             id="password_confirmation"
                             name="password_confirmation"
                             type="password"
-                            class="mt-1 block w-full"
+                            class="elegant-input mt-1 block w-full font-serif border-black/20 focus:border-black"
                             autocomplete="new-password"
-                            placeholder="Confirm password"
+                            placeholder="Подтвердите пароль"
                         />
                         <InputError :message="errors.password_confirmation" />
                     </div>
 
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-6 pt-2">
                         <Button
                             :disabled="processing"
                             data-test="update-password-button"
-                            >Save password</Button
+                            class="elegant-button px-8 py-2 font-serif text-sm tracking-[0.15em] uppercase text-white bg-black border border-black hover:tracking-[0.2em]"
+                            >Сохранить пароль</Button
                         >
 
                         <Transition
@@ -101,9 +102,9 @@ const breadcrumbItems: BreadcrumbItem[] = [
                         >
                             <p
                                 v-show="recentlySuccessful"
-                                class="text-sm text-neutral-600"
+                                class="text-sm font-serif text-black/60"
                             >
-                                Saved.
+                                Сохранено.
                             </p>
                         </Transition>
                     </div>
@@ -112,3 +113,19 @@ const breadcrumbItems: BreadcrumbItem[] = [
         </SettingsLayout>
     </AppLayout>
 </template>
+
+<style scoped>
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+:deep(.elegant-input) {
+    font-family: 'Playfair Display', serif;
+    border-radius: 0;
+}
+
+:deep(.elegant-button) {
+    font-family: 'Playfair Display', serif;
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+</style>

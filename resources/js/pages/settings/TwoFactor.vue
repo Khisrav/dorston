@@ -25,7 +25,7 @@ withDefaults(defineProps<Props>(), {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Two-Factor Authentication',
+        title: 'Двухфакторная аутентификация',
         href: show.url(),
     },
 ];
@@ -40,33 +40,31 @@ onUnmounted(() => {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
-        <Head title="Two-Factor Authentication" />
+        <Head title="Двухфакторная аутентификация" />
         <SettingsLayout>
-            <div class="space-y-6">
+            <div class="space-y-8">
                 <HeadingSmall
-                    title="Two-Factor Authentication"
-                    description="Manage your two-factor authentication settings"
+                    title="Двухфакторная аутентификация"
+                    description="Управление настройками двухфакторной аутентификации"
                 />
 
                 <div
                     v-if="!twoFactorEnabled"
-                    class="flex flex-col items-start justify-start space-y-4"
+                    class="flex flex-col items-start justify-start space-y-6"
                 >
-                    <Badge variant="destructive">Disabled</Badge>
+                    <Badge variant="destructive" class="font-serif tracking-wider px-3 py-1 rounded-none border border-red-600">Отключено</Badge>
 
-                    <p class="text-muted-foreground">
-                        When you enable two-factor authentication, you will be
-                        prompted for a secure pin during login. This pin can be
-                        retrieved from a TOTP-supported application on your
-                        phone.
+                    <p class="font-serif text-black/70 leading-relaxed">
+                        Когда вы включите двухфакторную аутентификацию, вам будет предложено ввести защищенный PIN-код при входе в систему. Этот PIN-код можно получить из приложения с поддержкой TOTP на вашем телефоне.
                     </p>
 
                     <div>
                         <Button
                             v-if="hasSetupData"
                             @click="showSetupModal = true"
+                            class="elegant-button px-8 py-2 font-serif text-sm tracking-[0.15em] uppercase hover:tracking-[0.2em]"
                         >
-                            <ShieldCheck />Continue Setup
+                            <ShieldCheck class="mr-2" />Продолжить настройку
                         </Button>
                         <Form
                             v-else
@@ -74,8 +72,12 @@ onUnmounted(() => {
                             @success="showSetupModal = true"
                             #default="{ processing }"
                         >
-                            <Button type="submit" :disabled="processing">
-                                <ShieldCheck />Enable 2FA</Button
+                            <Button 
+                                type="submit" 
+                                :disabled="processing"
+                                class="elegant-button px-8 py-2 font-serif text-sm tracking-[0.15em] uppercase bg-black text-white border border-black hover:tracking-[0.2em]"
+                            >
+                                <ShieldCheck class="mr-2" />Включить 2FA</Button
                             ></Form
                         >
                     </div>
@@ -83,15 +85,12 @@ onUnmounted(() => {
 
                 <div
                     v-else
-                    class="flex flex-col items-start justify-start space-y-4"
+                    class="flex flex-col items-start justify-start space-y-6"
                 >
-                    <Badge variant="default">Enabled</Badge>
+                    <Badge variant="default" class="font-serif tracking-wider px-3 py-1 rounded-none bg-black text-white border border-black">Включено</Badge>
 
-                    <p class="text-muted-foreground">
-                        With two-factor authentication enabled, you will be
-                        prompted for a secure, random pin during login, which
-                        you can retrieve from the TOTP-supported application on
-                        your phone.
+                    <p class="font-serif text-black/70 leading-relaxed">
+                        С включенной двухфакторной аутентификацией вам будет предложено ввести защищенный случайный PIN-код при входе в систему, который можно получить из приложения с поддержкой TOTP на вашем телефоне.
                     </p>
 
                     <TwoFactorRecoveryCodes />
@@ -102,9 +101,10 @@ onUnmounted(() => {
                                 variant="destructive"
                                 type="submit"
                                 :disabled="processing"
+                                class="elegant-button px-8 py-2 font-serif text-sm tracking-[0.15em] uppercase rounded-none hover:tracking-[0.2em]"
                             >
-                                <ShieldBan />
-                                Disable 2FA
+                                <ShieldBan class="mr-2" />
+                                Отключить 2FA
                             </Button>
                         </Form>
                     </div>
@@ -119,3 +119,14 @@ onUnmounted(() => {
         </SettingsLayout>
     </AppLayout>
 </template>
+
+<style scoped>
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+:deep(.elegant-button) {
+    font-family: 'Playfair Display', serif;
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+</style>

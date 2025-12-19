@@ -8,10 +8,15 @@ defineProps<Props>();
 </script>
 
 <template>
-    <div class="mb-8 space-y-0.5">
-        <h2 class="text-xl font-semibold tracking-tight">{{ title }}</h2>
-        <p v-if="description" class="text-sm text-muted-foreground">
+    <div class="mb-10 space-y-2 text-center border-b border-black/10 pb-8">
+        <h2 class="font-serif text-3xl tracking-tight text-black">{{ title }}</h2>
+        <p v-if="description" class="font-serif text-base text-black/60">
             {{ description }}
         </p>
     </div>
 </template>
+
+<style scoped>
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+</style>

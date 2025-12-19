@@ -1,221 +1,100 @@
-<script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
-import { useImage } from 'vue-konva';
+<template>
+	<div class="min-h-screen bg-white">
+		<div class="relative px-6 pt-24 pb-24 lg:px-8">
+			<!-- Decorative ornament at top -->
+			<!-- <div class="flex justify-center mb-16">
+				<div class="w-1 h-12 bg-black"></div>
+			</div> -->
 
-const panels = [
-    '/assets/конструктор/океанская зелень.webp',
-    '/assets/конструктор/полотно чистое.webp',
-    '/assets/panels/Шпат грей.png',
+			<div class="mx-auto max-w-4xl">
+				<!-- Announcement badge with classic styling -->
+				<!-- <div class="hidden sm:mb-16 sm:flex sm:justify-center">
+					<div class="relative px-6 py-2 text-xs tracking-[0.2em] uppercase text-black border border-black/20">
+						Announcing our next round of funding
+						<a href="#" class="ml-2 inline-flex items-center font-serif italic hover:underline decoration-1 underline-offset-4">
+							<span>Read more</span>
+							<span class="ml-1" aria-hidden="true">→</span>
+						</a>
+					</div>
+				</div> -->
+
+				<!-- Main content -->
+				<div class="text-center">
+					<!-- Decorative top flourish -->
+					<div class="flex justify-center mb-8">
+						<svg width="60" height="8" viewBox="0 0 60 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M0 4 L25 4 M35 4 L60 4" stroke="black" stroke-width="0.5"/>
+							<circle cx="30" cy="4" r="2" fill="black"/>
+						</svg>
+					</div>
+
+					<h1 class="font-serif text-5xl sm:text-6xl lg:text-7xl tracking-tight text-black leading-tight mb-12">
+						Создайте дверь<br />
+						<span class="italic">своей мечты</span><br />
+						с Dorston
+					</h1>
+
+					<div class="flex justify-center mb-8">
+						<div class="w-16 h-px bg-black/30"></div>
+					</div>
+
+					<p class="font-serif text-lg sm:text-xl lg:text-2xl text-black/70 leading-relaxed max-w-2xl mx-auto mb-16">
+						Используйте наш конфигуратор, чтобы создать идеальную дверь для вашего дома или офиса.
+					</p>
+
+					<!-- CTA buttons with classic styling -->
+					<div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+						<Link href="/configurator" 
+							class="group relative px-10 py-4 font-bold text-sm md:text-base tracking-[0.15em] uppercase font-serif text-white bg-black border border-black overflow-hidden transition-all duration-300 hover:tracking-[0.2em]">
+							<span class="relative z-10">Открыть</span>
+						</Link>
+						<Link href="#" 
+							class="group relative px-10 py-4 font-bold text-sm md:text-base tracking-[0.15em] uppercase font-serif text-black border border-black transition-all duration-300 hover:bg-black hover:text-white hover:tracking-[0.2em]">
+							<span class="relative z-10">Подробнее</span>
+						</Link>
+					</div>
+				</div>
+
+				<!-- Decorative bottom flourish -->
+				<div class="flex justify-center mt-20">
+					<svg width="120" height="16" viewBox="0 0 120 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M0 8 L50 8 M70 8 L120 8" stroke="black" stroke-width="0.5" opacity="0.3"/>
+						<path d="M55 8 L60 4 L65 8 L60 12 Z" fill="black" opacity="0.3"/>
+					</svg>
+				</div>
+			</div>
+
+			<!-- Decorative side borders for larger screens -->
+			<div class="hidden lg:block absolute left-12 top-1/4 bottom-1/4 w-px bg-black/10"></div>
+			<div class="hidden lg:block absolute right-12 top-1/4 bottom-1/4 w-px bg-black/10"></div>
+		</div>
+	</div>
+</template>
+
+<script setup>
+import { Link } from '@inertiajs/vue3';
+import { ref } from 'vue'
+
+const navigation = [
+	{ name: 'Product', href: '#' },
+	{ name: 'Features', href: '#' },
+	{ name: 'Marketplace', href: '#' },
+	{ name: 'Company', href: '#' },
 ]
 
-const millings = [
-    '/assets/конструктор/океанская зелень фреза.webp',
-    '/assets/конструктор/фреза один.webp',
-    '/assets/конструктор/фреза два.webp',
-    '/assets/millings/фреза artline.png',
-]
-
-const casings = [
-    '/assets/конструктор/наличник мдф.webp',
-    '/assets/конструктор/наличник.webp',
-    '/assets/casings/муар черный.png',
-]
-
-const fittings = [
-    '/assets/конструктор/фурнитура.webp',
-    '/assets/fittings/efitting.png',
-]
-
-const decorations = [
-    '',
-    '/assets/decorative-elements/decoration.png',
-]
-
-const selectedDoorParameters = ref({
-    panel: panels[0],
-    milling: millings[0],
-    casing: casings[0],
-    decoration: decorations[0],
-    fitting: fittings[0],
-});
-
-const doorLayerImages = computed(() => [
-    selectedDoorParameters.value.panel,
-    selectedDoorParameters.value.milling,
-    selectedDoorParameters.value.casing,
-    selectedDoorParameters.value.decoration,
-    selectedDoorParameters.value.fitting,
-]);
-
-const imageRefs = ref<Array<ReturnType<typeof useImage>>>([]);
-
-// Watch for changes in doorLayerImages and reload
-watchEffect(() => {
-    imageRefs.value = doorLayerImages.value.map((src) => useImage(src));
-});
-
-const imagesData = ref<
-    Array<{ type: string, image: HTMLImageElement | null; width: number; height: number; originalWidth: number; originalHeight: number; position: { x: number; y: number } }>
->(doorLayerImages.value.map(() => ({ type: '', image: null, width: 0, height: 0, originalWidth: 0, originalHeight: 0, position: { x: 0, y: 0 } })));
-
-const stageDesiredWidth = ref(300);
-
-const maxWH = computed(() => {
-    const maxWidth = Math.max(...imageRefs.value.map((imgRef) => imgRef[0].value?.width ?? 0));
-    const maxHeight = Math.max(...imageRefs.value.map((imgRef) => imgRef[0].value?.height ?? 0));
-    return {
-        width: maxWidth,
-        height: maxHeight,
-    };
-});
-
-const stageScaleFactor = computed(() => {
-    return stageDesiredWidth.value / maxWH.value.width;
-});
-
-const stageSize = computed(() => {
-    return {
-        width: maxWH.value.width * stageScaleFactor.value,
-        height: maxWH.value.height * stageScaleFactor.value,
-    };
-});
-
-watchEffect(() => {
-    // Define layer types based on index order: panel, milling, casing, decoration, fitting
-    const layerTypes = ['panel', 'milling', 'casing', 'decoration', 'fitting'];
-    
-    imageRefs.value.forEach((imgRef, index) => {
-        const image = imgRef[0].value;
-        if (image) {
-            const layerType = layerTypes[index] || 'unknown';
-            
-            // All images use the same scale factor for consistency
-            let scaledWidth = image.width * stageScaleFactor.value;
-            let scaledHeight = image.height * stageScaleFactor.value;
-            
-            // Scale up smaller images (except fitting) to match the desired width
-            if (scaledWidth < stageDesiredWidth.value && layerType !== 'fitting') {
-                scaledWidth = stageDesiredWidth.value;
-                scaledHeight = scaledWidth * (image.height / image.width);
-            }
-
-            imagesData.value[index] = {
-                type: layerType,
-                image,
-                width: scaledWidth,
-                height: scaledHeight,
-                originalWidth: image.width,
-                originalHeight: image.height,
-                position: {
-                    // Center each image within the stage
-                    x: (stageSize.value.width - scaledWidth) / 2,
-                    y: (stageSize.value.height - scaledHeight) / 2,
-                },
-            };
-        } else {
-            imagesData.value[index] = { type: '', image: null, width: 0, height: 0, originalWidth: 0, originalHeight: 0, position: { x: 0, y: 0 } };
-        }
-    });
-});
-
+const mobileMenuOpen = ref(false)
 </script>
 
-<template>
-    <div class="flex gap-4 p-4">
-        <div class="w-80 p-4 space-y-4 h-fit">  
-            <input type="number" v-model="stageDesiredWidth" class="space-y-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">          
-            <div class="space-y-2">
-                <select 
-                    v-model="selectedDoorParameters.panel"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    <option v-for="(panel, idx) in panels" :key="idx" :value="panel">
-                        {{ panel.split('/').pop() }}
-                    </option>
-                </select>
-            </div>
+<style scoped>
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
 
-            <div class="space-y-2">
-                <select 
-                    v-model="selectedDoorParameters.milling"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    <option v-for="(milling, idx) in millings" :key="idx" :value="milling">
-                        {{ milling.split('/').pop() }}
-                    </option>
-                </select>
-            </div>
+h1, p, a {
+	font-family: 'Playfair Display', serif;
+}
 
-            <div class="space-y-2">
-                <select 
-                    v-model="selectedDoorParameters.casing"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    <option v-for="(casing, idx) in casings" :key="idx" :value="casing">
-                        {{ casing.split('/').pop() }}
-                    </option>
-                </select>
-            </div>
-
-            <div class="space-y-2">
-                <select 
-                    v-model="selectedDoorParameters.decoration"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    <option v-for="(decoration, idx) in decorations" :key="idx" :value="decoration">
-                        {{ decoration.split('/').pop() }}
-                    </option>
-                </select>
-            </div>
-
-            <div class="space-y-2">
-                <select 
-                    v-model="selectedDoorParameters.fitting"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                    <option v-for="(fitting, idx) in fittings" :key="idx" :value="fitting">
-                        {{ fitting.split('/').pop() }}
-                    </option>
-                </select>
-            </div>
-        </div>
-
-        <div class="flex-1">
-            <div id="container" class="p-4 ">
-                <v-stage :config="stageSize">
-                    <v-layer>
-                        <v-image
-                            v-for="(imageData, index) in imagesData"
-                            :key="index"
-                            :config="{
-                                image: imageData.image,
-                                x: imageData.position.x,
-                                y: imageData.position.y,
-                                width: imageData.width,
-                                height: imageData.height,
-                                depth: index + 1,
-                            }"
-                        >
-                        </v-image>
-                    </v-layer>
-                </v-stage>
-            </div>
-
-            <div class="p-4">
-                <div v-for="(imageData, index) in imagesData" :key="index" class="mb-4 pb-4 border-b last:border-b-0">
-                    <h4 class="">
-                        Слой {{ index + 1 }}: {{ doorLayerImages[index] }}
-                    </h4>
-                    <div class="">
-                        <div><span>X:</span> {{ imageData.position.x }}</div>
-                        <div><span>Y:</span> {{ imageData.position.y }}</div>
-                        <div><span>Width:</span> {{ imageData.width }}</div>
-                        <div><span>Height:</span> {{ imageData.height }}</div>
-                        <div><span>Original W:</span> {{ imageData.originalWidth }}</div>
-                        <div><span>Original H:</span> {{ imageData.originalHeight }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</template>
+/* Subtle hover effects */
+a {
+	transition: all 0.3s ease;
+}
+</style>
