@@ -7,7 +7,7 @@ import { createApp, h } from 'vue';
 import { initializeTheme } from './composables/useAppearance';
 import VueKonva from 'vue-konva';
 import PrimeVue from 'primevue/config';
-import Aura from '@primeuix/themes/aura';
+import Nora from '@primeuix/themes/nora';
 import { createPinia } from 'pinia';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
@@ -25,7 +25,7 @@ createInertiaApp({
             .use(VueKonva)
             .use(PrimeVue, {
                 theme: {
-                    preset: Aura,
+                    preset: Nora,
                 },
             })
             .use(createPinia())

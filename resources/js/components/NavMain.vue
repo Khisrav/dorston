@@ -20,7 +20,7 @@ const page = usePage();
 <template>
     <SidebarGroup class="px-2 py-4">
         <SidebarGroupLabel class="elegant-label text-xs tracking-[0.2em] uppercase text-black/50 mb-3 font-serif">
-            Platform
+            ПЛАТФОРМА
         </SidebarGroupLabel>
         <SidebarMenu class="space-y-1">
             <SidebarMenuItem v-for="item in items" :key="item.title">

@@ -8,7 +8,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         doorConstructive: 'Comfort',
         doorWidth: 2030,
         doorHeight: 900,
-        doorTexture: 'Matte',
+        doorTexture: '',
         doorHandleSide: 'Left',
         doorBoxDesign: 'Opened',
     })
