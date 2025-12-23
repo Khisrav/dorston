@@ -13,12 +13,19 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class NomenclatureResource extends Resource
 {
     protected static ?string $model = Nomenclature::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|UnitEnum|null $navigationGroup = 'Номенклатуры';
+
+    protected static ?string $navigationLabel = 'Номенклатура';
+    protected static ?string $pluralNavigationLabel = 'Номенклатура';
+    protected static ?string $pluralModelLabel = 'Номенклатура';
+    protected static ?string $modelLabel = 'Номенклатура';
 
     public static function form(Schema $schema): Schema
     {

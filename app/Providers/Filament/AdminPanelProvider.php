@@ -68,7 +68,11 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Безопасность')
                     ->icon(Heroicon::OutlinedLockClosed)
                     ->collapsed(true)
-                    ->collapsible(true)
+                    ->collapsible(true),
+                NavigationGroup::make('Номенклатуры')
+                    ->icon(Heroicon::OutlinedRectangleStack)
+                    ->collapsed(true)
+                    ->collapsible(true),
             ])
             ->authMiddleware([
                 Authenticate::class,
