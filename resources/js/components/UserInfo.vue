@@ -30,7 +30,7 @@ const showAvatar = computed(
     </Avatar>
 
     <div class="grid flex-1 text-left text-sm leading-tight font-serif">
-        <span class="truncate font-medium tracking-wide text-black dark:text-white">{{ user.name }}</span>
+        <span class="truncate font-medium tracking-wide text-black dark:text-blue">{{ user.name }}</span>
         <span v-if="showEmail" class="truncate text-xs text-black/50 dark:text-white/50 tracking-wide">{{
             user.email
         }}</span>
