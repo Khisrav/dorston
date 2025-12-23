@@ -29,8 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Stone,
-                'success' => Color::Green,
+                'primary' => Color::Blue,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -53,6 +52,16 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->sidebarCollapsibleOnDesktop()
+            ->breadcrumbs(false)
+            ->maxContentWidth('full')
+            ->spa()
+            // ->brandLogoHeight('3rem')
+            //     ->favicon(asset('favicon-32x32.png'))
+            //     ->colors([
+            //         'primary' => Color::Blue,
+            //         'gray' => Color::Slate,
+            //     ])
             ->authMiddleware([
                 Authenticate::class,
             ]);

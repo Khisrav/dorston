@@ -25,29 +25,29 @@ defineProps<Props>();
 
 <template>
     <DropdownMenuLabel class="p-0 font-normal elegant-menu-label">
-        <div class="flex items-center gap-2 px-3 py-3 text-left text-sm border-b border-black/10">
+        <div class="flex items-center gap-2 px-3 py-3 text-left text-sm border-b border-black/10 dark:border-white/10">
             <UserInfo :user="user" :show-email="true" />
         </div>
     </DropdownMenuLabel>
     <DropdownMenuGroup class="elegant-menu-group">
         <DropdownMenuItem :as-child="true" class="elegant-menu-item">
-            <Link class="block w-full font-serif tracking-wide text-black/70 hover:text-black hover:bg-black/5 transition-colors px-3 py-2" :href="edit()" prefetch as="button">
+            <Link class="block w-full font-serif tracking-wide text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors px-3 py-2" :href="edit()" prefetch as="button">
                 <Settings class="mr-3 h-4 w-4" />
-                <span>Settings</span>
+                <span>Настройки</span>
             </Link>
         </DropdownMenuItem>
     </DropdownMenuGroup>
-    <div class="h-px bg-black/10 my-1"></div>
+    <div class="h-px bg-black/10 dark:bg-white/10 my-1"></div>
     <DropdownMenuItem :as-child="true" class="elegant-menu-item">
         <Link
-            class="block w-full font-serif tracking-wide text-black/70 hover:text-black hover:bg-black/5 transition-colors px-3 py-2"
+            class="block w-full font-serif tracking-wide text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 transition-colors px-3 py-2"
             :href="logout()"
             @click="handleLogout"
             as="button"
             data-test="logout-button"
         >
             <LogOut class="mr-3 h-4 w-4" />
-            <span>Log out</span>
+            <span>Выйти</span>
         </Link>
     </DropdownMenuItem>
 </template>

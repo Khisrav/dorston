@@ -8,9 +8,31 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         doorConstructive: 'Comfort',
         doorWidth: 2030,
         doorHeight: 900,
-        doorTexture: '',
         doorHandleSide: 'Left',
         doorBoxDesign: 'Opened',
+        interior: {
+            panelModel: '',
+            primaryTexture: '',
+            secondaryTexture: '',
+            casingTexture: '',
+        },
+        exterior: {
+            panelModel: '',
+            primaryTexture: '',
+            secondaryTexture: '',
+            casingTexture: '',
+        },
+        metalPainting: {
+            undercoat: '',
+            primaryColor: '',
+            secondaryColor: '',
+        },
+        furniture: {
+            primaryLock: '',
+            primaryCylindricalLockMechanism: '',
+            secondaryLock: '',
+            secondaryCylindricalLockMechanism: '',
+        },
     })
 
     return {

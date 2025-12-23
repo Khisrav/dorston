@@ -8,7 +8,30 @@ export interface DoorConfig {
     doorConstructive: doorConstructive,
     doorWidth: number;
     doorHeight: number;
-    doorTexture: string;
-    doorHandleSide: 'Left' | 'Right';
-    doorBoxDesign: 'Closed' | 'Opened';
+    doorHandleSide: doorHandleSide;
+    doorBoxDesign: doorBoxDesign;
+    interior: {
+        panelModel: string;
+        primaryTexture?: string;
+        secondaryTexture?: string;
+        casingTexture?: string;
+    };
+    exterior: {
+        panelModel: string;
+        primaryTexture?: string;
+        secondaryTexture?: string;
+        casingTexture?: string;
+    };
+    metalPainting?: {
+        undercoat?: string | 'Цинкогрунтование';
+        primaryColor?: string;
+        secondaryColor?: string;
+    }
+    furniture: {
+        primaryLock: string;
+        primaryCylindricalLockMechanism: string;
+        secondaryLock?: string;
+        secondaryCylindricalLockMechanism?: string;
+        // hinges?: string;
+    }
 }

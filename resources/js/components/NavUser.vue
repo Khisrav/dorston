@@ -27,15 +27,15 @@ const { isMobile, state } = useSidebar();
                 <DropdownMenuTrigger as-child>
                     <SidebarMenuButton
                         size="lg"
-                        class="elegant-user-button border border-black/10 hover:border-black/20 hover:bg-black/5 data-[state=open]:bg-black/5 data-[state=open]:border-black/20"
+                        class="elegant-user-button border border-black/10 dark:border-white/10 hover:border-black/20 dark:hover:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 data-[state=open]:bg-black/5 dark:data-[state=open]:bg-white/5 data-[state=open]:border-black/20 dark:data-[state=open]:border-white/20"
                         data-test="sidebar-menu-button"
                     >
                         <UserInfo :user="user" class="elegant-user-info" />
-                        <ChevronsUpDown class="ml-auto size-4 text-black/50" />
+                        <ChevronsUpDown class="ml-auto size-4 text-black/50 dark:text-white/50" />
                     </SidebarMenuButton>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                    class="elegant-dropdown w-(--reka-dropdown-menu-trigger-width) min-w-56 rounded-none border-black/20"
+                    class="elegant-dropdown w-(--reka-dropdown-menu-trigger-width) min-w-56 rounded-none border-black/20 dark:border-white/20"
                     :side="
                         isMobile
                             ? 'bottom'
@@ -64,6 +64,10 @@ const { isMobile, state } = useSidebar();
     background: white;
 }
 
+:deep(.dark .elegant-user-button) {
+    background: rgb(10 10 10);
+}
+
 :deep(.elegant-user-info) {
     font-family: 'Playfair Display', serif;
 }
@@ -71,5 +75,9 @@ const { isMobile, state } = useSidebar();
 :deep(.elegant-dropdown) {
     font-family: 'Playfair Display', serif;
     background: white;
+}
+
+:deep(.dark .elegant-dropdown) {
+    background: rgb(10 10 10);
 }
 </style>

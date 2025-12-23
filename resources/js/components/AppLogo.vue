@@ -4,12 +4,12 @@ import AppLogoIcon from '@/components/AppLogoIcon.vue';
 
 <template>
     <div
-        class="flex aspect-square size-8 items-center justify-center rounded-none border border-black/20 bg-white"
+        class="flex aspect-square size-8 items-center justify-center rounded-none border border-black/20 dark:border-white/20 bg-white dark:bg-neutral-950"
     >
-        <AppLogoIcon class="size-5 fill-current text-black" />
+        <AppLogoIcon class="size-5 fill-current text-black dark:text-white" />
     </div>
     <div class="ml-2 grid flex-1 text-left text-sm">
-        <span class="mb-0.5 truncate leading-tight font-serif tracking-wide font-medium text-black"
+        <span class="mb-0.5 truncate leading-tight font-serif tracking-wide font-medium text-black dark:text-white"
             >Dorston</span
         >
     </div>

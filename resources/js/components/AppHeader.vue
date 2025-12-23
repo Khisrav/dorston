@@ -56,8 +56,8 @@ const isCurrentRoute = computed(
 const activeItemStyles = computed(
     () => (url: NonNullable<InertiaLinkProps['href']>) =>
         isCurrentRoute.value(toUrl(url))
-            ? 'text-black bg-black/5'
-            : 'text-black/70',
+            ? 'text-black dark:text-white bg-black/5 dark:bg-white/5'
+            : 'text-black/70 dark:text-white/70',
 );
 
 const mainNavItems: NavItem[] = [
@@ -84,7 +84,7 @@ const rightNavItems: NavItem[] = [
 
 <template>
     <div class="elegant-header-wrapper">
-        <div class="border-b border-black/10 bg-white">
+        <div class="border-b border-black/10 bg-white dark:bg-neutral-950 dark:border-white/10">
             <div class="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
                 <!-- Mobile Menu -->
                 <div class="lg:hidden">
@@ -115,7 +115,7 @@ const rightNavItems: NavItem[] = [
                                     v-for="item in mainNavItems"
                                     :key="item.title"
                                     :href="item.href"
-                                    class="flex items-center gap-x-3 px-3 py-2 text-sm font-serif tracking-wide hover:bg-black/5 transition-colors"
+                                    class="flex items-center gap-x-3 px-3 py-2 text-sm font-serif tracking-wide hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
                                     :class="activeItemStyles(item.href)"
                                 >
                                     <component
@@ -133,7 +133,7 @@ const rightNavItems: NavItem[] = [
                                         :href="toUrl(item.href)"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        class="flex items-center space-x-2 text-sm font-serif tracking-wide text-black/70 hover:text-black transition-colors"
+                                        class="flex items-center space-x-2 text-sm font-serif tracking-wide text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors"
                                     >
                                         <component
                                             v-if="item.icon"
@@ -148,7 +148,7 @@ const rightNavItems: NavItem[] = [
                     </Sheet>
                 </div>
 
-                <Link :href="dashboard()" class="flex items-center gap-x-2">
+                <Link href="/" class="flex items-center gap-x-2">
                     <AppLogo />
                 </Link>
 
@@ -167,7 +167,7 @@ const rightNavItems: NavItem[] = [
                                     :class="[
                                         navigationMenuTriggerStyle(),
                                         activeItemStyles(item.href),
-                                        'h-9 cursor-pointer px-3 font-serif tracking-wide hover:bg-black/5',
+                                        'h-9 cursor-pointer px-3 font-serif tracking-wide hover:bg-black/5 dark:hover:bg-white/5',
                                     ]"
                                     :href="item.href"
                                 >
@@ -180,7 +180,7 @@ const rightNavItems: NavItem[] = [
                                 </Link>
                                 <div
                                     v-if="isCurrentRoute(item.href)"
-                                    class="absolute bottom-0 left-0 h-px w-full translate-y-px bg-black"
+                                    class="absolute bottom-0 left-0 h-px w-full translate-y-px bg-black dark:bg-white"
                                 ></div>
                             </NavigationMenuItem>
                         </NavigationMenuList>
@@ -270,10 +270,10 @@ const rightNavItems: NavItem[] = [
 
         <div
             v-if="props.breadcrumbs.length > 1"
-            class="flex w-full border-b border-black/10 bg-white"
+            class="flex w-full border-b border-black/10 dark:border-white/10 bg-white dark:bg-neutral-950"
         >
             <div
-                class="mx-auto flex h-12 w-full items-center justify-start px-4 text-black/50 md:max-w-7xl"
+                class="mx-auto flex h-12 w-full items-center justify-start px-4 text-black/50 dark:text-white/50 md:max-w-7xl"
             >
                 <Breadcrumbs :breadcrumbs="breadcrumbs" />
             </div>

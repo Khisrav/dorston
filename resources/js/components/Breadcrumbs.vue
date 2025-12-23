@@ -25,17 +25,17 @@ defineProps<{
             <template v-for="(item, index) in breadcrumbs" :key="index">
                 <BreadcrumbItem>
                     <template v-if="index === breadcrumbs.length - 1">
-                        <BreadcrumbPage class="text-black tracking-wide">{{ item.title }}</BreadcrumbPage>
+                        <BreadcrumbPage class="text-black dark:text-white tracking-wide">{{ item.title }}</BreadcrumbPage>
                     </template>
                     <template v-else>
-                        <BreadcrumbLink as-child class="text-black/50 hover:text-black transition-colors tracking-wide">
+                        <BreadcrumbLink as-child class="text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors tracking-wide">
                             <Link :href="item.href ?? '#'">{{
                                 item.title
                             }}</Link>
                         </BreadcrumbLink>
                     </template>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator v-if="index !== breadcrumbs.length - 1" class="text-black/30">
+                <BreadcrumbSeparator v-if="index !== breadcrumbs.length - 1" class="text-black/30 dark:text-white/30">
                     <span class="mx-2">·</span>
                 </BreadcrumbSeparator>
             </template>
