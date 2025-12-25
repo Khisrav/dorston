@@ -24,27 +24,30 @@ const passwordInput = useTemplateRef('passwordInput');
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="space-y-8">
         <HeadingSmall
-            title="Delete account"
-            description="Delete your account and all of its resources"
+            title="Удаление аккаунта"
+            description="Удалить ваш аккаунт и все его ресурсы"
         />
         <div
-            class="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10"
+            class="space-y-4 border border-red-600/30 bg-red-50/50 p-6"
         >
-            <div class="relative space-y-0.5 text-red-600 dark:text-red-100">
-                <p class="font-medium">Warning</p>
-                <p class="text-sm">
-                    Please proceed with caution, this cannot be undone.
+            <div class="relative space-y-2 text-red-700">
+                <p class="font-serif font-medium tracking-wide">Предупреждение</p>
+                <p class="font-serif text-sm">
+                    Пожалуйста, действуйте с осторожностью, это действие не может быть отменено.
                 </p>
             </div>
             <Dialog>
                 <DialogTrigger as-child>
-                    <Button variant="destructive" data-test="delete-user-button"
-                        >Delete account</Button
+                    <Button 
+                        variant="destructive" 
+                        data-test="delete-user-button"
+                        class="elegant-button px-8 py-2 font-serif text-sm tracking-[0.15em] uppercase rounded-none hover:tracking-[0.2em]"
+                        >Удалить аккаунт</Button
                     >
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent class="elegant-dialog border border-black/20 rounded-none">
                     <Form
                         v-bind="ProfileController.destroy.form()"
                         reset-on-success
@@ -55,35 +58,31 @@ const passwordInput = useTemplateRef('passwordInput');
                         class="space-y-6"
                         v-slot="{ errors, processing, reset, clearErrors }"
                     >
-                        <DialogHeader class="space-y-3">
-                            <DialogTitle
-                                >Are you sure you want to delete your
-                                account?</DialogTitle
+                        <DialogHeader class="space-y-4">
+                            <DialogTitle class="font-serif text-2xl tracking-tight text-black"
+                                >Вы уверены, что хотите удалить свой аккаунт?</DialogTitle
                             >
-                            <DialogDescription>
-                                Once your account is deleted, all of its
-                                resources and data will also be permanently
-                                deleted. Please enter your password to confirm
-                                you would like to permanently delete your
-                                account.
+                            <DialogDescription class="font-serif text-black/70 leading-relaxed">
+                                После удаления вашего аккаунта все его ресурсы и данные также будут безвозвратно удалены. Пожалуйста, введите ваш пароль для подтверждения того, что вы хотите безвозвратно удалить свой аккаунт.
                             </DialogDescription>
                         </DialogHeader>
 
-                        <div class="grid gap-2">
+                        <div class="grid gap-3">
                             <Label for="password" class="sr-only"
-                                >Password</Label
+                                >Пароль</Label
                             >
                             <Input
                                 id="password"
                                 type="password"
                                 name="password"
                                 ref="passwordInput"
-                                placeholder="Password"
+                                placeholder="Пароль"
+                                class="elegant-input font-serif border-black/20 focus:border-black rounded-none"
                             />
                             <InputError :message="errors.password" />
                         </div>
 
-                        <DialogFooter class="gap-2">
+                        <DialogFooter class="gap-3">
                             <DialogClose as-child>
                                 <Button
                                     variant="secondary"
@@ -93,8 +92,9 @@ const passwordInput = useTemplateRef('passwordInput');
                                             reset();
                                         }
                                     "
+                                    class="elegant-button px-6 py-2 font-serif text-sm tracking-[0.15em] uppercase rounded-none border border-black/20 hover:tracking-[0.2em]"
                                 >
-                                    Cancel
+                                    Отменить
                                 </Button>
                             </DialogClose>
 
@@ -103,8 +103,9 @@ const passwordInput = useTemplateRef('passwordInput');
                                 variant="destructive"
                                 :disabled="processing"
                                 data-test="confirm-delete-user-button"
+                                class="elegant-button px-6 py-2 font-serif text-sm tracking-[0.15em] uppercase rounded-none hover:tracking-[0.2em]"
                             >
-                                Delete account
+                                Удалить аккаунт
                             </Button>
                         </DialogFooter>
                     </Form>
@@ -113,3 +114,21 @@ const passwordInput = useTemplateRef('passwordInput');
         </div>
     </div>
 </template>
+
+<style scoped>
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+:deep(.elegant-button) {
+    font-family: 'Playfair Display', serif;
+    transition: all 0.3s ease;
+}
+
+:deep(.elegant-input) {
+    font-family: 'Playfair Display', serif;
+}
+
+:deep(.elegant-dialog) {
+    font-family: 'Playfair Display', serif;
+}
+</style>

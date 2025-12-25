@@ -22,17 +22,22 @@ const showAvatar = computed(
 </script>
 
 <template>
-    <Avatar class="h-8 w-8 overflow-hidden rounded-lg">
+    <Avatar class="h-8 w-8 overflow-hidden rounded-none border border-black/20 dark:border-white/20">
         <AvatarImage v-if="showAvatar" :src="user.avatar!" :alt="user.name" />
-        <AvatarFallback class="rounded-lg text-black dark:text-white">
+        <AvatarFallback class="rounded-none text-black dark:text-white bg-white dark:bg-neutral-950 border border-black/10 dark:border-white/10 font-serif">
             {{ getInitials(user.name) }}
         </AvatarFallback>
     </Avatar>
 
-    <div class="grid flex-1 text-left text-sm leading-tight">
-        <span class="truncate font-medium">{{ user.name }}</span>
-        <span v-if="showEmail" class="truncate text-xs text-muted-foreground">{{
+    <div class="grid flex-1 text-left text-sm leading-tight font-serif">
+        <span class="truncate font-medium tracking-wide text-black dark:text-blue">{{ user.name }}</span>
+        <span v-if="showEmail" class="truncate text-xs text-black/50 dark:text-white/50 tracking-wide">{{
             user.email
         }}</span>
     </div>
 </template>
+
+<style scoped>
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+</style>

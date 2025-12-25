@@ -11,7 +11,7 @@ import { edit } from '@/routes/appearance';
 
 const breadcrumbItems: BreadcrumbItem[] = [
     {
-        title: 'Appearance settings',
+        title: 'Настройки внешнего вида',
         href: edit().url,
     },
 ];
@@ -19,16 +19,21 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Appearance settings" />
+        <Head title="Настройки внешнего вида" />
 
         <SettingsLayout>
-            <div class="space-y-6">
+            <div class="space-y-8">
                 <HeadingSmall
-                    title="Appearance settings"
-                    description="Update your account's appearance settings"
+                    title="Настройки внешнего вида"
+                    description="Обновите настройки внешнего вида вашего аккаунта"
                 />
                 <AppearanceTabs />
             </div>
         </SettingsLayout>
     </AppLayout>
 </template>
+
+<style scoped>
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+</style>

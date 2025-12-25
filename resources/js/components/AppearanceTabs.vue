@@ -5,29 +5,39 @@ import { Monitor, Moon, Sun } from 'lucide-vue-next';
 const { appearance, updateAppearance } = useAppearance();
 
 const tabs = [
-    { value: 'light', Icon: Sun, label: 'Light' },
-    { value: 'dark', Icon: Moon, label: 'Dark' },
-    { value: 'system', Icon: Monitor, label: 'System' },
+    { value: 'light', Icon: Sun, label: 'Светлая' },
+    { value: 'dark', Icon: Moon, label: 'Темная' },
+    { value: 'system', Icon: Monitor, label: 'Системная' },
 ] as const;
 </script>
 
 <template>
     <div
-        class="inline-flex gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800"
+        class="inline-flex gap-2 border border-black/20 p-1 bg-white"
     >
         <button
             v-for="{ value, Icon, label } in tabs"
             :key="value"
             @click="updateAppearance(value)"
             :class="[
-                'flex items-center rounded-md px-3.5 py-1.5 transition-colors',
+                'elegant-tab-button flex items-center px-6 py-3 transition-all duration-300 font-serif text-sm tracking-wide',
                 appearance === value
-                    ? 'bg-white shadow-xs dark:bg-neutral-700 dark:text-neutral-100'
-                    : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60',
+                    ? 'bg-black text-white'
+                    : 'text-black/70 hover:bg-black/5 hover:text-black',
             ]"
         >
             <component :is="Icon" class="-ml-1 h-4 w-4" />
-            <span class="ml-1.5 text-sm">{{ label }}</span>
+            <span class="ml-2">{{ label }}</span>
         </button>
     </div>
 </template>
+
+<style scoped>
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+.elegant-tab-button {
+    font-family: 'Playfair Display', serif;
+    border-radius: 0;
+}
+</style>

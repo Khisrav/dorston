@@ -6,10 +6,12 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -29,7 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -51,6 +53,26 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->sidebarCollapsibleOnDesktop()
+            ->breadcrumbs(false)
+            ->maxContentWidth('full')
+            ->spa()
+            // ->brandLogoHeight('3rem')
+            //     ->favicon(asset('favicon-32x32.png'))
+            //     ->colors([
+            //         'primary' => Color::Blue,
+            //         'gray' => Color::Slate,
+            //     ])
+            ->navigationGroups([
+                NavigationGroup::make('Безопасность')
+                    ->icon(Heroicon::OutlinedLockClosed)
+                    ->collapsed(true)
+                    ->collapsible(true),
+                NavigationGroup::make('Номенклатуры')
+                    ->icon(Heroicon::OutlinedRectangleStack)
+                    ->collapsed(true)
+                    ->collapsible(true),
             ])
             ->authMiddleware([
                 Authenticate::class,

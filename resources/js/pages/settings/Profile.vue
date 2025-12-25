@@ -23,7 +23,7 @@ defineProps<Props>();
 
 const breadcrumbItems: BreadcrumbItem[] = [
     {
-        title: 'Profile settings',
+        title: 'Настройки профиля',
         href: edit().url,
     },
 ];
@@ -34,13 +34,13 @@ const user = page.props.auth.user;
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Profile settings" />
+        <Head title="Настройки профиля" />
 
         <SettingsLayout>
-            <div class="flex flex-col space-y-6">
+            <div class="flex flex-col space-y-8">
                 <HeadingSmall
-                    title="Profile information"
-                    description="Update your name and email address"
+                    title="Информация профиля"
+                    description="Обновите ваше имя и адрес электронной почты"
                 />
 
                 <Form
@@ -48,61 +48,61 @@ const user = page.props.auth.user;
                     class="space-y-6"
                     v-slot="{ errors, processing, recentlySuccessful }"
                 >
-                    <div class="grid gap-2">
-                        <Label for="name">Name</Label>
+                    <div class="grid gap-3">
+                        <Label for="name" class="font-serif text-sm tracking-wide text-black/70">Имя</Label>
                         <Input
                             id="name"
-                            class="mt-1 block w-full"
+                            class="elegant-input mt-1 block w-full font-serif border-black/20 focus:border-black"
                             name="name"
                             :default-value="user.name"
                             required
                             autocomplete="name"
-                            placeholder="Full name"
+                            placeholder="Полное имя"
                         />
                         <InputError class="mt-2" :message="errors.name" />
                     </div>
 
-                    <div class="grid gap-2">
-                        <Label for="email">Email address</Label>
+                    <div class="grid gap-3">
+                        <Label for="email" class="font-serif text-sm tracking-wide text-black/70">Адрес электронной почты</Label>
                         <Input
                             id="email"
                             type="email"
-                            class="mt-1 block w-full"
+                            class="elegant-input mt-1 block w-full font-serif border-black/20 focus:border-black"
                             name="email"
                             :default-value="user.email"
                             required
                             autocomplete="username"
-                            placeholder="Email address"
+                            placeholder="Адрес электронной почты"
                         />
                         <InputError class="mt-2" :message="errors.email" />
                     </div>
 
                     <div v-if="mustVerifyEmail && !user.email_verified_at">
-                        <p class="-mt-4 text-sm text-muted-foreground">
-                            Your email address is unverified.
+                        <p class="-mt-4 text-sm font-serif text-black/60">
+                            Ваш адрес электронной почты не подтверждён.
                             <Link
                                 :href="send()"
                                 as="button"
-                                class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
+                                class="text-black underline decoration-black/30 underline-offset-4 transition-colors duration-300 hover:decoration-black"
                             >
-                                Click here to resend the verification email.
+                                Нажмите здесь, чтобы отправить письмо подтверждения повторно.
                             </Link>
                         </p>
 
                         <div
                             v-if="status === 'verification-link-sent'"
-                            class="mt-2 text-sm font-medium text-green-600"
+                            class="mt-2 text-sm font-serif font-medium text-green-700"
                         >
-                            A new verification link has been sent to your email
-                            address.
+                            Новая ссылка подтверждения была отправлена на ваш адрес электронной почты.
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-6 pt-2">
                         <Button
                             :disabled="processing"
                             data-test="update-profile-button"
-                            >Save</Button
+                            class="elegant-button px-8 py-2 font-serif text-sm tracking-[0.15em] uppercase text-white bg-black border border-black hover:tracking-[0.2em]"
+                            >Сохранить</Button
                         >
 
                         <Transition
@@ -113,9 +113,9 @@ const user = page.props.auth.user;
                         >
                             <p
                                 v-show="recentlySuccessful"
-                                class="text-sm text-neutral-600"
+                                class="text-sm font-serif text-black/60"
                             >
-                                Saved.
+                                Сохранено.
                             </p>
                         </Transition>
                     </div>
@@ -126,3 +126,19 @@ const user = page.props.auth.user;
         </SettingsLayout>
     </AppLayout>
 </template>
+
+<style scoped>
+/* Import elegant serif fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+:deep(.elegant-input) {
+    font-family: 'Playfair Display', serif;
+    border-radius: 0;
+}
+
+:deep(.elegant-button) {
+    font-family: 'Playfair Display', serif;
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+</style>
