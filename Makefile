@@ -86,43 +86,63 @@ queue-restart: ## Restart queue worker
 	docker compose restart queue
 
 # Production targets
+PROJECT_NAME ?= dorston
+COMPOSE_PROD = docker compose -p $(PROJECT_NAME) -f compose.prod.yaml
+
 prod-build: ## Build production images
-	docker compose -f compose.prod.yaml build --no-cache
+	$(COMPOSE_PROD) build --no-cache
 
 prod-up: ## Start production containers
-	docker compose -f compose.prod.yaml up -d
+	$(COMPOSE_PROD) up -d
 
 prod-down: ## Stop production containers
-	docker compose -f compose.prod.yaml down
+	$(COMPOSE_PROD) down
 
 prod-restart: ## Restart production containers
-	docker compose -f compose.prod.yaml restart
+	$(COMPOSE_PROD) restart
 
 prod-logs: ## View production logs
-	docker compose -f compose.prod.yaml logs -f
+	$(COMPOSE_PROD) logs -f
 
 prod-ps: ## Show production container status
-	docker compose -f compose.prod.yaml ps
+	$(COMPOSE_PROD) ps
+
+prod-volumes: ## List production volumes
+	@docker volume ls | grep $(PROJECT_NAME) || echo "No volumes found"
 
 prod-clean-volumes: ## Remove production volumes (WARNING: This will delete data!)
-	docker compose -f compose.prod.yaml down -v
+	@echo "⚠️  WARNING: This will delete ALL data including the database!"
+	@read -p "Are you sure? Type 'yes' to continue: " confirm && [ "$$confirm" = "yes" ]
+	$(COMPOSE_PROD) down -v
 
 prod-deploy: ## Full production deployment (automated)
 	@echo "Starting automated deployment..."
 	@./deploy.sh
 
 prod-migrate: ## Run migrations in production
-	docker compose -f compose.prod.yaml exec php-fpm php artisan migrate --force
+	$(COMPOSE_PROD) exec php-fpm php artisan migrate --force
 
 prod-cache-clear: ## Clear production cache
-	docker compose -f compose.prod.yaml exec php-fpm php artisan cache:clear
-	docker compose -f compose.prod.yaml exec php-fpm php artisan config:clear
-	docker compose -f compose.prod.yaml exec php-fpm php artisan route:clear
-	docker compose -f compose.prod.yaml exec php-fpm php artisan view:clear
+	$(COMPOSE_PROD) exec php-fpm php artisan cache:clear
+	$(COMPOSE_PROD) exec php-fpm php artisan config:clear
+	$(COMPOSE_PROD) exec php-fpm php artisan route:clear
+	$(COMPOSE_PROD) exec php-fpm php artisan view:clear
 
 prod-optimize: ## Optimize production
-	docker compose -f compose.prod.yaml exec php-fpm php artisan optimize
+	$(COMPOSE_PROD) exec php-fpm php artisan optimize
 
 prod-shell: ## Access production PHP container shell
-	docker compose -f compose.prod.yaml exec php-fpm sh
+	$(COMPOSE_PROD) exec php-fpm sh
+
+prod-db-backup: ## Backup production database
+	@echo "Creating database backup..."
+	@mkdir -p backups
+	docker exec $(PROJECT_NAME)-mysql-1 mysqldump -u root -p$${DB_PASSWORD:-root} $${DB_DATABASE:-dorston} > backups/backup-$$(date +%Y%m%d-%H%M%S).sql
+	@echo "Backup saved to backups/"
+
+prod-db-restore: ## Restore database from backup (usage: make prod-db-restore FILE=backups/backup.sql)
+	@if [ -z "$(FILE)" ]; then echo "Error: Please specify FILE=path/to/backup.sql"; exit 1; fi
+	@echo "Restoring database from $(FILE)..."
+	docker exec -i $(PROJECT_NAME)-mysql-1 mysql -u root -p$${DB_PASSWORD:-root} $${DB_DATABASE:-dorston} < $(FILE)
+	@echo "Database restored!"
 

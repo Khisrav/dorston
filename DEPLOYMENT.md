@@ -1,6 +1,23 @@
 # Deployment Guide
 
-This guide explains how to deploy changes to your VPS.
+This guide explains how to deploy changes to your VPS **safely** without losing data.
+
+## ⚠️ IMPORTANT: Data Safety
+
+**Your database and uploaded files are stored in Docker volumes that persist between deployments.**
+
+The deployment process is designed to:
+- ✅ Keep your database intact
+- ✅ Keep uploaded files
+- ✅ Only refresh application code and assets
+
+However, **ALWAYS create a backup before deploying**:
+
+```bash
+make prod-db-backup
+```
+
+Backups are saved to `backups/backup-YYYYMMDD-HHMMSS.sql`
 
 ## Quick Start
 
@@ -9,6 +26,10 @@ After making changes, committing, and pushing to `main`:
 ### On your VPS
 
 ```bash
+# STEP 1: Create a backup (IMPORTANT!)
+make prod-db-backup
+
+# STEP 2: Deploy
 # Option 1: Automated deployment (recommended)
 ./deploy.sh
 
@@ -16,13 +37,16 @@ After making changes, committing, and pushing to `main`:
 make prod-deploy
 ```
 
-That's it! The script will:
-- Pull latest code from git
-- Stop running containers
-- Clear old assets
-- Rebuild Docker images with new code and assets
-- Start fresh containers
-- Show you the status
+The deployment script will:
+1. Check that your database volume exists (safety check!)
+2. Pull latest code from git
+3. Stop running containers (volumes remain intact)
+4. Clear old assets (NOT database!)
+5. Rebuild Docker images with new code and assets
+6. Start fresh containers with existing data
+7. Show you the status
+
+**Your data is safe!** Only application code and frontend assets are updated.
 
 ## Manual Deployment Steps
 
@@ -101,17 +125,30 @@ docker compose -f compose.prod.yaml restart
 
 Run `make help` to see all available commands, or check the production-specific ones:
 
-- `make prod-deploy` - Full automated deployment
+### Deployment
+- `make prod-deploy` - Full automated deployment (safe, keeps data)
 - `make prod-build` - Build Docker images
 - `make prod-up` - Start containers
-- `make prod-down` - Stop containers
-- `make prod-restart` - Restart containers
+- `make prod-down` - Stop containers (keeps volumes)
+
+### Database & Backups ⚠️ IMPORTANT
+- `make prod-db-backup` - Create database backup (do this before every deploy!)
+- `make prod-db-restore FILE=path/to/backup.sql` - Restore from backup
+- `make prod-migrate` - Run migrations
+
+### Monitoring
 - `make prod-logs` - View logs
 - `make prod-ps` - Show container status
-- `make prod-migrate` - Run migrations
+- `make prod-volumes` - List data volumes
+- `make prod-shell` - Access PHP container
+
+### Maintenance
+- `make prod-restart` - Restart containers
 - `make prod-cache-clear` - Clear all caches
 - `make prod-optimize` - Optimize application
-- `make prod-shell` - Access PHP container
+
+### Dangerous Commands ⚠️
+- `make prod-clean-volumes` - **DELETES ALL DATA!** (requires confirmation)
 
 ## How It Works
 
@@ -186,14 +223,16 @@ docker compose -f compose.prod.yaml up -d
 
 1. Clone the repository
 2. Copy `.env.example` to `.env` and configure it
-3. Make the deployment script executable:
+3. Make scripts executable:
    ```bash
    chmod +x deploy.sh
+   chmod +x scripts/find-old-data.sh
    ```
 4. Run initial deployment:
    ```bash
    ./deploy.sh
    ```
+5. Set up automated backups (see below)
 
 ## Environment Variables
 
@@ -203,4 +242,41 @@ Make sure your `.env` file on the VPS has:
 - `APP_ENV=production`
 - `APP_DEBUG=false`
 - Other production-specific settings
+
+## Automated Backups (Highly Recommended!)
+
+Set up daily automated backups on your VPS:
+
+```bash
+# Edit crontab
+crontab -e
+
+# Add these lines (adjust path to your project):
+# Daily backup at 2 AM
+0 2 * * * cd /path/to/dorston && make prod-db-backup
+
+# Delete backups older than 7 days
+0 3 * * * find /path/to/dorston/backups -name "*.sql" -mtime +7 -delete
+```
+
+## Data Recovery
+
+**If you lost data after deployment**, see [DATA_RECOVERY.md](./DATA_RECOVERY.md) for recovery steps.
+
+Your old data might still exist in orphaned Docker volumes! Use the recovery script:
+
+```bash
+./scripts/find-old-data.sh
+```
+
+## Project Name Consistency
+
+All commands now use explicit project name (`-p dorston`) to ensure:
+- ✅ Volumes are always found correctly
+- ✅ No accidental data loss from mismatched names
+- ✅ Consistent behavior regardless of working directory
+
+The project name is set in:
+- `deploy.sh` (line 11): `PROJECT_NAME="dorston"`
+- `Makefile` (line 89): `PROJECT_NAME ?= dorston`
 
