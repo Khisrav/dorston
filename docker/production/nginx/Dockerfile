@@ -58,7 +58,7 @@ RUN if [ ! -f .env ]; then \
     fi
 
 # Install Node.js dependencies and build assets
-RUN npm install && npm run build
+RUN npm install && npm run build:ssr
 
 # Stage 2: Nginx production image
 FROM nginx:alpine

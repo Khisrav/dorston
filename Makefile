@@ -86,14 +86,43 @@ queue-restart: ## Restart queue worker
 	docker compose restart queue
 
 # Production targets
-prod-deploy: ## Deploy to production (build and start)
-	@echo "Deploying to production..."
-	docker compose build --no-cache
-	docker compose up -d --force-recreate
-	@echo "Running post-deployment tasks..."
-	@make optimize
-	@echo "Deployment complete!"
+prod-build: ## Build production images
+	docker compose -f compose.prod.yaml build --no-cache
+
+prod-up: ## Start production containers
+	docker compose -f compose.prod.yaml up -d
+
+prod-down: ## Stop production containers
+	docker compose -f compose.prod.yaml down
+
+prod-restart: ## Restart production containers
+	docker compose -f compose.prod.yaml restart
+
+prod-logs: ## View production logs
+	docker compose -f compose.prod.yaml logs -f
+
+prod-ps: ## Show production container status
+	docker compose -f compose.prod.yaml ps
+
+prod-clean-volumes: ## Remove production volumes (WARNING: This will delete data!)
+	docker compose -f compose.prod.yaml down -v
+
+prod-deploy: ## Full production deployment (automated)
+	@echo "Starting automated deployment..."
+	@./deploy.sh
 
 prod-migrate: ## Run migrations in production
-	docker compose exec app php artisan migrate --force
+	docker compose -f compose.prod.yaml exec php-fpm php artisan migrate --force
+
+prod-cache-clear: ## Clear production cache
+	docker compose -f compose.prod.yaml exec php-fpm php artisan cache:clear
+	docker compose -f compose.prod.yaml exec php-fpm php artisan config:clear
+	docker compose -f compose.prod.yaml exec php-fpm php artisan route:clear
+	docker compose -f compose.prod.yaml exec php-fpm php artisan view:clear
+
+prod-optimize: ## Optimize production
+	docker compose -f compose.prod.yaml exec php-fpm php artisan optimize
+
+prod-shell: ## Access production PHP container shell
+	docker compose -f compose.prod.yaml exec php-fpm sh
 
