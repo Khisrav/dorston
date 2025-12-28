@@ -63,7 +63,7 @@ class AdminPanelProvider extends PanelProvider
             //     ->colors([
             //         'primary' => Color::Blue,
             //         'gray' => Color::Slate,
-            //     ])
+            //     ]) 
             ->navigationGroups([
                 NavigationGroup::make('Безопасность')
                     ->icon(Heroicon::OutlinedLockClosed)

@@ -14,17 +14,22 @@ class NomenclatureForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('Название')
                     ->required(),
                 TextInput::make('nomenclature_category_id')
+                    ->label('ID категории')
                     ->required()
                     ->numeric(),
                 FileUpload::make('image')
+                    ->label('Изображение')
                     ->image(),
                 TextInput::make('base_price')
+                    ->label('Базовая цена')
                     ->required()
                     ->numeric()
-                    ->prefix('$'),
+                    ->prefix('₽'),
                 Select::make('unit')
+                    ->label('Единица измерения')
                     ->options([
             'м' => 'М',
             'шт' => 'Шт',

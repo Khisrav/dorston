@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\Users\Tables;
+namespace App\Filament\Resources\Orders\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -9,26 +9,23 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class UsersTable
+class OrdersTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('name')
-                    ->label('Имя')
-                    ->searchable(),
-                TextColumn::make('email')
-                    ->label('Электронная почта')
-                    ->searchable(),
-                TextColumn::make('email_verified_at')
-                    ->label('Email подтвержден')
-                    ->dateTime()
+                TextColumn::make('user_id')
+                    ->label('ID пользователя')
+                    ->numeric()
                     ->sortable(),
-                TextColumn::make('two_factor_confirmed_at')
-                    ->label('2FA подтверждена')
-                    ->dateTime()
+                TextColumn::make('total_price')
+                    ->label('Общая стоимость')
+                    ->money()
                     ->sortable(),
+                TextColumn::make('status')
+                    ->label('Статус')
+                    ->badge(),
                 TextColumn::make('created_at')
                     ->label('Создан')
                     ->dateTime()
