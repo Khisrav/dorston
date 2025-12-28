@@ -5,7 +5,7 @@
     import { type BreadcrumbItem } from '@/types';
     import { usePage } from '@inertiajs/vue3';
     import { Head } from '@inertiajs/vue3';
-    import { Select } from 'primevue';
+    import { SelectButton, InputNumber } from 'primevue';
     import { computed, ref, watchEffect, onMounted, onUnmounted } from 'vue';
     import { useImage } from 'vue-konva';
     
@@ -160,6 +160,42 @@
         if (!usePage().props.auth) return null;
         return usePage().props.auth.user !== null;
     });
+    
+    // Accordion state for door parameters
+    const isParametersExpanded = ref(false);
+    
+    // Door type options
+    const doorTypeOptions = [
+        { label: 'Квартирная', value: 'Apartment' },
+        { label: 'Уличная', value: 'Street' }
+    ];
+    
+    const doorConstructiveOptions = [
+        { label: 'Comfort', value: 'Comfort' },
+        { label: 'Absolut', value: 'Absolut' },
+        { label: 'Termo', value: 'Termo' }
+    ];
+    
+    const handleSideOptions = [
+        { label: 'Левая', value: 'Left' },
+        { label: 'Правая', value: 'Right' }
+    ];
+    
+    const boxDesignOptions = [
+        { label: 'Открытый', value: 'Opened' },
+        { label: 'Закрытый', value: 'Closed' }
+    ];
+    
+    // Computed summary for collapsed state
+    const parametersSummary = computed(() => {
+        const width = doorCalcStore.doorConfig.doorWidth;
+        const height = doorCalcStore.doorConfig.doorHeight;
+        const constructive = doorCalcStore.doorConfig.doorConstructive;
+        const handleSide = doorCalcStore.doorConfig.doorHandleSide === 'Left' ? 'Левая' : 'Правая';
+        const boxDesign = doorCalcStore.doorConfig.doorBoxDesign === 'Opened' ? 'Открытый' : 'Закрытый';
+        const doorType = doorCalcStore.doorConfig.doorType === 'Apartment' ? 'Квартирная' : 'Уличная';
+        return `${doorType} • ${width}×${height} мм • ${constructive} • ${handleSide} ручка • ${boxDesign} короб`;
+    });
     </script>
     
     <template>
@@ -180,16 +216,135 @@
                 <div class="grid gap-4 sm:gap-6 lg:gap-8 lg:grid-cols-12">
                     <!-- Preview Panel -->
                     <div class="lg:col-span-7">
-                        <div class="sticky top-8 space-y-4">
-                            <!-- Main door parameters -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                <div class="col-span-1">
-                                    <h3 class="font-serif text-sm sm:text-base tracking-wide truncate text-black dark:text-white">
+                        <div class="sticky top-0 space-y-4">
+                            <!-- Door Parameters Accordion -->
+                            <div class="border-2 border-black/10 dark:border-white/10 bg-white dark:bg-neutral-800">
+                                <!-- Accordion Header -->
+                                <button 
+                                    @click="isParametersExpanded = !isParametersExpanded"
+                                    class="w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between text-left transition-colors hover:bg-gray-50 dark:hover:bg-neutral-700"
+                                >
+                                    <div class="flex-1">
+                                        <h3 class="font-serif text-base sm:text-lg text-black dark:text-white mb-1">
+                                            Параметры двери
+                                        </h3>
+                                        <p v-if="!isParametersExpanded" class="font-serif text-xs sm:text-sm text-black/60 dark:text-white/60">
+                                            {{ parametersSummary }}
+                                        </p>
+                                    </div>
+                                    <svg 
+                                        :class="['w-5 h-5 text-black dark:text-white transition-transform duration-300', isParametersExpanded ? 'rotate-180' : '']"
+                                        fill="none" 
+                                        stroke="currentColor" 
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                                
+                                <!-- Accordion Content -->
+                                <div 
+                                    v-show="isParametersExpanded"
+                                    class="border-t border-black/10 dark:border-white/10 p-4 sm:p-6 space-y-4 sm:space-y-5"
+                                >
+                                    <!-- Door Type -->
+                                    <div>
+                                        <label class="block font-serif text-sm text-black dark:text-white mb-2">
                                         Тип двери
-                                    </h3>
-                                    <Select :options="['Apartment', 'Street']" v-model="doorCalcStore.doorConfig.doorType" />
+                                        </label>
+                                        <SelectButton 
+                                            :options="doorTypeOptions" 
+                                            v-model="doorCalcStore.doorConfig.doorType"
+                                            optionLabel="label"
+                                            optionValue="value"
+                                            class="w-full"
+                                        />
+                                    </div>
+                                    
+                                    <!-- Door Constructive -->
+                                    <div>
+                                        <label class="block font-serif text-sm text-black dark:text-white mb-2">
+                                            Конструктив
+                                        </label>
+                                        <SelectButton 
+                                            :options="doorConstructiveOptions" 
+                                            v-model="doorCalcStore.doorConfig.doorConstructive"
+                                            optionLabel="label"
+                                            optionValue="value"
+                                            class="w-full"
+                                        />
+                                    </div>
+                                    
+                                    <!-- Dimensions -->
+                                    <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                                        <div>
+                                            <label class="block font-serif text-sm text-black dark:text-white mb-2">
+                                                Ширина (мм)
+                                            </label>
+                                            <InputNumber 
+                                                v-model="doorCalcStore.doorConfig.doorWidth"
+                                                :min="600"
+                                                :max="3000"
+                                                :step="10"
+                                                showButtons
+                                                buttonLayout="horizontal"
+                                                decrementButtonClass="p-button-text"
+                                                incrementButtonClass="p-button-text"
+                                                incrementButtonIcon="pi pi-plus"
+                                                decrementButtonIcon="pi pi-minus"
+                                                class="w-full"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label class="block font-serif text-sm text-black dark:text-white mb-2">
+                                                Высота (мм)
+                                            </label>
+                                            <InputNumber 
+                                                v-model="doorCalcStore.doorConfig.doorHeight"
+                                                :min="600"
+                                                :max="3000"
+                                                :step="10"
+                                                showButtons
+                                                buttonLayout="horizontal"
+                                                decrementButtonClass="p-button-text"
+                                                incrementButtonClass="p-button-text"
+                                                incrementButtonIcon="pi pi-plus"
+                                                decrementButtonIcon="pi pi-minus"
+                                                class="w-full"
+                                            />
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Handle Side -->
+                                    <div>
+                                        <label class="block font-serif text-sm text-black dark:text-white mb-2">
+                                            Сторона ручки
+                                        </label>
+                                        <SelectButton 
+                                            :options="handleSideOptions" 
+                                            v-model="doorCalcStore.doorConfig.doorHandleSide"
+                                            optionLabel="label"
+                                            optionValue="value"
+                                            class="w-full"
+                                        />
+                                    </div>
+                                    
+                                    <!-- Box Design -->
+                                    <div>
+                                        <label class="block font-serif text-sm text-black dark:text-white mb-2">
+                                            Дизайн короба
+                                        </label>
+                                        <SelectButton 
+                                            :options="boxDesignOptions" 
+                                            v-model="doorCalcStore.doorConfig.doorBoxDesign"
+                                            optionLabel="label"
+                                            optionValue="value"
+                                            class="w-full"
+                                        />
+                                    </div>
                                 </div>
                             </div>
+                            
                             <div ref="containerRef" class="border-2 border-black/10 dark:border-white/10 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-800 dark:to-neutral-900 p-4 sm:p-6 lg:p-8 flex items-center justify-center relative overflow-hidden">
                                 <!-- Decorative frame -->
                                 <!-- <div class="absolute inset-4 border border-black/5 dark:border-white/5"></div> -->
@@ -238,22 +393,23 @@
                             <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white mb-3 sm:mb-4 tracking-tight">
                                 <span class="italic">I.</span> Текстура
                             </h2>
-                            <div class="space-y-2 sm:space-y-3">
+                            <div class="grid grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
                                 <div 
                                     v-for="(panel, idx) in panels" 
                                     :key="idx"
                                     @click="selectedDoorParameters.panel = panel"
                                     :class="[
-                                        'group cursor-pointer border border-black/20 dark:border-white/20 p-3 sm:p-4 transition-all duration-300',
+                                        'group cursor-pointer border rounded-full overflow-hidden transition-all duration-300 aspect-square',
                                         selectedDoorParameters.panel === panel 
-                                            ? 'bg-black dark:bg-white text-white dark:text-black border-black dark:border-white' 
-                                            : 'hover:border-black/40 dark:hover:border-white/40'
+                                            ? 'border-black dark:border-white border-4' 
+                                            : 'border-black/20 dark:border-white/20 hover:border-black/40 dark:hover:border-white/40 border-2'
                                     ]"
                                 >
-                                    <h3 class="font-serif text-sm sm:text-base tracking-wide truncate" 
-                                        :class="selectedDoorParameters.panel === panel ? 'text-white dark:text-black' : 'text-black dark:text-white'">
-                                        {{ panel.split('/').pop() }}
-                                    </h3>
+                                    <img 
+                                        :src="panel" 
+                                        :alt="panel.split('/').pop()"
+                                        class="w-full h-full object-cover"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -263,22 +419,23 @@
                             <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white mb-3 sm:mb-4 tracking-tight">
                                 <span class="italic">II.</span> Фрезеровка
                             </h2>
-                            <div class="space-y-2 sm:space-y-3">
+                            <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
                                 <div 
                                     v-for="(milling, idx) in millings" 
                                     :key="idx"
                                     @click="selectedDoorParameters.milling = milling"
                                     :class="[
-                                        'group cursor-pointer border border-black/20 dark:border-white/20 p-3 sm:p-4 transition-all duration-300',
+                                        'group cursor-pointer border transition-all duration-300 overflow-hidden',
                                         selectedDoorParameters.milling === milling 
-                                            ? 'bg-black dark:bg-white text-white dark:text-black border-black dark:border-white' 
-                                            : 'hover:border-black/40 dark:hover:border-white/40'
+                                            ? 'border-black dark:border-white border-4' 
+                                            : 'border-black/20 dark:border-white/20 hover:border-black/40 dark:hover:border-white/40 border-2'
                                     ]"
                                 >
-                                    <h3 class="font-serif text-sm sm:text-base tracking-wide truncate" 
-                                        :class="selectedDoorParameters.milling === milling ? 'text-white dark:text-black' : 'text-black dark:text-white'">
-                                        {{ milling.split('/').pop() }}
-                                    </h3>
+                                    <img 
+                                        :src="milling" 
+                                        :alt="milling.split('/').pop()"
+                                        class="w-full h-full object-contain"
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -370,4 +527,32 @@
     h1, h2, h3, p, button {
         font-family: 'Playfair Display', serif;
     }
+
+/* PrimeVue SelectButton customization */
+:deep(.p-selectbutton) {
+    display: flex;
+    width: 100%;
+}
+
+:deep(.p-selectbutton .p-button) {
+    flex: 1;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.875rem;
+}
+
+/* PrimeVue InputNumber customization */
+:deep(.p-inputnumber) {
+    width: 100%;
+    display: flex;
+}
+
+:deep(.p-inputnumber-input) {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.875rem;
+}
+
+:deep(.p-inputnumber-button .p-icon) {
+    width: 1rem;
+    height: 1rem;
+}
     </style>

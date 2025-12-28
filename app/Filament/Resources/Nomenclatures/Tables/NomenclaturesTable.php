@@ -16,21 +16,28 @@ class NomenclaturesTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label('Название')
                     ->searchable(),
                 TextColumn::make('nomenclature_category_id')
+                    ->label('ID категории')
                     ->numeric()
                     ->sortable(),
-                ImageColumn::make('image'),
+                ImageColumn::make('image')
+                    ->label('Изображение'),
                 TextColumn::make('base_price')
+                    ->label('Базовая цена')
                     ->money()
                     ->sortable(),
                 TextColumn::make('unit')
+                    ->label('Единица измерения')
                     ->badge(),
                 TextColumn::make('created_at')
+                    ->label('Создан')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Обновлен')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -37,10 +37,13 @@ class RoleResource extends Resource
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('Название')
                     ->required(),
                 TextInput::make('guard_name')
+                    ->label('Имя защиты')
                     ->required(),
-                TextInput::make('display_name'),
+                TextInput::make('display_name')
+                    ->label('Отображаемое имя'),
             ]);
     }
 
@@ -48,15 +51,20 @@ class RoleResource extends Resource
     {
         return $schema
             ->components([
-                TextEntry::make('name'),
-                TextEntry::make('guard_name'),
+                TextEntry::make('name')
+                    ->label('Название'),
+                TextEntry::make('guard_name')
+                    ->label('Имя защиты'),
                 TextEntry::make('created_at')
+                    ->label('Создан')
                     ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('updated_at')
+                    ->label('Обновлен')
                     ->dateTime()
                     ->placeholder('-'),
                 TextEntry::make('display_name')
+                    ->label('Отображаемое имя')
                     ->placeholder('-'),
             ]);
     }
@@ -67,18 +75,23 @@ class RoleResource extends Resource
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('name')
+                    ->label('Название')
                     ->searchable(),
                 TextColumn::make('guard_name')
+                    ->label('Имя защиты')
                     ->searchable(),
                 TextColumn::make('created_at')
+                    ->label('Создан')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Обновлен')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('display_name')
+                    ->label('Отображаемое имя')
                     ->searchable(),
             ])
             ->filters([
