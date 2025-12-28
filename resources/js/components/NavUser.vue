@@ -61,7 +61,7 @@ const { isMobile, state } = useSidebar();
     font-family: 'Playfair Display', serif;
     transition: all 0.3s ease;
     border-radius: 0;
-    background: white;
+    /* background: white; */
 }
 
 :deep(.dark .elegant-user-button) {

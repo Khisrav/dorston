@@ -14,15 +14,20 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LockIcon, Wrench } from 'lucide-vue-next';
+import { LockIcon, ScrollTextIcon, WrenchIcon } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
     {
         title: 'Конфигуратор',
         href: '/configurator',
-        icon: Wrench,
+        icon: WrenchIcon,
     },
+    {
+        title: 'Заявки',
+        href: '/orders',
+        icon: ScrollTextIcon,
+    }
 ];
 
 const footerNavItems: NavItem[] = [
@@ -35,7 +40,7 @@ const footerNavItems: NavItem[] = [
 </script>
 
 <template>
-    <Sidebar collapsible="icon" variant="inset" class="elegant-sidebar border-r border-black/10 dark:border-white/10">
+    <Sidebar collapsible="icon" variant="inset" class="elegant-sidebar border-r border-black/10 dark:border-white/5">
         <SidebarHeader class="border-b border-black/10 dark:border-white/10">
             <SidebarMenu>
                 <SidebarMenuItem>
@@ -65,7 +70,7 @@ const footerNavItems: NavItem[] = [
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
 
 :deep(.elegant-sidebar) {
-    background: white;
+    background: none;
     font-family: 'Playfair Display', serif;
 }
 

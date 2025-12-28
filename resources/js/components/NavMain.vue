@@ -31,7 +31,7 @@ const page = usePage();
                     class="elegant-menu-button"
                     :class="[
                         urlIsActive(item.href, page.url) 
-                            ? 'bg-black dark:bg-white text-white dark:text-black hover:bg-black dark:hover:bg-white' 
+                            ? 'bg-black/5 dark:bg-white/5 text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/5' 
                             : 'text-black/70 dark:text-white/70 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white'
                     ]"
                 >
