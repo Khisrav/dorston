@@ -1,8 +1,12 @@
 import { DoorConfig, doorConstructive, doorType } from "@/types/configurator";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, watch, computed } from "vue";
+import { useComfortConstructive } from "./door-constructives/useComfortConstructive";
+import { isDoorStandard } from "@/lib/utils";
 
 export const useDoorCalc = defineStore('doorCalc', () => {
+    const total_price = ref(0)
+
     const doorConfig = ref<DoorConfig>({
         doorType: 'Apartment',
         doorConstructive: 'Comfort',
@@ -35,7 +39,17 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         },
     })
 
+    const isStandard = computed(() => isDoorStandard(doorConfig.value.doorWidth, doorConfig.value.doorHeight))
+
+    watch(doorConfig, () => {
+        if (doorConfig.value.doorConstructive === 'Comfort') {
+            total_price.value = useComfortConstructive().getTotalPrice(isStandard.value, doorConfig.value)
+        }
+    }, { deep: true, immediate: true })
+
     return {
         doorConfig,
+        total_price,
+        isStandard,
     }
 })
