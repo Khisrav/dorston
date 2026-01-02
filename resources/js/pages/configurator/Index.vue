@@ -374,13 +374,13 @@
     
                             <!-- Action buttons -->
                             <div class="mt-4 sm:mt-6 lg:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+                                <div>
+                                    <span>{{ doorCalcStore.total_price }} ₽</span>
+                                </div>
+                                
                                 <button 
                                     class="px-6 sm:px-8 py-2.5 sm:py-3 font-serif text-xs sm:text-sm tracking-[0.15em] uppercase text-white bg-black dark:bg-white dark:text-black border border-black dark:border-white transition-all duration-300 hover:tracking-[0.2em]">
                                     Сохранить конфигурацию
-                                </button>
-                                <button 
-                                    class="px-6 sm:px-8 py-2.5 sm:py-3 font-serif text-xs sm:text-sm tracking-[0.15em] uppercase text-black dark:text-white border border-black dark:border-white transition-all duration-300 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black hover:tracking-[0.2em]">
-                                    Запросить цену
                                 </button>
                             </div>
                         </div>
