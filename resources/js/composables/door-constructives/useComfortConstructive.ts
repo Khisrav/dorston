@@ -21,6 +21,8 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
         total_price.value += ((isStandard ? 2 : 2.2) - (isMetallicDoor(doorConfig) ? 0 : 0.6)) * 390
         //антик серебро
         total_price.value += ((isStandard ? 2 : 2.2) - (isMetallicDoor(doorConfig) ? 0 : 0.6)) * 480
+        //букле серый
+        total_price.value += ((isStandard ? 1.9 : 2.1) - (isMetallicDoor(doorConfig) ? 0 : 0.5)) * 455
 
         return total_price.value
     }
