@@ -23,7 +23,7 @@ export interface DoorConfig {
         casingTexture?: string;
     };
     metalPainting?: {
-        undercoat?: 'Цинкогрунтование' | 'Нет';
+        undercoat?: 'Цинкогрунтование' | 'Нет' | '';
         primaryColor?: string;
         secondaryColor?: string;
     }
@@ -34,4 +34,15 @@ export interface DoorConfig {
         secondaryCylindricalLockMechanism?: string;
         // hinges?: string;
     }
+}
+
+export interface Nomenclature {
+    id: number;
+    name: string;
+    base_price: number;
+    unit: string;
+    image?: string | null;
+    nomenclature_category_id: number;
+    created_at?: any;
+    updated_at?: any;
 }

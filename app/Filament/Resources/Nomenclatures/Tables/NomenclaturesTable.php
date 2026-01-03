@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\Nomenclatures\Tables;
 
+use App\Models\NomenclatureCategory;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\MultiSelectFilter;
 use Filament\Tables\Table;
 
 class NomenclaturesTable
@@ -15,6 +17,10 @@ class NomenclaturesTable
     {
         return $table
             ->columns([
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('name')
                     ->label('Название')
                     ->searchable(),
@@ -43,7 +49,9 @@ class NomenclaturesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                MultiSelectFilter::make('nomenclature_category_id')
+                    ->label('Категория')
+                    ->options(NomenclatureCategory::all()->pluck('name', 'id'))
             ])
             ->recordActions([
                 EditAction::make(),

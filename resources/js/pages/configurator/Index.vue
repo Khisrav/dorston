@@ -3,6 +3,7 @@
     import AppLayout from '@/layouts/AppLayout.vue';
     import { dashboard } from '@/routes';
     import { type BreadcrumbItem } from '@/types';
+import { Nomenclature } from '@/types/configurator';
     import { usePage } from '@inertiajs/vue3';
     import { Head } from '@inertiajs/vue3';
     import { SelectButton, InputNumber } from 'primevue';
@@ -14,9 +15,12 @@
             title: 'Конфигуратор',
             href: dashboard().url,
         },
-    ];
+    ]
+
+    const paints = usePage().props.paints
     
     const doorCalcStore = useDoorCalc()
+    doorCalcStore.paints = paints as Nomenclature[]
     
     // Door component arrays
     const panels = [

@@ -25,3 +25,13 @@ export const isDoorStandard = (width: number, height: number) => {
 export const isMetallicDoor = (doorConfig: DoorConfig) => {
     return ['Kombi', 'Verso', 'Forta', 'Stark'].includes(doorConfig.exterior.panelModel)
 }
+
+export const getPaintPrice = (doorConfig: DoorConfig) => {
+    let total = 0
+    
+    if (doorConfig.metalPainting?.undercoat === 'Цинкогрунтование') {
+        total += (isDoorStandard(doorConfig.doorWidth, doorConfig.doorHeight) ? 1 : 1.1) * 420
+    }
+    
+    return total
+}
