@@ -1,10 +1,13 @@
-import { DoorConfig, doorConstructive, doorType } from "@/types/configurator";
+import { DoorConfig, doorConstructive, doorType, Nomenclature } from "@/types/configurator";
 import { defineStore } from "pinia";
 import { ref, watch, computed } from "vue";
 import { useComfortConstructive } from "./door-constructives/useComfortConstructive";
 import { isDoorStandard } from "@/lib/utils";
 
 export const useDoorCalc = defineStore('doorCalc', () => {
+    //static vars
+    const paints = ref<Nomenclature[]>([]);
+    
     const total_price = ref(0)
 
     const doorConfig = ref<DoorConfig>({
@@ -27,7 +30,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
             casingTexture: '',
         },
         metalPainting: {
-            undercoat: '',
+            undercoat: 'Нет',
             primaryColor: '',
             secondaryColor: '',
         },
@@ -44,6 +47,10 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     watch(doorConfig, () => {
         if (doorConfig.value.doorConstructive === 'Comfort') {
             total_price.value = useComfortConstructive().getTotalPrice(isStandard.value, doorConfig.value)
+        } 
+        //other constructives
+        else {
+            total_price.value = 0
         }
     }, { deep: true, immediate: true })
 
@@ -51,5 +58,6 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         doorConfig,
         total_price,
         isStandard,
+        paints,
     }
 })

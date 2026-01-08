@@ -14,15 +14,17 @@ import {
 import { usePage } from '@inertiajs/vue3';
 import { ChevronsUpDown } from 'lucide-vue-next';
 import UserMenuContent from './UserMenuContent.vue';
+import { computed } from 'vue';
 
 const page = usePage();
 const user = page.props.auth.user;
 const { isMobile, state } = useSidebar();
+const isSignedIn = computed(() => !!user);
 </script>
 
 <template>
     <SidebarMenu>
-        <SidebarMenuItem>
+        <SidebarMenuItem v-if="isSignedIn">
             <DropdownMenu>
                 <DropdownMenuTrigger as-child>
                     <SidebarMenuButton

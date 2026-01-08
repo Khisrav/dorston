@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConfiguratorController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -14,8 +15,6 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('configurator', function () {
-    return Inertia::render('configurator/Index');
-})->name('configurator');
+Route::get('configurator', [ConfiguratorController::class, 'index'])->name('configurator');
 
 require __DIR__.'/settings.php';
