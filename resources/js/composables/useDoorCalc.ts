@@ -30,7 +30,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
             casingTexture: '',
         },
         metalPainting: {
-            undercoat: '',
+            undercoat: 'Нет',
             primaryColor: '',
             secondaryColor: '',
         },

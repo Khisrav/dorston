@@ -12,7 +12,13 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Button: typeof import('primevue/button')['default']
+    Dialog: typeof import('primevue/dialog')['default']
+    IconField: typeof import('primevue/iconfield')['default']
+    InputIcon: typeof import('primevue/inputicon')['default']
     InputMask: typeof import('primevue/inputmask')['default']
+    InputText: typeof import('primevue/inputtext')['default']
     Select: typeof import('primevue/select')['default']
+    SplitButton: typeof import('primevue/splitbutton')['default']
+    Toolbar: typeof import('primevue/toolbar')['default']
   }
 }

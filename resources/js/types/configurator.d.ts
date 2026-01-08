@@ -23,7 +23,7 @@ export interface DoorConfig {
         casingTexture?: string;
     };
     metalPainting?: {
-        undercoat?: 'Цинкогрунтование' | 'Нет' | '';
+        undercoat: 'Цинкогрунтование' | 'Нет';
         primaryColor?: string;
         secondaryColor?: string;
     }
