@@ -20,6 +20,8 @@ class DoorModelsTable
                     ->label('Название')
                     ->searchable(),
                 ImageColumn::make('image')
+                    ->disk('public')
+                    ->height(100)
                     ->label('Изображение'),
                 TextColumn::make('type')
                     ->label('Тип')
