@@ -79,8 +79,8 @@ class OuterDoorModelsSeeder extends Seeder
      */
     protected function copyImageToStorage(string $name, string $folder): string
     {
-        $defaultImageSource = database_path('data/door-models/default/placeholder.png');
-        $defaultImageDest = 'door-models/default/placeholder.png';
+        $defaultImageSource = database_path('data/door-models/placeholder.jpeg');
+        $defaultImageDest = 'door-models/placeholder.jpeg';
         
         // Copy default placeholder if it doesn't exist in storage
         if (File::exists($defaultImageSource) && !Storage::disk('public')->exists($defaultImageDest)) {

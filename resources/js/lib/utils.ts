@@ -35,3 +35,5 @@ export const getPaintPrice = (doorConfig: DoorConfig) => {
     
     return total
 }
+
+export const getDoorModelImage = (link: string) => link.startsWith('http') ? link : `/storage/${link}`

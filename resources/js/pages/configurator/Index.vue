@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useDoorCalc } from '@/composables/useDoorCalc';
 import AppLayout from '@/layouts/AppLayout.vue';
+import { getDoorModelImage } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Nomenclature } from '@/types/configurator';
@@ -18,33 +19,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 const paints = usePage().props.paints
-// const doorModels = usePage().props.doorModels
-const doorModels = [
-    {
-        name: 'Kombi',
-        image: '/assets/door-models/apartment/Kombi.png',
-    },
-    {
-        name: 'Verso',
-        image: '/assets/door-models/apartment/Verso.png',
-    },
-    {
-        name: 'Forta',
-        image: '/assets/door-models/apartment/Forta.png',
-    },
-    {
-        name: 'Stark',
-        image: '/assets/door-models/apartment/Stark.png',
-    },
-    {
-        name: 'ВС-6',
-        image: '/assets/door-models/apartment/ВС-6.png',
-    },
-    {
-        name: 'ВС-45',
-        image: '/assets/door-models/apartment/ВС-45.png',
-    },
-]
+const doorModels = usePage().props.doorModels
 
 const doorCalcStore = useDoorCalc()
 doorCalcStore.paints = paints as Nomenclature[]
@@ -243,7 +218,7 @@ const showInnerDesignDialog = ref(false);
 
                             <!-- Konva Canvas -->
                             <div class=" z-10 flex justify-center items-center">
-                                <img :src="`/assets/door-models/apartment/${doorCalcStore.doorConfig.exterior.panelModel}.png`" class="w-32" alt="">
+                                <img :src="getDoorModelImage(doorCalcStore.doorConfig.exterior.panelModel)" class="w-32" alt="">
                             </div>
                         </div>
 
@@ -395,14 +370,14 @@ const showInnerDesignDialog = ref(false);
                 </h2>
             </div>
         </template>
-        <div class="grid grid-cols-5 gap-3 sm:gap-4">
+        <div class="grid grid-cols-4 gap-3 sm:gap-4">
             <div v-for="doorModel in doorModels" :key="doorModel.name"
                 class="flex flex-col items-center justify-center gap-2 pb-2 cursor-pointer"
                 @click="() => {
                     doorCalcStore.doorConfig.exterior.panelModel = doorModel.name;
                     showOuterDesignDialog = false;
                 }">
-                <img :src="doorModel.image" :alt="doorModel.name" class="w-full h-full object-cover">
+                <img :src="getDoorModelImage(doorModel.image)" :alt="doorModel.name" class="w-full h-full object-cover">
                 <p class="font-medium tracking-tight text-center transition-colors duration-300" :class="[
                     doorCalcStore.doorConfig.exterior.panelModel === doorModel.name
                         ? 'text-black dark:text-white'
