@@ -248,9 +248,9 @@ const showInnerDesignDialog = ref(false);
                         </div>
 
                         <!-- Action buttons -->
-                        <div class="mt-4 sm:mt-6 lg:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+                        <div class="mt-4 sm:mt-6 lg:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
                             <div>
-                                <span>{{ doorCalcStore.total_price }} ₽</span>
+                                <span class="font-medium font-sans">{{ doorCalcStore.total_price }} ₽</span>
                             </div>
 
                             <button
@@ -264,7 +264,7 @@ const showInnerDesignDialog = ref(false);
                 <!-- Options Panel -->
                 <div class="lg:col-span-5 space-y-4 sm:space-y-6">
                     <!-- Model Selection -->
-                    <div class="border-l-2 border-black dark:border-white pl-4 sm:pl-6">
+                    <div class="border-l-2 border-black dark:border-white pl-4 sm:pl-6 space-y-2">
                         <h2
                             class="font-serif text-xl sm:text-2xl text-black dark:text-white mb-3 sm:mb-4 tracking-tight">
                             <span class="italic">I.</span> Дизайн отделки
@@ -279,6 +279,9 @@ const showInnerDesignDialog = ref(false);
                                     @click="showInnerDesignDialog = true" />
                             </div>
                         </div>
+                        <p class="text-black sm:text-sm dark:text-white tracking-tight">
+                            Выбрано: <span class="font-medium instrument-sans">{{ doorCalcStore.doorConfig.exterior.panelModel }}</span>
+                        </p>
                     </div>
 
                     <!-- Texture Selection -->
