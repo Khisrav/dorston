@@ -7,4 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class DoorModel extends Model
 {
     protected $fillable = ['name', 'image', 'type', 'is_thermally_resistant'];
+
+    // public function getImageAttribute($value)
+    // {
+    //     return asset('storage/' . $value);
+    // }
 }

@@ -9,47 +9,74 @@ import { initializeTheme } from './composables/useAppearance';
 import VueKonva from 'vue-konva';
 import PrimeVue from 'primevue/config';
 import { definePreset } from '@primeuix/themes';
-import Nora from '@primeuix/themes/nora';
+import Lara from '@primeuix/themes/lara';
 import { createPinia } from 'pinia';
 
 // Custom preset with muted neutral colors for better eye comfort
-const CustomPreset = definePreset(Nora, {
+const CustomPreset = definePreset(Lara, {
     semantic: {
         primary: {
-            50: '{zinc.100}',
-            100: '{zinc.200}',
-            200: '{zinc.300}',
-            300: '{zinc.400}',
-            400: '{zinc.500}',
-            500: '{zinc.600}',
-            600: '{zinc.700}',
-            700: '{zinc.800}',
-            800: '{zinc.800}',
-            900: '{zinc.900}',
-            950: '{zinc.900}'
+            50: '{gray.100}',
+            100: '{gray.200}',
+            200: '{gray.300}',
+            300: '{gray.400}',
+            400: '{gray.500}',
+            500: '{gray.600}',
+            600: '{gray.700}',
+            700: '{gray.800}',
+            800: '{gray.800}',
+            900: '{gray.900}',
+            950: '{gray.900}'
         },
         colorScheme: {
             light: {
                 primary: {
-                    color: '{zinc.800}',
-                    contrastColor: '{zinc.50}',
-                    hoverColor: '{zinc.700}',
-                    activeColor: '{zinc.900}'
+                    color: '{gray.800}',
+                    contrastColor: '{gray.50}',
+                    hoverColor: '{gray.700}',
+                    activeColor: '{gray.900}'
                 }
             },
             dark: {
                 primary: {
-                    color: '{zinc.300}',
-                    contrastColor: '{zinc.900}',
-                    hoverColor: '{zinc.400}',
-                    activeColor: '{zinc.200}'
+                    color: '{gray.300}',
+                    contrastColor: '{gray.900}',
+                    hoverColor: '{gray.400}',
+                    activeColor: '{gray.200}'
+                }
+            }
+        },
+        borderRadius: {
+            none: '0',
+            xs: '0',
+            sm: '0',
+            md: '0',
+            lg: '0',
+            xl: '0'
+        },
+    },
+    components: {
+        toggleswitch: {
+            handle: {
+                borderRadius: '0'
+            },
+            colorScheme: {
+                light: {
+                    root: {
+                        borderRadius: '0'
+                    }
+                },
+                dark: {
+                    root: {
+                        borderRadius: '0'
+                    }
                 }
             }
         }
     }
 });
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Dorston';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),

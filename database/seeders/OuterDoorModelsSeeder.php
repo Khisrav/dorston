@@ -3,183 +3,117 @@
 namespace Database\Seeders;
 
 use App\Models\DoorModel;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use DB;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class OuterDoorModelsSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $doorModels = [
-            [
-                'name' => 'Kombi',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'Verso',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'Forta',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'Stark',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-6',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-45',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-22',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-24',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-13',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-41',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-46',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-47',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-32',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-48',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-42',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-49',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-50',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-43',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-51',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'НФ-6',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-52',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-34',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-30',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-44',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-19',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'BC-38',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-            [
-                'name' => 'ВС-17',
-                'image' => '',
-                'type' => 'exterior',
-                'is_thermally_resistant' => false,
-            ],
-        ];
+        // Clean up existing door models directory in storage
+        Storage::disk('public')->deleteDirectory('door-models');
+        Storage::disk('public')->makeDirectory('door-models');
 
-        foreach ($doorModels as $doorModel) {
-            DoorModel::create($doorModel);
+        $doorModels = [];
+
+        // Scan and process interior models
+        $doorModels = array_merge($doorModels, $this->scanAndProcessFolder('apartment-interior', 'interior', false));
+        
+        // Scan and process exterior models
+        $doorModels = array_merge($doorModels, $this->scanAndProcessFolder('apartment-exterior', 'exterior', false));
+        
+        // Scan and process thermal resistant models
+        $doorModels = array_merge($doorModels, $this->scanAndProcessFolder('street-exterior', 'exterior', true));
+
+        DB::table('door_models')->truncate();
+        DoorModel::insert($doorModels);
+        
+        Log::info("Seeded " . count($doorModels) . " door models");
+    }
+
+    /**
+     * Scan a folder and process all PNG images
+     */
+    protected function scanAndProcessFolder(string $folder, string $type, bool $isThermallyResistant): array
+    {
+        $sourcePath = database_path("data/door-models/{$folder}");
+        $doorModels = [];
+
+        if (!File::isDirectory($sourcePath)) {
+            Log::warning("Directory does not exist: {$sourcePath}");
+            return $doorModels;
         }
+
+        $files = File::files($sourcePath);
+        
+        foreach ($files as $file) {
+            if ($file->getExtension() !== 'png') {
+                continue;
+            }
+
+            $filename = $file->getFilename();
+            $name = pathinfo($filename, PATHINFO_FILENAME);
+            
+            // Skip placeholder or unwanted files
+            if (in_array(strtolower($name), ['placeholder', 'image'])) {
+                continue;
+            }
+
+            $imagePath = $this->copyImageToStorage($name, $folder);
+            
+            $doorModels[] = [
+                'name' => $name,
+                'image' => $imagePath,
+                'type' => $type,
+                'is_thermally_resistant' => $isThermallyResistant,
+            ];
+            
+            Log::info("✓ Processed: {$name}");
+        }
+
+        return $doorModels;
+    }
+
+    /**
+     * Copy image from database/data to storage/public and return the storage path.
+     */
+    protected function copyImageToStorage(string $name, string $folder): string
+    {
+        $defaultImageSource = database_path('data/door-models/placeholder.jpeg');
+        $defaultImageDest = 'door-models/placeholder.jpeg';
+        
+        // Copy default placeholder if it doesn't exist in storage
+        if (File::exists($defaultImageSource) && !Storage::disk('public')->exists($defaultImageDest)) {
+            Storage::disk('public')->put(
+                $defaultImageDest,
+                File::get($defaultImageSource)
+            );
+        }
+
+        // Source path in database/data
+        $sourcePath = database_path("data/door-models/{$folder}/{$name}.png");
+        
+        // Destination path in storage/app/public
+        $destinationPath = "door-models/{$folder}/{$name}.png";
+
+        // Check if source file exists
+        if (File::exists($sourcePath)) {
+            // Create directory if it doesn't exist
+            Storage::disk('public')->makeDirectory("door-models/{$folder}");
+            
+            // Copy file to storage
+            Storage::disk('public')->put(
+                $destinationPath,
+                File::get($sourcePath)
+            );
+            
+            return $destinationPath;
+        }
+
+        Log::warning("✗ File not found: {$sourcePath}");
+        return $defaultImageDest;
     }
 }
