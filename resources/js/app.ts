@@ -53,11 +53,30 @@ const CustomPreset = definePreset(Lara, {
             md: '0',
             lg: '0',
             xl: '0'
+        },
+    },
+    components: {
+        toggleswitch: {
+            handle: {
+                borderRadius: '0'
+            },
+            colorScheme: {
+                light: {
+                    root: {
+                        borderRadius: '0'
+                    }
+                },
+                dark: {
+                    root: {
+                        borderRadius: '0'
+                    }
+                }
+            }
         }
     }
 });
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Dorston';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),

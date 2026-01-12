@@ -17,6 +17,9 @@ class ConfiguratorController extends Controller
                 ->get(),
             'doorModels' => DoorModel::select('id', 'name', 'image', 'type', 'is_thermally_resistant')
                 ->get(),
+            'filmColors' => Nomenclature::where('nomenclature_category_id', 13)
+                ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id')
+                ->get(),
         ]);
     }
 }

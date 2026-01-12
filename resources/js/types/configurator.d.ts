@@ -11,21 +11,21 @@ export interface DoorConfig {
     doorHandleSide: doorHandleSide;
     doorBoxDesign: doorBoxDesign;
     interior: {
-        panelModel: string;
-        primaryTexture?: string;
-        secondaryTexture?: string;
-        casingTexture?: string;
+        panelModel: number;
+        primaryTexture?: number;
+        secondaryTexture?: number;
+        casingTexture?: number;
     };
     exterior: {
-        panelModel: string;
-        primaryTexture?: string;
-        secondaryTexture?: string;
-        casingTexture?: string;
+        panelModel: number;
+        primaryTexture?: number;
+        secondaryTexture?: number;
+        casingTexture?: number;
     };
     metalPainting?: {
-        undercoat: 'Цинкогрунтование' | 'Нет';
-        primaryColor?: string;
-        secondaryColor?: string;
+        undercoat?: boolean;
+        primaryColor?: number;
+        secondaryColor?: number;
     }
     furniture: {
         primaryLock: string;
@@ -45,4 +45,12 @@ export interface Nomenclature {
     nomenclature_category_id: number;
     created_at?: any;
     updated_at?: any;
+}
+
+export interface DoorModel {
+    id: number;
+    name: string;
+    image: string;
+    type: 'interior' | 'exterior';
+    is_thermally_resistant: boolean;
 }

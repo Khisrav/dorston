@@ -4,10 +4,10 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { getDoorModelImage } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { Nomenclature } from '@/types/configurator';
+import { DoorModel, Nomenclature } from '@/types/configurator';
 import { usePage } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
-import { SelectButton, InputNumber, Dialog, Drawer } from 'primevue';
+import { SelectButton, InputNumber, Dialog, Drawer, ToggleSwitch } from 'primevue';
 import { computed, ref, watchEffect, onMounted, onUnmounted } from 'vue';
 import { useImage } from 'vue-konva';
 
@@ -18,11 +18,13 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-const paints = usePage().props.paints
-const doorModels = usePage().props.doorModels
-
+const paints = ref(usePage().props.paints as Nomenclature[])
+const doorModels = ref(usePage().props.doorModels as DoorModel[])
+const filmColors = ref(usePage().props.filmColors as Nomenclature[])
 const doorCalcStore = useDoorCalc()
-doorCalcStore.paints = paints as Nomenclature[]
+doorCalcStore.paints = paints.value
+doorCalcStore.doorModels = doorModels.value
+doorCalcStore.filmColors = filmColors.value
 
 // Door component arrays
 const panels = [
@@ -53,6 +55,15 @@ const decorations = [
     '',
     '/assets/decorative-elements/decoration.png',
 ];
+
+// Computed properties to filter door models
+const exteriorDoorModels = computed(() => {
+    return doorModels.value.filter((model: DoorModel) => model.type === 'exterior');
+});
+
+const interiorDoorModels = computed(() => {
+    return doorModels.value.filter((model: DoorModel) => model.type === 'interior');
+});
 
 const selectedDoorParameters = ref({
     panel: panels[0],
@@ -92,6 +103,24 @@ const boxDesignOptions = [
     { label: 'Закрытый', value: 'Closed' }
 ];
 
+const parametersSummary = computed(() => {
+    let doorWidth = doorCalcStore.doorConfig.doorWidth
+    let doorHeight = doorCalcStore.doorConfig.doorHeight
+    let handleSide = 'Ручка ' + (doorCalcStore.doorConfig.doorHandleSide === 'Left' ? 'слева' : 'справа')
+    let boxDesign = (doorCalcStore.doorConfig.doorBoxDesign === 'Opened' ? 'Открытый' : 'Закрытый') + ' короб'
+    let doorType = doorCalcStore.doorConfig.doorType === 'Apartment' ? 'Квартирная' : 'Уличная'
+    let doorConstructive = doorCalcStore.doorConfig.doorConstructive
+
+    // return `${doorType} ● ${doorConstructive} ● ${handleSide} ● ${boxDesign}`
+    return [
+        `${doorWidth}x${doorHeight} мм`,
+        doorType,
+        doorConstructive,
+        handleSide,
+        boxDesign,
+    ]
+})
+
 const showOuterDesignDialog = ref(false);
 const showInnerDesignDialog = ref(false);
 </script>
@@ -129,8 +158,8 @@ const showInnerDesignDialog = ref(false);
                                         Параметры двери
                                     </h3>
                                     <p v-if="!isParametersExpanded"
-                                        class="font-serif text-xs sm:text-sm text-black/60 dark:text-white/60">
-                                        {{ parametersSummary }}
+                                        class="text-xs sm:text-sm hidden sm:block text-black/60 dark:text-white/60">
+                                        <span v-for="item in parametersSummary" :key="item">{{ item }} <span class="mx-2 text-xs" v-if="item !== parametersSummary[parametersSummary.length - 1]">●</span></span>
                                     </p>
                                 </div>
                                 <svg :class="['w-5 h-5 text-black dark:text-white transition-transform duration-300', isParametersExpanded ? 'rotate-180' : '']"
@@ -218,7 +247,7 @@ const showInnerDesignDialog = ref(false);
 
                             <!-- Konva Canvas -->
                             <div class=" z-10 flex justify-center items-center">
-                                <img :src="getDoorModelImage(doorCalcStore.doorConfig.exterior.panelModel)" class="w-32" alt="">
+                                <img :src="getDoorModelImage(doorModels.find((model: DoorModel) => model.id === doorCalcStore.doorConfig.exterior.panelModel)?.image ?? '')" class="w-32" alt="">
                             </div>
                         </div>
 
@@ -255,7 +284,7 @@ const showInnerDesignDialog = ref(false);
                             </div>
                         </div>
                         <p class="text-black sm:text-sm dark:text-white tracking-tight">
-                            Выбрано: <span class="font-medium instrument-sans">{{ doorCalcStore.doorConfig.exterior.panelModel }}</span>
+                            Выбрано: <span class="font-medium instrument-sans">{{ doorCalcStore.getDoorModelInfo(doorCalcStore.doorConfig.exterior.panelModel)?.name }}</span>
                         </p>
                     </div>
 
@@ -271,14 +300,8 @@ const showInnerDesignDialog = ref(false);
                                 цвет</label>
                         </div>
                         <div class="grid grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mb-4">
-                            <div v-for="(panel, idx) in panels" :key="idx" @click="selectedDoorParameters.panel = panel"
-                                :class="[
-                                    'group cursor-pointer border overflow-hidden transition-all duration-300 aspect-video',
-                                    selectedDoorParameters.panel === panel
-                                        ? 'border-black dark:border-white border-4'
-                                        : 'border-black/20 dark:border-white/20 hover:border-black/40 dark:hover:border-white/40 border-2'
-                                ]">
-                                <img :src="panel" :alt="panel.split('/').pop()" class="w-full h-full object-cover" />
+                            <div v-for="(panel, idx) in filmColors" :key="idx" @click="doorCalcStore.doorConfig.exterior.primaryTexture = panel.id">
+                                <img :src="panel.image ?? ''" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                             </div>
                         </div>
                         <!-- <br> -->
@@ -286,28 +309,28 @@ const showInnerDesignDialog = ref(false);
                                 class="block font-serif text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium">Дополнительный
                                 цвет</label></div>
                         <div class="grid grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mb-4">
-                            <div v-for="(panel, idx) in panels" :key="idx" @click="selectedDoorParameters.panel = panel"
+                            <div v-for="(panel, idx) in filmColors" :key="idx" @click="doorCalcStore.doorConfig.exterior.secondaryTexture = panel.id"
                                 :class="[
                                     'group cursor-pointer border overflow-hidden transition-all duration-300 aspect-video',
-                                    selectedDoorParameters.panel === panel
+                                    doorCalcStore.doorConfig.exterior.secondaryTexture === panel.id
                                         ? 'border-black dark:border-white border-4'
                                         : 'border-black/20 dark:border-white/20 hover:border-black/40 dark:hover:border-white/40 border-2'
                                 ]">
-                                <img :src="panel" :alt="panel.split('/').pop()" class="w-full h-full object-cover" />
+                                <img :src="panel.image ?? ''" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                             </div>
                         </div>
                         <div><label
                                 class="block font-serif text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium">Цвет
                                 наличника</label></div>
                         <div class="grid grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
-                            <div v-for="(panel, idx) in panels" :key="idx" @click="selectedDoorParameters.panel = panel"
+                            <div v-for="(panel, idx) in filmColors" :key="idx" @click="doorCalcStore.doorConfig.exterior.casingTexture = panel.id"
                                 :class="[
                                     'group cursor-pointer border overflow-hidden transition-all duration-300 aspect-video',
-                                    selectedDoorParameters.panel === panel
+                                    doorCalcStore.doorConfig.exterior.casingTexture === panel.id
                                         ? 'border-black dark:border-white border-4'
                                         : 'border-black/20 dark:border-white/20 hover:border-black/40 dark:hover:border-white/40 border-2'
                                 ]">
-                                <img :src="panel" :alt="panel.split('/').pop()" class="w-full h-full object-cover" />
+                                <img :src="panel.image ?? ''" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                             </div>
                         </div>
                     </div>
@@ -319,22 +342,21 @@ const showInnerDesignDialog = ref(false);
                             <span class="italic">III.</span> Покраска металла
                         </h2>
                         <!-- undercoat toggle -->
-                        <SelectButton :options="['Цинкогрунтование', 'Нет']"
-                            v-model="doorCalcStore.doorConfig.metalPainting.undercoat" class="w-full mb-4" />
+                        <ToggleSwitch v-model="doorCalcStore.doorConfig.metalPainting!.undercoat" class="w-full mb-4" />
                         <div>
                             <label
                                 class="block font-serif text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium">Основной
                                 цвет</label>
                         </div>
                         <div class="grid grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mb-4">
-                            <div v-for="(panel, idx) in panels" :key="idx" @click="selectedDoorParameters.panel = panel"
+                            <div v-for="(panel, idx) in filmColors" :key="idx" @click="doorCalcStore.doorConfig.metalPainting!.primaryColor = panel.id"
                                 :class="[
                                     'group cursor-pointer border overflow-hidden transition-all duration-300 aspect-video',
-                                    selectedDoorParameters.panel === panel
+                                    doorCalcStore.doorConfig.metalPainting?.primaryColor === panel.id
                                         ? 'border-black dark:border-white border-4'
                                         : 'border-black/20 dark:border-white/20 hover:border-black/40 dark:hover:border-white/40 border-2'
                                 ]">
-                                <img :src="panel" :alt="panel.split('/').pop()" class="w-full h-full object-cover" />
+                                <img :src="panel.image ?? ''" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                             </div>
                         </div>
                         <!-- <br> -->
@@ -342,14 +364,14 @@ const showInnerDesignDialog = ref(false);
                                 class="block font-serif text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium">Дополнительный
                                 цвет</label></div>
                         <div class="grid grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 mb-4">
-                            <div v-for="(panel, idx) in panels" :key="idx" @click="selectedDoorParameters.panel = panel"
+                            <div v-for="(panel, idx) in filmColors" :key="idx" @click="doorCalcStore.doorConfig.metalPainting!.secondaryColor = panel.id"
                                 :class="[
                                     'group cursor-pointer border overflow-hidden transition-all duration-300 aspect-video',
-                                    selectedDoorParameters.panel === panel
+                                    doorCalcStore.doorConfig.metalPainting?.secondaryColor === panel.id
                                         ? 'border-black dark:border-white border-4'
                                         : 'border-black/20 dark:border-white/20 hover:border-black/40 dark:hover:border-white/40 border-2'
                                 ]">
-                                <img :src="panel" :alt="panel.split('/').pop()" class="w-full h-full object-cover" />
+                                <img :src="panel.image ?? ''" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                             </div>
                         </div>
                     </div>
@@ -362,38 +384,80 @@ const showInnerDesignDialog = ref(false);
         </div>
     </AppLayout>
 
-    <Drawer v-model:visible="showOuterDesignDialog" position="right" class="md:!min-w-256">
+    <!-- Outer Design Drawer -->
+    <Drawer v-model:visible="showOuterDesignDialog" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
         <template #header>
             <div class="flex items-center gap-2">
-                <h2 class="text-black sm:text-xl dark:text-white tracking-tight">
+                <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight">
                     Дизайн наружной отделки
                 </h2>
             </div>
         </template>
-        <div class="grid grid-cols-4 gap-3 sm:gap-4">
-            <div v-for="doorModel in doorModels" :key="doorModel.name"
-                class="flex flex-col items-center justify-center gap-2 pb-2 cursor-pointer"
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+            <div 
+                v-for="doorModel in exteriorDoorModels" 
+                :key="doorModel.id"
+                class="flex flex-col items-center justify-center gap-1.5 sm:gap-2 pb-2 cursor-pointer transition-transform duration-200 hover:scale-105"
                 @click="() => {
-                    doorCalcStore.doorConfig.exterior.panelModel = doorModel.name;
+                    doorCalcStore.doorConfig.exterior.panelModel = doorModel.id;
                     showOuterDesignDialog = false;
-                }">
-                <img :src="getDoorModelImage(doorModel.image)" :alt="doorModel.name" class="w-full h-full object-cover">
-                <p class="font-medium tracking-tight text-center transition-colors duration-300" :class="[
-                    doorCalcStore.doorConfig.exterior.panelModel === doorModel.name
-                        ? 'text-black dark:text-white'
-                        : 'text-gray-500 dark:text-gray-400'
-                ]">
+                }"
+            >
+                    <img 
+                        :src="getDoorModelImage(doorModel.image)" 
+                        :alt="doorModel.name" 
+                        class="w-full"
+                    >
+                <p 
+                    class="font-medium tracking-tight text-center transition-colors duration-300 px-1" 
+                    :class="[
+                        doorCalcStore.doorConfig.exterior.panelModel === doorModel.id
+                            ? 'text-black dark:text-white'
+                            : 'text-gray-500 dark:text-gray-400'
+                    ]"
+                >
                     {{ doorModel.name }}
                 </p>
             </div>
         </div>
-
     </Drawer>
 
-    <Drawer v-model:visible="showInnerDesignDialog" position="right">
-        <h2 class="text-black dark:text-white tracking-tight">
-            Дизайн внутренней отделки
-        </h2>
+    <!-- Inner Design Drawer -->
+    <Drawer v-model:visible="showInnerDesignDialog" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+        <template #header>
+            <div class="flex items-center gap-2">
+                <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight">
+                    Дизайн внутренней отделки
+                </h2>
+            </div>
+        </template>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
+            <div 
+                v-for="doorModel in interiorDoorModels" 
+                :key="doorModel.id"
+                class="flex flex-col items-center justify-center gap-1.5 sm:gap-2 pb-2 cursor-pointer transition-transform duration-200 hover:scale-105"
+                @click="() => {
+                    doorCalcStore.doorConfig.interior.panelModel = doorModel.id;
+                    showInnerDesignDialog = false;
+                }"
+            >
+                <img 
+                    :src="getDoorModelImage(doorModel.image)" 
+                    :alt="doorModel.name" 
+                    class="w-full h-full object-cover"
+                >
+                <p 
+                    class="font-medium tracking-tight text-center transition-colors duration-300 px-1" 
+                    :class="[
+                        doorCalcStore.doorConfig.interior.panelModel === doorModel.id
+                            ? 'text-black dark:text-white'
+                            : 'text-gray-500 dark:text-gray-400'
+                    ]"
+                >
+                    {{ doorModel.name }}
+                </p>
+            </div>
+        </div>
     </Drawer>
 </template>
 

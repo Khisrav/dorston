@@ -1,4 +1,4 @@
-import { DoorConfig, doorConstructive, doorType, Nomenclature } from "@/types/configurator";
+import { DoorConfig, doorConstructive, DoorModel, doorType, Nomenclature } from "@/types/configurator";
 import { defineStore } from "pinia";
 import { ref, watch, computed } from "vue";
 import { useComfortConstructive } from "./door-constructives/useComfortConstructive";
@@ -7,7 +7,9 @@ import { isDoorStandard } from "@/lib/utils";
 export const useDoorCalc = defineStore('doorCalc', () => {
     //static vars
     const paints = ref<Nomenclature[]>([]);
-    
+    const doorModels = ref<DoorModel[]>([]);
+    const filmColors = ref<Nomenclature[]>([]);
+
     const total_price = ref(0)
 
     const doorConfig = ref<DoorConfig>({
@@ -18,19 +20,19 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         doorHandleSide: 'Left',
         doorBoxDesign: 'Opened',
         interior: {
-            panelModel: '',
+            panelModel: 1,
             primaryTexture: '',
             secondaryTexture: '',
             casingTexture: '',
         },
         exterior: {
-            panelModel: '',
+            panelModel: 39,
             primaryTexture: '',
             secondaryTexture: '',
             casingTexture: '',
         },
         metalPainting: {
-            undercoat: 'Нет',
+            undercoat: false,
             primaryColor: '',
             secondaryColor: '',
         },
@@ -54,10 +56,18 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         }
     }, { deep: true, immediate: true })
 
+    //get door model info
+    const getDoorModelInfo = (id: number) => {
+        return doorModels.value.find((model: DoorModel) => model.id === id)
+    }
+
     return {
         doorConfig,
         total_price,
         isStandard,
         paints,
+        doorModels,
+        filmColors,
+        getDoorModelInfo,
     }
 })
