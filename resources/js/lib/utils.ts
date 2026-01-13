@@ -64,4 +64,4 @@ export const hasCasingTexture = (type: doorType, isExterior: boolean, modelId: n
 }
 
 export const getDoorModelImage = (link: string) => link.startsWith('http') ? link : `/storage/${link}`
-
+export const getImageUrl = (image: string | null) => image ? image.startsWith('http') ? image : `/storage/${image}` : ''
