@@ -29,6 +29,8 @@ class NomenclaturesTable
                     ->numeric()
                     ->sortable(),
                 ImageColumn::make('image')
+                    ->disk('public')
+                    ->height(64)
                     ->label('Изображение'),
                 TextColumn::make('base_price')
                     ->label('Базовая цена')

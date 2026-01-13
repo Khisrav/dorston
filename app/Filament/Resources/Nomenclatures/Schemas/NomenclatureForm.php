@@ -22,6 +22,8 @@ class NomenclatureForm
                     ->numeric(),
                 FileUpload::make('image')
                     ->label('Изображение')
+                    // ->visibility('public')
+                    ->directory('nomenclatures')
                     ->image(),
                 TextInput::make('base_price')
                     ->label('Базовая цена')
