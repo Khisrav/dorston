@@ -20,13 +20,13 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         doorHandleSide: 'Left',
         doorBoxDesign: 'Opened',
         interior: {
-            panelModel: 1,
+            panelModel: 2, //Ф-11
             primaryTexture: '',
             secondaryTexture: '',
             casingTexture: '',
         },
         exterior: {
-            panelModel: 39,
+            panelModel: 59, //ВС-6
             primaryTexture: '',
             secondaryTexture: '',
             casingTexture: '',

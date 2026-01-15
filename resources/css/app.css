@@ -170,3 +170,17 @@
         @apply bg-background text-foreground;
     }
 }
+
+
+
+body {
+    /* font-family: 'Playfair Display', serif; */
+}
+
+.playfair-display {
+    /* font-family: 'Playfair Display', serif; */
+}
+
+.instrument-sans {
+    font-family: 'Instrument Sans', sans-serif;
+}

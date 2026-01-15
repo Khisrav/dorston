@@ -28,18 +28,6 @@
             html.dark {
                 background-color: oklch(0.145 0 0);
             }
-
-            .playfair-display {
-                font-family: 'Playfair Display', serif;
-            }
-
-            .instrument-sans {
-                font-family: 'Instrument Sans', sans-serif;
-            }
-
-            body {
-                font-family: 'Playfair Display', serif;
-            }
         </style>
 
         <title inertia>{{ config('app.name', 'Dorston') }}</title>
