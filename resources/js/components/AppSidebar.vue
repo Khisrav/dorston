@@ -16,6 +16,7 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import { LockIcon, ScrollTextIcon, WrenchIcon } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
+import ThemeSwitcher from './ThemeSwitcher.vue';
 
 const mainNavItems: NavItem[] = [
     {
@@ -60,6 +61,8 @@ const footerNavItems: NavItem[] = [
         <SidebarFooter class="border-t border-black/10 dark:border-white/10 pt-4 elegant-footer">
             <NavFooter :items="footerNavItems" />
             <NavUser />
+            <!-- THEME SWITCHER -->
+            <ThemeSwitcher />
         </SidebarFooter>
     </Sidebar>
     <slot />

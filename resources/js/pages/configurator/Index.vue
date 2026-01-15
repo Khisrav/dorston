@@ -1,5 +1,6 @@
 <script setup lang="ts">
-    import { useDoorCalc } from '@/composables/useDoorCalc';
+    import DoorVisualizer from '@/components/Configurator/DoorVisualizer.vue';
+import { useDoorCalc } from '@/composables/useDoorCalc';
     import AppLayout from '@/layouts/AppLayout.vue';
     import { getDoorModelImage, getImageUrl } from '@/lib/utils';
     import { dashboard } from '@/routes';
@@ -118,9 +119,9 @@
     const showMetalSecondaryDrawer = ref(false);
     
     // Helper to get current selection details for UI cards
-    const getSelectedModel = (id?: string) => doorModels.value.find(m => m.id === id);
-    const getSelectedFilm = (id?: string) => filmColors.value.find(f => f.id === id);
-    const getSelectedPaint = (id?: string) => paints.value.find(p => p.id === id);
+    const getSelectedModel = (id?: number) => doorModels.value.find(m => m.id === id);
+    const getSelectedFilm = (id?: number) => filmColors.value.find(f => f.id === id);
+    const getSelectedPaint = (id?: number) => paints.value.find(p => p.id === id);
     
     </script>
     
@@ -239,12 +240,7 @@
                             </div>
     
                             <!-- Visualization Area -->
-                            <div ref="containerRef"
-                                class="border-2 border-black/10 dark:border-white/10 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-800 dark:to-neutral-900 p-4 sm:p-6 lg:p-8 flex items-center justify-center relative overflow-hidden min-h-[400px]">
-                                <div class="z-10 flex justify-center items-center">
-                                    <img :src="getDoorModelImage(doorModels.find((model: DoorModel) => model.id === doorCalcStore.doorConfig.exterior.panelModel)?.image ?? '')" class="w-32 max-h-[60vh] object-contain drop-shadow-2xl" alt="">
-                                </div>
-                            </div>
+                            <DoorVisualizer />
     
                             <!-- Action buttons -->
                             <div class="mt-4 sm:mt-6 lg:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
@@ -274,7 +270,7 @@
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                     <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden">
                                         <img v-if="doorCalcStore.doorConfig.exterior.panelModel" 
-                                             :src="getDoorModelImage(getSelectedModel(doorCalcStore.doorConfig.exterior.panelModel)?.image)" 
+                                             :src="getDoorModelImage(getSelectedModel(doorCalcStore.doorConfig.exterior.panelModel)?.image ?? '')" 
                                              class="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal" />
                                     </div>
                                     <div class="flex-1 min-w-0">
@@ -291,7 +287,7 @@
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                     <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden">
                                         <img v-if="doorCalcStore.doorConfig.interior.panelModel" 
-                                             :src="getDoorModelImage(getSelectedModel(doorCalcStore.doorConfig.interior.panelModel)?.image)" 
+                                             :src="getDoorModelImage(getSelectedModel(doorCalcStore.doorConfig.interior.panelModel)?.image ?? '')" 
                                              class="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal" />
                                     </div>
                                     <div class="flex-1 min-w-0">
@@ -317,7 +313,7 @@
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                     <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                         <img v-if="doorCalcStore.doorConfig.exterior.secondaryTexture" 
-                                             :src="getImageUrl(getSelectedFilm(doorCalcStore.doorConfig.exterior.secondaryTexture)?.image)" 
+                                             :src="getImageUrl(getSelectedFilm(doorCalcStore.doorConfig.exterior.secondaryTexture)?.image ?? '')" 
                                              class="w-full h-full object-cover" />
                                     </div>
                                     <div class="flex-1 min-w-0">
@@ -334,7 +330,7 @@
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                     <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                         <img v-if="doorCalcStore.doorConfig.exterior.casingTexture" 
-                                             :src="getImageUrl(getSelectedFilm(doorCalcStore.doorConfig.exterior.casingTexture)?.image)" 
+                                             :src="getImageUrl(getSelectedFilm(doorCalcStore.doorConfig.exterior.casingTexture)?.image ?? '')" 
                                              class="w-full h-full object-cover" />
                                     </div>
                                     <div class="flex-1 min-w-0">
@@ -358,7 +354,7 @@
                             
                             <!-- Undercoat Toggle -->
                             <div class="flex items-center justify-between py-2">
-                                <span class="font-serif text-sm text-gray-700 dark:text-gray-300">Грунтовка (Undercoat)</span>
+                                <span class="font-serif text-sm text-gray-700 dark:text-gray-300">Цинкогрунтование</span>
                                 <ToggleSwitch v-model="doorCalcStore.doorConfig.metalPainting!.undercoat" />
                             </div>
     
@@ -368,7 +364,7 @@
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                     <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                         <img v-if="doorCalcStore.doorConfig.metalPainting?.primaryColor" 
-                                             :src="getImageUrl(getSelectedPaint(doorCalcStore.doorConfig.metalPainting.primaryColor)?.image)" 
+                                             :src="getImageUrl(getSelectedPaint(doorCalcStore.doorConfig.metalPainting.primaryColor)?.image ?? '')" 
                                              class="w-full h-full object-cover" />
                                     </div>
                                     <div class="flex-1 min-w-0">
@@ -385,7 +381,7 @@
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                     <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                         <img v-if="doorCalcStore.doorConfig.metalPainting?.secondaryColor" 
-                                             :src="getImageUrl(getSelectedPaint(doorCalcStore.doorConfig.metalPainting.secondaryColor)?.image)" 
+                                             :src="getImageUrl(getSelectedPaint(doorCalcStore.doorConfig.metalPainting.secondaryColor)?.image ?? '')" 
                                              class="w-full h-full object-cover" />
                                     </div>
                                     <div class="flex-1 min-w-0">

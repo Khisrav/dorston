@@ -19,6 +19,7 @@ declare module 'vue' {
     InputMask: typeof import('primevue/inputmask')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Select: typeof import('primevue/select')['default']
+    SelectButton: typeof import('primevue/selectbutton')['default']
     SplitButton: typeof import('primevue/splitbutton')['default']
     Toolbar: typeof import('primevue/toolbar')['default']
   }

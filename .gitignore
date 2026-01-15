@@ -28,6 +28,7 @@ yarn-error.log
 /.zed
 /public/build
 /docs
+/public/assets/test/
 
 # Docker
 .env.docker.local
