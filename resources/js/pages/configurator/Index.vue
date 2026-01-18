@@ -113,6 +113,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
     // Drawer States
     const showOuterDesignDialog = ref(false);
     const showInnerDesignDialog = ref(false);
+    const showFilmPrimaryDrawer = ref(false);
     const showFilmSecondaryDrawer = ref(false);
     const showFilmCasingDrawer = ref(false);
     const showMetalPrimaryDrawer = ref(false);
@@ -316,6 +317,22 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                             </h2>
     
                             <div class="grid grid-cols-1 gap-3">
+                                <!-- Primary Texture Card -->
+                                <div @click="showFilmPrimaryDrawer = true" 
+                                    class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
+                                    <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
+                                        <img v-if="doorCalcStore.doorConfig.exterior.primaryTexture" 
+                                             :src="getImageUrl(getSelectedFilm(doorCalcStore.doorConfig.exterior.primaryTexture)?.image ?? '')" 
+                                             class="w-full h-full object-cover" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Основной цвет</p>
+                                        <p class="font-medium truncate text-black dark:text-white">
+                                            {{ getSelectedFilm(doorCalcStore.doorConfig.exterior.primaryTexture)?.name || 'Не выбрано' }}
+                                        </p>
+                                    </div>
+                                    <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                </div>
                                 <!-- Secondary Texture Card -->
                                 <div @click="showFilmSecondaryDrawer = true" 
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
@@ -350,7 +367,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                                     <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                                 </div>
                             </div>
-                        </div>
+                        
     
                         <!-- III. Metal Painting Selection -->
                         <div class="space-y-4">
@@ -404,6 +421,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
         </AppLayout>
     
@@ -450,6 +468,28 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                 </div>
             </div>
         </Drawer>
+
+        <!-- DRAWER: Primary Film Color -->
+        <Drawer v-model:visible="showFilmPrimaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+            <template #header>
+                <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight font-serif">
+                    Цвет плёнки: Основной
+                </h2>
+            </template>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 p-1">
+                <div v-for="(panel, idx) in filmColors" :key="idx" 
+                    @click="() => { doorCalcStore.doorConfig.exterior.primaryTexture = panel.id; showFilmPrimaryDrawer = false; }"
+                    :class="[
+                        'group cursor-pointer border transition-all duration-300 aspect-video',
+                        doorCalcStore.doorConfig.exterior.primaryTexture === panel.id
+                            ? 'border-black/40 dark:border-white/40 border-2'
+                            : 'border-transparent dark:border-transparent hover:border-black/40 dark:hover:border-white/40 border-2'
+                    ]">
+                    <img :src="getImageUrl(panel.image ?? null)" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
+                    <div class="text-xs text-center p-1 truncate">{{ panel.name }}</div>
+                </div>
+            </div>
+        </Drawer>
     
         <!-- DRAWER: Secondary Film Color -->
         <Drawer v-model:visible="showFilmSecondaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
@@ -462,10 +502,10 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                 <div v-for="(panel, idx) in filmColors" :key="idx" 
                     @click="() => { doorCalcStore.doorConfig.exterior.secondaryTexture = panel.id; showFilmSecondaryDrawer = false; }"
                     :class="[
-                        'group cursor-pointer border overflow-hidden transition-all duration-300 aspect-video rounded-sm',
+                        'group cursor-pointer border transition-all duration-300 aspect-video',
                         doorCalcStore.doorConfig.exterior.secondaryTexture === panel.id
-                            ? 'border-black dark:border-white border-4'
-                            : 'border-black/10 dark:border-white/10 hover:border-black/40 dark:hover:border-white/40 border-2'
+                            ? 'border-black/40 dark:border-white/40 border-2'
+                            : 'border-transparent dark:border-transparent hover:border-black/40 dark:hover:border-white/40 border-2'
                     ]">
                     <img :src="getImageUrl(panel.image ?? null)" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                     <div class="text-xs text-center p-1 truncate">{{ panel.name }}</div>
@@ -484,10 +524,10 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                 <div v-for="(panel, idx) in filmColors" :key="idx" 
                     @click="() => { doorCalcStore.doorConfig.exterior.casingTexture = panel.id; showFilmCasingDrawer = false; }"
                     :class="[
-                        'group cursor-pointer border overflow-hidden transition-all duration-300 aspect-video rounded-sm',
+                        'group cursor-pointer border transition-all duration-300 aspect-video',
                         doorCalcStore.doorConfig.exterior.casingTexture === panel.id
-                            ? 'border-black dark:border-white border-4'
-                            : 'border-black/10 dark:border-white/10 hover:border-black/40 dark:hover:border-white/40 border-2'
+                            ? 'border-black/40 dark:border-white/40 border-2'
+                            : 'border-transparent dark:border-transparent hover:border-black/40 dark:hover:border-white/40 border-2'
                     ]">
                     <img :src="getImageUrl(panel.image ?? null)" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                     <div class="text-xs text-center p-1 truncate">{{ panel.name }}</div>
@@ -506,10 +546,10 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                 <div v-for="(panel, idx) in paints" :key="idx" 
                     @click="() => { doorCalcStore.doorConfig.metalPainting!.primaryColor = panel.id; showMetalPrimaryDrawer = false; }"
                     :class="[
-                        'group cursor-pointer border overflow-hidden transition-all duration-300 aspect-video rounded-sm',
+                        'group cursor-pointer border transition-all duration-300 aspect-video',
                         doorCalcStore.doorConfig.metalPainting?.primaryColor === panel.id
-                            ? 'border-black dark:border-white border-4'
-                            : 'border-black/10 dark:border-white/10 hover:border-black/40 dark:hover:border-white/40 border-2'
+                            ? 'border-black/40 dark:border-white/40 border-2'
+                            : 'border-transparent dark:border-transparent hover:border-black/40 dark:hover:border-white/40 border-2'
                     ]">
                     <img :src="getImageUrl(panel.image ?? null)" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                     <div class="text-xs text-center p-1 truncate">{{ panel.name }}</div>
@@ -528,10 +568,10 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                 <div v-for="(panel, idx) in paints" :key="idx" 
                     @click="() => { doorCalcStore.doorConfig.metalPainting!.secondaryColor = panel.id; showMetalSecondaryDrawer = false; }"
                     :class="[
-                        'group cursor-pointer border overflow-hidden transition-all duration-300 aspect-video rounded-sm',
+                        'group cursor-pointer border transition-all duration-300 aspect-video',
                         doorCalcStore.doorConfig.metalPainting?.secondaryColor === panel.id
-                            ? 'border-black dark:border-white border-4'
-                            : 'border-black/10 dark:border-white/10 hover:border-black/40 dark:hover:border-white/40 border-2'
+                            ? 'border-black/40 dark:border-white/40 border-2'
+                            : 'border-transparent dark:border-transparent hover:border-black/40 dark:hover:border-white/40 border-2'
                     ]">
                     <img :src="getImageUrl(panel.image ?? null)" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                     <div class="text-xs text-center p-1 truncate">{{ panel.name }}</div>

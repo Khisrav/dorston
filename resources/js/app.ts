@@ -16,33 +16,33 @@ import { createPinia } from 'pinia';
 const CustomPreset = definePreset(Lara, {
     semantic: {
         primary: {
-            50: '{gray.100}',
-            100: '{gray.200}',
-            200: '{gray.300}',
-            300: '{gray.400}',
-            400: '{gray.500}',
-            500: '{gray.600}',
-            600: '{gray.700}',
-            700: '{gray.800}',
-            800: '{gray.800}',
-            900: '{gray.900}',
-            950: '{gray.900}'
+            50: '{neutral.100}',
+            100: '{neutral.200}',
+            200: '{neutral.300}',
+            300: '{neutral.400}',
+            400: '{neutral.500}',
+            500: '{neutral.600}',
+            600: '{neutral.700}',
+            700: '{neutral.800}',
+            800: '{neutral.800}',
+            900: '{neutral.900}',
+            950: '{neutral.900}'
         },
         colorScheme: {
             light: {
                 primary: {
-                    color: '{gray.800}',
-                    contrastColor: '{gray.50}',
-                    hoverColor: '{gray.700}',
-                    activeColor: '{gray.900}'
+                    color: '{neutral.800}',
+                    contrastColor: '{neutral.50}',
+                    hoverColor: '{neutral.700}',
+                    activeColor: '{neutral.900}'
                 }
             },
             dark: {
                 primary: {
-                    color: '{gray.300}',
-                    contrastColor: '{gray.900}',
-                    hoverColor: '{gray.400}',
-                    activeColor: '{gray.200}'
+                    color: '{neutral.300}',
+                    contrastColor: '{neutral.950}',
+                    hoverColor: '{neutral.400}',
+                    activeColor: '{neutral.200}',
                 }
             }
         },
@@ -69,6 +69,21 @@ const CustomPreset = definePreset(Lara, {
                 dark: {
                     root: {
                         borderRadius: '0'
+                    }
+                }
+            }
+        },
+        button: {
+            colorScheme: {
+                light: {
+                    root: {
+                    }
+                },
+                dark: {
+                    outlined: {
+                        primary: {
+                            borderColor: '{neutral.700}',
+                        }
                     }
                 }
             }
