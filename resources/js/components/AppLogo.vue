@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
+import { useSidebar } from './ui/sidebar';
+
+const { state } = useSidebar();
+console.log(useSidebar(), state)
 </script>
 
 <template>
@@ -8,7 +12,7 @@ import AppLogoIcon from '@/components/AppLogoIcon.vue';
     >
         <AppLogoIcon class="size-5 fill-current text-black dark:text-white" />
     </div>
-    <div class="ml-2 grid flex-1 text-left text-sm">
+    <div v-if="state === 'expanded'" class="flex-1 text-left text-sm hidden md:grid">
         <span class="mb-0.5 truncate leading-tight font-serif tracking-wide font-medium text-black dark:text-white"
             >Dorston</span
         >

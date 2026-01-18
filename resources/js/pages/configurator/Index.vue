@@ -113,6 +113,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
     // Drawer States
     const showOuterDesignDialog = ref(false);
     const showInnerDesignDialog = ref(false);
+    const showFilmPrimaryDrawer = ref(false);
     const showFilmSecondaryDrawer = ref(false);
     const showFilmCasingDrawer = ref(false);
     const showMetalPrimaryDrawer = ref(false);
@@ -128,7 +129,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
     <template>
         <Head title="Конфигуратор" />
         <AppLayout :breadcrumbs="breadcrumbs">
-            <div class="flex h-full flex-1 flex-col gap-4 sm:gap-6 lg:gap-8 overflow-x-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-neutral-900">
+            <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-neutral-900">
                 
                 <!-- Header Section -->
                 <div v-if="!isLoggedIn" class="text-center border-b border-black/10 dark:border-white/10 pb-4 sm:pb-6 lg:pb-8">
@@ -141,10 +142,10 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                 </div>
     
                 <!-- Main Grid -->
-                <div class="grid gap-4 sm:gap-6 lg:gap-8 lg:grid-cols-12">
+                <div class="grid gap-4 lg:grid-cols-12">
                     
                     <!-- Left Column: Preview & Parameters -->
-                    <div class="lg:col-span-7">
+                    <div class="lg:col-span-8">
                         <div class="sticky top-0 space-y-4">
                             
                             <!-- Door Parameters Accordion -->
@@ -170,7 +171,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                                 
                                 <!-- Accordion Content -->
                                 <div v-show="isParametersExpanded"
-                                    class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-black/10 dark:border-white/10 p-4 sm:p-6 space-y-4 sm:space-y-5">
+                                    class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-black/10 dark:border-white/10 p-4">
                                     
                                     <!-- Door Type -->
                                     <div>
@@ -178,7 +179,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                                             Тип двери
                                         </label>
                                         <SelectButton :options="doorTypeOptions" v-model="doorCalcStore.doorConfig.doorType"
-                                            optionLabel="label" optionValue="value" class="w-full" />
+                                            optionLabel="label" optionValue="value" size="small" fluid />
                                     </div>
     
                                     <!-- Door Constructive -->
@@ -188,11 +189,11 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                                         </label>
                                         <SelectButton :options="doorConstructiveOptions"
                                             v-model="doorCalcStore.doorConfig.doorConstructive" optionLabel="label"
-                                            optionValue="value" class="w-full" />
+                                            optionValue="value" size="small" fluid />
                                     </div>
     
                                     <!-- Dimensions -->
-                                    <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                                    <div>
                                         <div>
                                             <label class="block font-serif text-sm text-black dark:text-white mb-2">
                                                 Ширина (мм)
@@ -201,10 +202,10 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                                                 :step="10" showButtons buttonLayout="horizontal"
                                                 decrementButtonClass="p-button-text" incrementButtonClass="p-button-text"
                                                 incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-                                                class="w-full" />
+                                                fluid suffix="мм" />
                                         </div>
                                     </div>
-                                    <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                                    <div>
                                         <div>
                                             <label class="block font-serif text-sm text-black dark:text-white mb-2">
                                                 Высота (мм)
@@ -213,7 +214,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                                                 :max="3000" :step="10" showButtons buttonLayout="horizontal"
                                                 decrementButtonClass="p-button-text" incrementButtonClass="p-button-text"
                                                 incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-                                                class="w-full" />
+                                                fluid suffix="мм" />
                                         </div>
                                     </div>
     
@@ -224,7 +225,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                                         </label>
                                         <SelectButton :options="handleSideOptions"
                                             v-model="doorCalcStore.doorConfig.doorHandleSide" optionLabel="label"
-                                            optionValue="value" class="w-full" />
+                                            optionValue="value" size="small" fluid />
                                     </div>
     
                                     <!-- Box Design -->
@@ -234,13 +235,17 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                                         </label>
                                         <SelectButton :options="boxDesignOptions"
                                             v-model="doorCalcStore.doorConfig.doorBoxDesign" optionLabel="label"
-                                            optionValue="value" class="w-full" />
+                                            optionValue="value" size="small" fluid />
                                     </div>
                                 </div>
                             </div>
     
                             <!-- Visualization Area -->
-                            <DoorVisualizer />
+                            <div class="relative">
+                                <!-- <div class="sticky top-16"> -->
+                                    <DoorVisualizer />
+                                <!-- </div> -->
+                            </div>
     
                             <!-- Action buttons -->
                             <div class="mt-4 sm:mt-6 lg:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
@@ -256,7 +261,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                     </div>
     
                     <!-- Right Column: Options Panel -->
-                    <div class="lg:col-span-5 space-y-6">
+                    <div class="lg:col-span-4 space-y-4">
                         
                         <!-- I. Design Selection -->
                         <div class="space-y-4">
@@ -264,39 +269,43 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                                 <span class="italic text-gray-400 mr-2">I.</span> Дизайн отделки
                             </h2>
                             
-                            <div class="grid grid-cols-1 gap-3">
-                                <!-- Outer Design Card -->
+                            <div class="grid grid-cols-2 gap-3">
                                 <div @click="showOuterDesignDialog = true" 
-                                    class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden">
+                                    class="group flex flex-col items-center gap-2 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
+                                    
+                                    <div class="w-full aspect-[2/3] relative flex-shrink-0 rounded-sm overflow-hidden flex items-center justify-center">
                                         <img v-if="doorCalcStore.doorConfig.exterior.panelModel" 
-                                             :src="getDoorModelImage(getSelectedModel(doorCalcStore.doorConfig.exterior.panelModel)?.image ?? '')" 
-                                             class="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal" />
+                                            :src="getDoorModelImage(getSelectedModel(doorCalcStore.doorConfig.exterior.panelModel)?.image ?? '')" 
+                                            
+                                            class="max-w-full max-h-full w-auto h-auto object-contain mix-blend-multiply dark:mix-blend-normal" />
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Наружная отделка</p>
-                                        <p class="font-medium truncate text-black dark:text-white">
+
+                                    <div class="text-center w-full">
+                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Снаружи</p>
+                                        <p class="font-medium truncate text-black dark:text-white font-sans">
                                             {{ getSelectedModel(doorCalcStore.doorConfig.exterior.panelModel)?.name || 'Не выбрано' }}
                                         </p>
                                     </div>
-                                    <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                    <Button variant="outlined" size="small" class="w-full" label="Изменить" />
                                 </div>
-    
-                                <!-- Inner Design Card -->
+
                                 <div @click="showInnerDesignDialog = true" 
-                                    class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden">
+                                    class="group flex flex-col items-center gap-2 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
+                                    
+                                    <div class="w-full aspect-[2/3] relative flex-shrink-0 rounded-sm overflow-hidden flex items-center justify-center">
                                         <img v-if="doorCalcStore.doorConfig.interior.panelModel" 
-                                             :src="getDoorModelImage(getSelectedModel(doorCalcStore.doorConfig.interior.panelModel)?.image ?? '')" 
-                                             class="w-full h-full object-cover mix-blend-multiply dark:mix-blend-normal" />
+                                            :src="getDoorModelImage(getSelectedModel(doorCalcStore.doorConfig.interior.panelModel)?.image ?? '')" 
+                                            
+                                            class="max-w-full max-h-full w-auto h-auto object-contain mix-blend-multiply dark:mix-blend-normal" />
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Внутренняя отделка</p>
-                                        <p class="font-medium truncate text-black dark:text-white">
+
+                                    <div class="text-center w-full">
+                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Изнутри</p>
+                                        <p class="font-medium truncate text-black dark:text-white font-sans">
                                             {{ getSelectedModel(doorCalcStore.doorConfig.interior.panelModel)?.name || 'Не выбрано' }}
                                         </p>
                                     </div>
-                                    <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                    <Button variant="outlined" size="small" class="w-full" label="Изменить" />
                                 </div>
                             </div>
                         </div>
@@ -308,6 +317,22 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                             </h2>
     
                             <div class="grid grid-cols-1 gap-3">
+                                <!-- Primary Texture Card -->
+                                <div @click="showFilmPrimaryDrawer = true" 
+                                    class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
+                                    <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
+                                        <img v-if="doorCalcStore.doorConfig.exterior.primaryTexture" 
+                                             :src="getImageUrl(getSelectedFilm(doorCalcStore.doorConfig.exterior.primaryTexture)?.image ?? '')" 
+                                             class="w-full h-full object-cover" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Основной цвет</p>
+                                        <p class="font-medium truncate text-black dark:text-white">
+                                            {{ getSelectedFilm(doorCalcStore.doorConfig.exterior.primaryTexture)?.name || 'Не выбрано' }}
+                                        </p>
+                                    </div>
+                                    <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                </div>
                                 <!-- Secondary Texture Card -->
                                 <div @click="showFilmSecondaryDrawer = true" 
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
@@ -342,7 +367,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                                     <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                                 </div>
                             </div>
-                        </div>
+                        
     
                         <!-- III. Metal Painting Selection -->
                         <div class="space-y-4">
@@ -396,6 +421,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                         </div>
                     </div>
                 </div>
+                </div>
             </div>
         </AppLayout>
     
@@ -442,6 +468,28 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                 </div>
             </div>
         </Drawer>
+
+        <!-- DRAWER: Primary Film Color -->
+        <Drawer v-model:visible="showFilmPrimaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+            <template #header>
+                <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight font-serif">
+                    Цвет плёнки: Основной
+                </h2>
+            </template>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 p-1">
+                <div v-for="(panel, idx) in filmColors" :key="idx" 
+                    @click="() => { doorCalcStore.doorConfig.exterior.primaryTexture = panel.id; showFilmPrimaryDrawer = false; }"
+                    :class="[
+                        'group cursor-pointer border transition-all duration-300 aspect-video',
+                        doorCalcStore.doorConfig.exterior.primaryTexture === panel.id
+                            ? 'border-black/40 dark:border-white/40 border-2'
+                            : 'border-transparent dark:border-transparent hover:border-black/40 dark:hover:border-white/40 border-2'
+                    ]">
+                    <img :src="getImageUrl(panel.image ?? null)" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
+                    <div class="text-xs text-center p-1 truncate">{{ panel.name }}</div>
+                </div>
+            </div>
+        </Drawer>
     
         <!-- DRAWER: Secondary Film Color -->
         <Drawer v-model:visible="showFilmSecondaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
@@ -454,10 +502,10 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                 <div v-for="(panel, idx) in filmColors" :key="idx" 
                     @click="() => { doorCalcStore.doorConfig.exterior.secondaryTexture = panel.id; showFilmSecondaryDrawer = false; }"
                     :class="[
-                        'group cursor-pointer border overflow-hidden transition-all duration-300 aspect-video rounded-sm',
+                        'group cursor-pointer border transition-all duration-300 aspect-video',
                         doorCalcStore.doorConfig.exterior.secondaryTexture === panel.id
-                            ? 'border-black dark:border-white border-4'
-                            : 'border-black/10 dark:border-white/10 hover:border-black/40 dark:hover:border-white/40 border-2'
+                            ? 'border-black/40 dark:border-white/40 border-2'
+                            : 'border-transparent dark:border-transparent hover:border-black/40 dark:hover:border-white/40 border-2'
                     ]">
                     <img :src="getImageUrl(panel.image ?? null)" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                     <div class="text-xs text-center p-1 truncate">{{ panel.name }}</div>
@@ -476,10 +524,10 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                 <div v-for="(panel, idx) in filmColors" :key="idx" 
                     @click="() => { doorCalcStore.doorConfig.exterior.casingTexture = panel.id; showFilmCasingDrawer = false; }"
                     :class="[
-                        'group cursor-pointer border overflow-hidden transition-all duration-300 aspect-video rounded-sm',
+                        'group cursor-pointer border transition-all duration-300 aspect-video',
                         doorCalcStore.doorConfig.exterior.casingTexture === panel.id
-                            ? 'border-black dark:border-white border-4'
-                            : 'border-black/10 dark:border-white/10 hover:border-black/40 dark:hover:border-white/40 border-2'
+                            ? 'border-black/40 dark:border-white/40 border-2'
+                            : 'border-transparent dark:border-transparent hover:border-black/40 dark:hover:border-white/40 border-2'
                     ]">
                     <img :src="getImageUrl(panel.image ?? null)" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                     <div class="text-xs text-center p-1 truncate">{{ panel.name }}</div>
@@ -498,10 +546,10 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                 <div v-for="(panel, idx) in paints" :key="idx" 
                     @click="() => { doorCalcStore.doorConfig.metalPainting!.primaryColor = panel.id; showMetalPrimaryDrawer = false; }"
                     :class="[
-                        'group cursor-pointer border overflow-hidden transition-all duration-300 aspect-video rounded-sm',
+                        'group cursor-pointer border transition-all duration-300 aspect-video',
                         doorCalcStore.doorConfig.metalPainting?.primaryColor === panel.id
-                            ? 'border-black dark:border-white border-4'
-                            : 'border-black/10 dark:border-white/10 hover:border-black/40 dark:hover:border-white/40 border-2'
+                            ? 'border-black/40 dark:border-white/40 border-2'
+                            : 'border-transparent dark:border-transparent hover:border-black/40 dark:hover:border-white/40 border-2'
                     ]">
                     <img :src="getImageUrl(panel.image ?? null)" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                     <div class="text-xs text-center p-1 truncate">{{ panel.name }}</div>
@@ -520,10 +568,10 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                 <div v-for="(panel, idx) in paints" :key="idx" 
                     @click="() => { doorCalcStore.doorConfig.metalPainting!.secondaryColor = panel.id; showMetalSecondaryDrawer = false; }"
                     :class="[
-                        'group cursor-pointer border overflow-hidden transition-all duration-300 aspect-video rounded-sm',
+                        'group cursor-pointer border transition-all duration-300 aspect-video',
                         doorCalcStore.doorConfig.metalPainting?.secondaryColor === panel.id
-                            ? 'border-black dark:border-white border-4'
-                            : 'border-black/10 dark:border-white/10 hover:border-black/40 dark:hover:border-white/40 border-2'
+                            ? 'border-black/40 dark:border-white/40 border-2'
+                            : 'border-transparent dark:border-transparent hover:border-black/40 dark:hover:border-white/40 border-2'
                     ]">
                     <img :src="getImageUrl(panel.image ?? null)" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                     <div class="text-xs text-center p-1 truncate">{{ panel.name }}</div>
@@ -538,7 +586,6 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
 h1,
 h2,
 h3,
-p,
 button {
     font-family: 'Playfair Display', serif;
 }
