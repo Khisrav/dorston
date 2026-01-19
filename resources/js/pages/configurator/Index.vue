@@ -8,7 +8,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
     import { DoorModel, Nomenclature } from '@/types/configurator';
     import { usePage } from '@inertiajs/vue3';
     import { Head } from '@inertiajs/vue3';
-    import { SelectButton, InputNumber, Dialog, Drawer, ToggleSwitch, Button } from 'primevue';
+    import { SelectButton, InputNumber, Dialog, Drawer, ToggleSwitch, Button, Timeline } from 'primevue';
     import { computed, ref, watchEffect, onMounted, onUnmounted } from 'vue';
     import { useImage } from 'vue-konva';
     
@@ -18,6 +18,25 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
             href: dashboard().url,
         },
     ]
+    
+    const steps = ref([
+        {
+            label: 'Дизайн',
+            icon: 'pi pi-palette',
+        },
+        {
+            label: 'Цвет плёнки',
+            icon: 'pi pi-palette',
+        },
+        {
+            label: 'Цвет металла',
+            icon: 'pi pi-palette',
+        },
+        {
+            label: 'Цвет металла',
+            icon: 'pi pi-palette',
+        },
+    ])
     
     const paints = ref(usePage().props.paints as Nomenclature[])
     const doorModels = ref(usePage().props.doorModels as DoorModel[])
@@ -145,9 +164,15 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                 <div class="grid gap-4 lg:grid-cols-12">
                     
                     <!-- Left Column: Preview & Parameters -->
-                    <div class="lg:col-span-8">
+                    <div class="lg:col-span-7">
                         <div class="sticky top-0 space-y-4">
-                            
+                            <!-- Visualization Area -->
+                            <div class="relative min-h-[400px]">
+                                <div class="sticky top-0">
+                                    <DoorVisualizer />
+                                </div>
+                            </div>
+
                             <!-- Door Parameters Accordion -->
                             <div class="border-2 border-black/10 dark:border-white/10 bg-white dark:bg-neutral-800">
                                 <!-- Accordion Header -->
@@ -238,13 +263,6 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                                             optionValue="value" size="small" fluid />
                                     </div>
                                 </div>
-                            </div>
-    
-                            <!-- Visualization Area -->
-                            <div class="relative">
-                                <!-- <div class="sticky top-16"> -->
-                                    <DoorVisualizer />
-                                <!-- </div> -->
                             </div>
     
                             <!-- Action buttons -->
@@ -420,7 +438,16 @@ import { useDoorCalc } from '@/composables/useDoorCalc';
                             </div>
                         </div>
                     </div>
-                </div>
+                    </div>
+
+                    <!-- Step timeline -->
+                    <div class="lg:col-span-1 border-2 border-black/10 dark:border-white/10 pt-4">
+                        <Timeline :value="steps" align="center" :pt="{
+                            item: {
+                                class: 'flex items-center justify-between'
+                            }
+                        }"></Timeline>
+                    </div>
                 </div>
             </div>
         </AppLayout>
