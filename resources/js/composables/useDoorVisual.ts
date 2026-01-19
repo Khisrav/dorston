@@ -1,228 +1,120 @@
 import { defineStore } from "pinia";
 import { ref, watch, nextTick, computed, Ref, ComputedRef } from 'vue';
 import { useImage } from 'vue-konva';
+import { useDoorCalc } from "./useDoorCalc";
+import { getImageUrl } from "@/lib/utils";
 
-// Types
-export interface ImageConfig {
-    type: string;
-    image: string;
-    x: number;
-    y: number;
-    width?: number;
-    height?: number;
-    opacity?: number;
-    globalCompositeOperation?: string;
-}
-
-export interface LoadedImageConfig extends ImageConfig {
-    loadedImage: Ref<HTMLImageElement | null>;
-}
-
-export interface LayerCacheInfo {
-    index: number;
-    needsCache: boolean;
-}
-
-export interface LayerLoadingStatus {
-    layerIndex: number;
-    loaded: boolean;
+// Helper to load multiple images
+function useImages(paths: string[]) {
+    return paths.map(path => {
+        const url = computed(() => getImageUrl(path));
+        const [image] = useImage(url);
+        return image;
+    });
 }
 
 // Store
-export const useDoorVisualStore = defineStore('doorVisual', () => {
-    // Оригинальные размеры
-    const ORIGINAL_WIDTH = 1878;
-    const ORIGINAL_HEIGHT = 4096;
-    const ASPECT_RATIO = ORIGINAL_HEIGHT / ORIGINAL_WIDTH;
-    
-    const maxWidth = ref<number>(240);
+export const useDoorVisual = defineStore('doorVisual', () => {
+    const doorCalcStore = useDoorCalc();
 
-    // Computed размеры
-    const stageWidth = computed(() => maxWidth.value);
-    const stageHeight = computed(() => Math.round(maxWidth.value * ASPECT_RATIO));
-
-    // Слои двери - каждый слой это массив изображений
-    const doorLayers = ref<ImageConfig[][]>([
-        // Слой 0: Фон
-        [
-            {
-                type: 'background',
-                image: '/assets/test/film-colors/filmcolor1.png',
-                x: 0,
-                y: 0,
-                width: stageWidth.value,
-                height: stageHeight.value,
-                opacity: 1,
-            }
-        ],
-        // Слой 1: Фрезеровка
-        [
-            {
-                type: 'milling',
-                image: '/assets/test/millings/milling1.png',
-                // x: 85 * (stageWidth.value / 1878),
-                // y: 85 * (stageHeight.value / 4096),
-                // width: stageWidth.value - 170 * (stageWidth.value / 1878),
-                // height: stageHeight.value - 85 * (stageHeight.value / 4096),
-                x: 0,
-                y: 0,
-                width: stageWidth.value,
-                height: stageHeight.value,
-                opacity: 0.75,
-                globalCompositeOperation: 'multiply',
-            }
-        ],
-        // Слой 2: Декоративный элемент (текстура + маска)
-        [
-            {
-                type: 'decor-texture',
-                image: '/assets/test/decorative-elements/el1/texture.png',
-                x: 0,
-                y: 0,
-                width: stageWidth.value,
-                height: stageHeight.value,
-                opacity: 1,
-                globalCompositeOperation: 'destination-in',
-            },
-            {
-                type: 'decor-mask',
-                image: '/assets/test/decorative-elements/el1/texture.png',
-                x: 0,
-                y: 0,
-                width: stageWidth.value,
-                height: stageHeight.value,
-                opacity: 1,
-            },
-            {
-                type: 'decor-detail',
-                image: '/assets/test/decorative-elements/el1/decor.png',
-                x: 0,
-                y: 0,
-                width: stageWidth.value,
-                height: stageHeight.value,
-                opacity: 1,
-            }
-        ],
-        // Слой 3: Силуэт корпуса
-        [
-            {
-                type: 'case-silhouette',
-                image: '/assets/test/case-silhouette.png',
-                x: 0,
-                y: 0,
-                width: stageWidth.value,
-                height: stageHeight.value,
-                opacity: 1,
-            }
-        ]
-    ]);
-
-    // Определяем какие слои нужно кэшировать (группировать)
-    const layersThatNeedCaching = computed<LayerCacheInfo[]>(() => {
-        return doorLayers.value.map((layer, index) => {
-            // Если в слое есть composite operations, его нужно кэшировать
-            const hasCompositeOps = layer.some(img => img.globalCompositeOperation);
-            return { index, needsCache: hasCompositeOps };
-        }).filter(l => l.needsCache);
+    const stageWidth = ref<number>(0);
+    const stageHeight = ref<number>(0);
+    const casing_thickness = ref<number>(85);
+    const doorDimensions = computed(() => {
+        return {
+            width: doorCalcStore.doorConfig.doorWidth,
+            height: doorCalcStore.doorConfig.doorHeight,
+        }
     });
 
-    // Actions
-    function setDoorLayers(layers: ImageConfig[][]) {
-        doorLayers.value = layers;
+    const setStageDimensions = (width: number, height: number) => {
+        stageWidth.value = width;
+        stageHeight.value = width * doorDimensions.value.height / doorDimensions.value.width;
+
+        console.log('stage size set to', stageWidth.value, stageHeight.value);
     }
 
-    function updateLayer(layerIndex: number, images: ImageConfig[]) {
-        doorLayers.value[layerIndex] = images;
-    }
+    // Load all images at once
+    // exterior images
+    const exteriorBgImageUrl = computed(() => 
+        doorCalcStore.getSelectedFilm(doorCalcStore.doorConfig.exterior.casingTexture ?? -1)?.image ?? ''
+    );
+    const [exteriorBgImage] = useImage(computed(() => getImageUrl(exteriorBgImageUrl.value)));
+    const exteriorPrimaryImageUrl = computed(() => 
+        doorCalcStore.getSelectedFilm(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)?.image ?? ''
+    );
+    const [exteriorPrimaryImage] = useImage(computed(() => getImageUrl(exteriorPrimaryImageUrl.value)));
+    const exteriorSecondaryImageUrl = computed(() => 
+        doorCalcStore.getSelectedFilm(doorCalcStore.doorConfig.exterior.secondaryTexture ?? -1)?.image ?? ''
+    );
+    const [exteriorSecondaryImage] = useImage(computed(() => getImageUrl(exteriorSecondaryImageUrl.value)));
 
-    function setMaxWidth(width: number) {
-        maxWidth.value = width;
-    }
+    // interior images
+    const interiorBgImageUrl = computed(() => 
+        doorCalcStore.getSelectedFilm(doorCalcStore.doorConfig.interior.casingTexture ?? -1)?.image ?? ''
+    );
+    const [interiorBgImage] = useImage(computed(() => getImageUrl(interiorBgImageUrl.value)));
+    const interiorPrimaryImageUrl = computed(() => 
+        doorCalcStore.getSelectedFilm(doorCalcStore.doorConfig.interior.primaryTexture ?? -1)?.image ?? ''
+    );
+    const [interiorPrimaryImage] = useImage(computed(() => getImageUrl(interiorPrimaryImageUrl.value)));
+    const interiorSecondaryImageUrl = computed(() => 
+        doorCalcStore.getSelectedFilm(doorCalcStore.doorConfig.interior.secondaryTexture ?? -1)?.image ?? ''
+    );
+    const [interiorSecondaryImage] = useImage(computed(() => getImageUrl(interiorSecondaryImageUrl.value)));
+
+    // combine all exterior+interior images
+    const layersImages = computed(() => ({
+        exterior: {
+            background: exteriorBgImage.value, //may be applied to casing texture
+            primary: exteriorPrimaryImage.value, //applies to door itself (where milling is)
+            secondary: exteriorSecondaryImage.value, //applies to decorative element's textured surface (optional)
+        },
+        interior: {
+            background: interiorBgImage.value, //may be applied to casing texture
+            primary: interiorPrimaryImage.value, //applies to door itself (where milling is)
+            secondary: interiorSecondaryImage.value, //applies to decorative element's textured surface (optional)
+        }
+    }));
+    
+    const layersPositioning = computed(() => ({
+        exterior: {
+            //background is whole door's film color (texture). if door texture differs from casing texture, then background is casing texture.
+            background: {
+                x: 0,
+                y: 0,
+                width: stageWidth.value,
+                height: stageHeight.value,
+            },
+            milling: {
+                x: (casing_thickness.value / doorDimensions.value.width) * stageWidth.value,
+                y: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value,
+                width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
+                height: stageHeight.value - (stageHeight.value * (casing_thickness.value / doorDimensions.value.height)),
+                globalCompositeOperation: 'multiply',
+            },
+        },
+        interior: {
+            background: {
+                x: 0,
+                y: 0,
+                width: stageWidth.value,
+                height: stageHeight.value,
+            },
+            milling: {
+                x: (casing_thickness.value / doorDimensions.value.width) * stageWidth.value,
+                y: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value,
+                width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
+                height: stageHeight.value - (stageHeight.value * (casing_thickness.value / doorDimensions.value.height)),
+            },
+        },
+    }));
 
     return {
-        // State
-        doorLayers,
-        maxWidth,
-        
-        // Computed
+        layersPositioning,
+        layersImages,
+        setStageDimensions,
         stageWidth,
         stageHeight,
-        layersThatNeedCaching,
-        ASPECT_RATIO,
-        
-        // Actions
-        setDoorLayers,
-        updateLayer,
-        setMaxWidth,
-    };
-});
-
-// Composable
-export function useDoorVisual() {
-    const store = useDoorVisualStore();
-    const stageKey = ref<number>(0);
-    const layerRefs = ref<any[]>([]);
-
-    // Загружаем все изображения из всех слоев
-    const loadedLayers: ComputedRef<LoadedImageConfig[][]> = computed(() => {
-        return store.doorLayers.map(layer => {
-            return layer.map(imageConfig => {
-                const [loadedImage] = useImage(imageConfig.image);
-                return {
-                    ...imageConfig,
-                    loadedImage,
-                };
-            });
-        });
-    });
-
-    // Проверяем загрузку каждого слоя
-    const layersLoadingStatus: ComputedRef<LayerLoadingStatus[]> = computed(() => {
-        return loadedLayers.value.map((layer, idx) => {
-            const allLoaded = layer.every(img => img.loadedImage.value);
-            return { layerIndex: idx, loaded: allLoaded };
-        });
-    });
-
-    // Кэшируем слои которым это нужно
-    watch(
-        () => loadedLayers.value,
-        async () => {
-            await nextTick();
-            await nextTick();
-
-            store.layersThatNeedCaching.forEach(({ index }) => {
-                const layerRef = layerRefs.value[index];
-                if (layerRef) {
-                    const group = layerRef.getNode();
-                    if (group) {
-                        group.clearCache();
-                        group.cache();
-                        group.getLayer()?.batchDraw();
-                    }
-                }
-            });
-        },
-        { deep: true }
-    );
-
-    // Пересоздаем stage при изменении размера
-    watch(() => store.maxWidth, () => {
-        stageKey.value++;
-    });
-
-    // Helper для установки ref
-    function setLayerRef(index: number, el: any) {
-        if (el) {
-            layerRefs.value[index] = el;
-        }
     }
-
-    return {
-        store,
-        stageKey,
-        loadedLayers,
-        layersLoadingStatus,
-        setLayerRef,
-    };
-}
+});

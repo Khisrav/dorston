@@ -15,8 +15,8 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     const doorConfig = ref<DoorConfig>({
         doorType: 'Apartment',
         doorConstructive: 'Comfort',
-        doorWidth: 2030,
-        doorHeight: 900,
+        doorWidth: 900,
+        doorHeight: 2030,
         doorHandleSide: 'Left',
         doorBoxDesign: 'Opened',
         interior: {
@@ -27,9 +27,9 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         },
         exterior: {
             panelModel: 59, //ВС-6
-            primaryTexture: -1,
+            primaryTexture: 80,
             secondaryTexture: -1,
-            casingTexture: -1,
+            casingTexture: 80,
         },
         metalPainting: {
             undercoat: true,
@@ -42,6 +42,15 @@ export const useDoorCalc = defineStore('doorCalc', () => {
             secondaryLock: '',
             secondaryCylindricalLockMechanism: '',
         },
+    })
+
+    //if primary texture changed, then apply primary texture value to casing texture
+    watch(() => doorConfig.value.interior.primaryTexture, (newTexture) => {
+        doorConfig.value.interior.casingTexture = newTexture
+    })
+    
+    watch(() => doorConfig.value.exterior.primaryTexture, (newTexture) => {
+        doorConfig.value.exterior.casingTexture = newTexture
     })
 
     const isStandard = computed(() => isDoorStandard(doorConfig.value.doorWidth, doorConfig.value.doorHeight))
@@ -61,6 +70,9 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         return doorModels.value.find((model: DoorModel) => model.id === id)
     }
 
+    const getSelectedFilm = (id: number) => filmColors.value.find((film: Nomenclature) => film.id === id)
+    const getSelectedPaint = (id: number) => paints.value.find((paint: Nomenclature) => paint.id === id)
+
     return {
         doorConfig,
         total_price,
@@ -69,5 +81,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         doorModels,
         filmColors,
         getDoorModelInfo,
+        getSelectedFilm,
+        getSelectedPaint,
     }
 })
