@@ -37,31 +37,35 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     // Load all images at once
     // exterior images
     const exteriorBgImageUrl = computed(() => 
-        doorCalcStore.getSelectedFilm(doorCalcStore.doorConfig.exterior.casingTexture ?? -1)?.image ?? ''
+        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.casingTexture ?? -1)?.image ?? ''
     );
     const [exteriorBgImage] = useImage(computed(() => getImageUrl(exteriorBgImageUrl.value)));
     const exteriorPrimaryImageUrl = computed(() => 
-        doorCalcStore.getSelectedFilm(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)?.image ?? ''
+        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)?.image ?? ''
     );
     const [exteriorPrimaryImage] = useImage(computed(() => getImageUrl(exteriorPrimaryImageUrl.value)));
     const exteriorSecondaryImageUrl = computed(() => 
-        doorCalcStore.getSelectedFilm(doorCalcStore.doorConfig.exterior.secondaryTexture ?? -1)?.image ?? ''
+        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.secondaryTexture ?? -1)?.image ?? ''
     );
     const [exteriorSecondaryImage] = useImage(computed(() => getImageUrl(exteriorSecondaryImageUrl.value)));
 
     // interior images
     const interiorBgImageUrl = computed(() => 
-        doorCalcStore.getSelectedFilm(doorCalcStore.doorConfig.interior.casingTexture ?? -1)?.image ?? ''
+        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.interior.casingTexture ?? -1)?.image ?? ''
     );
     const [interiorBgImage] = useImage(computed(() => getImageUrl(interiorBgImageUrl.value)));
     const interiorPrimaryImageUrl = computed(() => 
-        doorCalcStore.getSelectedFilm(doorCalcStore.doorConfig.interior.primaryTexture ?? -1)?.image ?? ''
+        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.interior.primaryTexture ?? -1)?.image ?? ''
     );
     const [interiorPrimaryImage] = useImage(computed(() => getImageUrl(interiorPrimaryImageUrl.value)));
     const interiorSecondaryImageUrl = computed(() => 
-        doorCalcStore.getSelectedFilm(doorCalcStore.doorConfig.interior.secondaryTexture ?? -1)?.image ?? ''
+        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.interior.secondaryTexture ?? -1)?.image ?? ''
     );
     const [interiorSecondaryImage] = useImage(computed(() => getImageUrl(interiorSecondaryImageUrl.value)));
+
+    //casing spacer images are constant (applied to exterior only)
+    const [casingSideSpacerImage] = useImage('assets/casing-side-spacers.png');
+    const [casingTopSpacerImage] = useImage('assets/casing-top-spacers.png');
 
     // combine all exterior+interior images
     const layersImages = computed(() => ({
@@ -69,6 +73,8 @@ export const useDoorVisual = defineStore('doorVisual', () => {
             background: exteriorBgImage.value, //may be applied to casing texture
             primary: exteriorPrimaryImage.value, //applies to door itself (where milling is)
             secondary: exteriorSecondaryImage.value, //applies to decorative element's textured surface (optional)
+            sideSpacers: casingSideSpacerImage.value,
+            topSpacers: casingTopSpacerImage.value,
         },
         interior: {
             background: interiorBgImage.value, //may be applied to casing texture
@@ -92,6 +98,18 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
                 height: stageHeight.value - (stageHeight.value * (casing_thickness.value / doorDimensions.value.height)),
                 globalCompositeOperation: 'multiply',
+            },
+            sideSpacers: {
+                x: casing_thickness.value / doorDimensions.value.width * stageWidth.value,
+                y: casing_thickness.value / doorDimensions.value.height * stageHeight.value,
+                width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
+                height: stageHeight.value - (stageHeight.value * (casing_thickness.value / doorDimensions.value.height)),
+            },
+            topSpacers: {
+                x: casing_thickness.value / doorDimensions.value.width * stageWidth.value,
+                y: 0,
+                width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
+                height: casing_thickness.value,
             },
         },
         interior: {

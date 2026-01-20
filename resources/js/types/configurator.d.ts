@@ -53,4 +53,18 @@ export interface DoorModel {
     image: string;
     type: 'interior' | 'exterior';
     is_thermally_resistant: boolean;
+    has_primary_film_color: boolean;
+    has_secondary_film_color: boolean;
+    has_casing_film_color: boolean;
+    has_primary_paint: boolean;
+    has_secondary_paint: boolean;
+    default_primary_film_color_id?: number;
+    default_secondary_film_color_id?: number;
+    default_casing_film_color_id?: number;
+    default_primary_paint_id?: number;
+    default_secondary_paint_id?: number;
+    milling_image?: string;
+    milling_overflows_to_casing: boolean;
+    decorative_element_image?: string;
+    additional_element_texture_image?: string;
 }

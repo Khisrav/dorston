@@ -15,8 +15,9 @@ class ConfiguratorController extends Controller
             'paints' => Nomenclature::where('nomenclature_category_id', 2)
                 ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id')
                 ->get(),
-            'doorModels' => DoorModel::select('id', 'name', 'image', 'type', 'is_thermally_resistant')
-                ->get(),
+            // 'doorModels' => DoorModel::select('id', 'name', 'image', 'type', 'is_thermally_resistant')
+            //     ->get(),
+            'doorModels' => DoorModel::all(),
             'filmColors' => Nomenclature::where('nomenclature_category_id', 13)
                 ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id')
                 ->get(),

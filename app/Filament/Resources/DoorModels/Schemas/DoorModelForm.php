@@ -41,12 +41,41 @@ class DoorModelForm
                                     ->label('Дверь с терморазрывом')
                                     ->default(false)
                                     ->inline(false),
-                        
+                                
+                                Toggle::make('milling_overflows_to_casing')
+                                    ->label('Фрезеровка переливается на наличник')
+                                    ->default(false)
+                                    ->inline(false)
+                                    ->columnSpan(1),
+                            ]),
+                        Grid::make(4)
+                            ->schema([
                                 FileUpload::make('image')
-                                    ->label('Изображение модели')
+                                    ->label('Превью модели')
                                     ->required()
                                     ->disk('public')
                                     ->directory('door-models')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->maxSize(5120),
+                                FileUpload::make('milling_image')
+                                    ->label('Фрезеровка')
+                                    ->disk('public')
+                                    ->directory('door-models/millings')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->maxSize(5120),
+                                FileUpload::make('additional_element_decor_image')
+                                    ->label('Доп элемент')
+                                    ->disk('public')
+                                    ->directory('door-models/decorative-elements/elements')
+                                    ->image()
+                                    ->imageEditor()
+                                    ->maxSize(5120),
+                                FileUpload::make('additional_element_texture_image')
+                                    ->label('Текстура доп элемента')
+                                    ->disk('public')
+                                    ->directory('door-models/additional-elements/textures')
                                     ->image()
                                     ->imageEditor()
                                     ->maxSize(5120),
