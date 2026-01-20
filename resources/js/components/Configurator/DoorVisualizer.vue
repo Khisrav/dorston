@@ -33,18 +33,32 @@ onMounted(() => {
                     width: doorVisualStore.stageWidth,
                     height: doorVisualStore.stageHeight,
                 }">
+                    <!-- Наличник (фон) -->
                     <v-layer>
                         <v-image :config="{
                             ...doorVisualStore.layersPositioning.exterior.background,
                             image: doorVisualStore.layersImages.exterior.background,
                         }" />
                     </v-layer>
+                    <!-- Фрезеровка -->
                     <v-layer>
                         <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.millingBackground,
+                            ...doorVisualStore.layersPositioning.exterior.doorItself,
                             image: doorVisualStore.layersImages.exterior.millingBackground,
                         }" />
                     </v-layer>
+                    <!-- Доп элемент -->
+                    <v-layer>
+                        <v-image :config="{
+                            ...doorVisualStore.layersPositioning.exterior.doorItself,
+                            image: doorVisualStore.layersImages.exterior.additionalElementDecor,
+                        }" />
+                        <v-image :config="{
+                            ...doorVisualStore.layersPositioning.exterior.doorItself,
+                            image: doorVisualStore.layersImages.exterior.additionalElementTexture,
+                        }" />
+                    </v-layer>
+                    <!-- Зазоры между наличником и дверью -->
                     <v-layer>
                         <v-image :config="{
                             ...doorVisualStore.layersPositioning.exterior.sideSpacers,

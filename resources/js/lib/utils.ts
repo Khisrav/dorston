@@ -63,5 +63,9 @@ export const hasCasingTexture = (type: doorType, isExterior: boolean, modelId: n
     return false
 }
 
+export const hasSecondaryMetalPaint = (modelId: number) => {
+    return [36, 37, 38].includes(modelId) ? true : false
+}
+
 export const getDoorModelImage = (link: string) => link.startsWith('http') ? link : `/storage/${link}`
 export const getImageUrl = (image: string | null) => image ? image.startsWith('http') ? image : `/storage/${image}` : ''

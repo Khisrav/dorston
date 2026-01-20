@@ -2,7 +2,7 @@
 import DoorVisualizer from '@/components/Configurator/DoorVisualizer.vue';
 import { useDoorCalc } from '@/composables/useDoorCalc';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { getDoorModelImage, getImageUrl } from '@/lib/utils';
+import { getDoorModelImage, getImageUrl, hasSecondaryMetalPaint } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { DoorModel, Nomenclature } from '@/types/configurator';
@@ -234,7 +234,7 @@ const showMetalSecondaryDrawer = ref(false);
                         </div>
 
                         <!-- Action buttons -->
-                        <div class="mt-4 sm:mt-6 lg:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
+                        <div class="mt-4 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
                             <div>
                                 <span class="font-medium font-sans text-xl">{{ doorCalcStore.total_price }} ₽</span>
                             </div>
@@ -388,20 +388,34 @@ const showMetalSecondaryDrawer = ref(false);
                             </div>
 
                             <!-- Secondary Metal Color Card -->
-                            <div @click="showMetalSecondaryDrawer = true" 
-                                class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
+                            <div
+                                @click="hasSecondaryMetalPaint(doorCalcStore.doorConfig.exterior.panelModel) ? showMetalSecondaryDrawer = true : null" 
+                                :class="[
+                                    'group flex items-center gap-4 p-3 border-2 transition-all duration-300',
+                                    hasSecondaryMetalPaint(doorCalcStore.doorConfig.exterior.panelModel)
+                                        ? 'border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 cursor-pointer'
+                                        : 'border-black/5 dark:border-white/5 bg-gray-50 dark:bg-white/5 opacity-60 cursor-not-allowed'
+                                ]">
                                 <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
-                                    <img v-if="doorCalcStore.doorConfig.metalPainting?.secondaryColor" 
+                                    <img v-if="doorCalcStore.doorConfig.metalPainting?.secondaryColor && hasSecondaryMetalPaint(doorCalcStore.doorConfig.exterior.panelModel)" 
                                             :src="getImageUrl(doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.secondaryColor)?.image ?? '')" 
                                             class="w-full h-full object-cover" />
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Дополнительный цвет</p>
                                     <p class="font-medium truncate text-black dark:text-white">
-                                        {{ doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting?.secondaryColor)?.name || 'Не выбрано' }}
+                                        {{ hasSecondaryMetalPaint(doorCalcStore.doorConfig.exterior.panelModel) 
+                                            ? (doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting?.secondaryColor)?.name || 'Не выбрано')
+                                            : 'Недоступно' 
+                                        }}
                                     </p>
                                 </div>
-                                <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                <i :class="[
+                                    'pi pi-chevron-right transition-colors',
+                                    hasSecondaryMetalPaint(doorCalcStore.doorConfig.exterior.panelModel)
+                                        ? 'text-gray-300 group-hover:text-black dark:group-hover:text-white'
+                                        : 'text-gray-200'
+                                ]"></i>
                             </div>
                         </div>
                     </div>

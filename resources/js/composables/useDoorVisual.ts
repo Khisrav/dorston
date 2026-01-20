@@ -52,6 +52,14 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.secondaryTexture ?? -1)?.image ?? ''
     );
     const [exteriorSecondaryImage] = useImage(computed(() => getImageUrl(exteriorSecondaryImageUrl.value)));
+    const additionalElementDecorImageUrl = computed(() => 
+        doorCalcStore.getSelectedModel('exterior')?.additional_element_decor_image ?? ''
+    );
+    const [additionalElementDecorImage] = useImage(computed(() => getImageUrl(additionalElementDecorImageUrl.value)));
+    const additionalElementTextureImageUrl = computed(() => 
+        doorCalcStore.getSelectedModel('exterior')?.additional_element_texture_image ?? ''
+    );
+    const [additionalElementTextureImage] = useImage(computed(() => getImageUrl(additionalElementTextureImageUrl.value)));
 
     // interior images
     const interiorBgImageUrl = computed(() => 
@@ -80,6 +88,8 @@ export const useDoorVisual = defineStore('doorVisual', () => {
             secondary: exteriorSecondaryImage.value, //applies to decorative element's textured surface (optional)
             sideSpacers: casingSideSpacerImage.value,
             topSpacers: casingTopSpacerImage.value,
+            additionalElementDecor: additionalElementDecorImage.value,
+            additionalElementTexture: additionalElementTextureImage.value,
         },
         interior: {
             background: interiorBgImage.value, //may be applied to casing texture
@@ -97,7 +107,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 width: stageWidth.value,
                 height: stageHeight.value,
             },
-            millingBackground: {
+            doorItself: {
                 x: (casing_thickness.value / doorDimensions.value.width) * stageWidth.value,
                 y: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value,
                 width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
