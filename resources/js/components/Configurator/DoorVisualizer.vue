@@ -39,6 +39,22 @@ onMounted(() => {
                             image: doorVisualStore.layersImages.exterior.background,
                         }" />
                     </v-layer>
+                    <v-layer>
+                        <v-image :config="{
+                            ...doorVisualStore.layersPositioning.exterior.millingBackground,
+                            image: doorVisualStore.layersImages.exterior.millingBackground,
+                        }" />
+                    </v-layer>
+                    <v-layer>
+                        <v-image :config="{
+                            ...doorVisualStore.layersPositioning.exterior.sideSpacers,
+                            image: doorVisualStore.layersImages.exterior.sideSpacers,
+                        }" />
+                        <v-image :config="{
+                            ...doorVisualStore.layersPositioning.exterior.topSpacers,
+                            image: doorVisualStore.layersImages.exterior.topSpacers,
+                        }" />
+                    </v-layer>
                 </v-stage>
 
                 <v-stage :config="{

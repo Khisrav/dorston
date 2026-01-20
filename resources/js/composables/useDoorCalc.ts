@@ -46,11 +46,14 @@ export const useDoorCalc = defineStore('doorCalc', () => {
 
     //if primary texture changed, then apply primary texture value to casing texture
     watch(() => doorConfig.value.interior.primaryTexture, (newTexture) => {
-        doorConfig.value.interior.casingTexture = newTexture
+        if (doorConfig.value.interior.casingTexture === -1) {
+            doorConfig.value.interior.casingTexture = newTexture
+        }
     })
-    
     watch(() => doorConfig.value.exterior.primaryTexture, (newTexture) => {
-        doorConfig.value.exterior.casingTexture = newTexture
+        if (doorConfig.value.exterior.casingTexture === -1) {
+            doorConfig.value.exterior.casingTexture = newTexture
+        }
     })
 
     const isStandard = computed(() => isDoorStandard(doorConfig.value.doorWidth, doorConfig.value.doorHeight))
@@ -70,8 +73,16 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         return doorModels.value.find((model: DoorModel) => model.id === id)
     }
 
-    const getSelectedFilm = (id: number) => filmColors.value.find((film: Nomenclature) => film.id === id)
-    const getSelectedPaint = (id: number) => paints.value.find((paint: Nomenclature) => paint.id === id)
+    const getFilmColor = (id?: number) => filmColors.value.find((film: Nomenclature) => film.id === id) ?? null
+
+    const getPaintColor = (id?: number) => paints.value.find((paint: Nomenclature) => paint.id === id) ?? null
+
+    const getSelectedModel = (type: 'exterior' | 'interior') => {
+        const modelId = type === 'exterior' 
+            ? doorConfig.value.exterior.panelModel 
+            : doorConfig.value.interior.panelModel;
+        return doorModels.value.find((m: DoorModel) => m.id === modelId);
+    }
 
     return {
         doorConfig,
@@ -81,7 +92,8 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         doorModels,
         filmColors,
         getDoorModelInfo,
-        getSelectedFilm,
-        getSelectedPaint,
+        getFilmColor,
+        getPaintColor,
+        getSelectedModel
     }
 })
