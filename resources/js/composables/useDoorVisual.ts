@@ -40,6 +40,10 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.casingTexture ?? -1)?.image ?? ''
     );
     const [exteriorBgImage] = useImage(computed(() => getImageUrl(exteriorBgImageUrl.value)));
+    const exteriorMillingBackgroundImageUrl = computed(() => 
+        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)?.image ?? ''
+    );
+    const [exteriorMillingBackgroundImage] = useImage(computed(() => getImageUrl(exteriorMillingBackgroundImageUrl.value)));
     const exteriorPrimaryImageUrl = computed(() => 
         doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)?.image ?? ''
     );
@@ -71,6 +75,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const layersImages = computed(() => ({
         exterior: {
             background: exteriorBgImage.value, //may be applied to casing texture
+            millingBackground: exteriorMillingBackgroundImage.value, //applies to door itself (where milling is)
             primary: exteriorPrimaryImage.value, //applies to door itself (where milling is)
             secondary: exteriorSecondaryImage.value, //applies to decorative element's textured surface (optional)
             sideSpacers: casingSideSpacerImage.value,
@@ -92,6 +97,12 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 width: stageWidth.value,
                 height: stageHeight.value,
             },
+            millingBackground: {
+                x: (casing_thickness.value / doorDimensions.value.width) * stageWidth.value,
+                y: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value,
+                width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
+                height: stageHeight.value - (stageHeight.value * (casing_thickness.value / doorDimensions.value.height)),
+            },
             milling: {
                 x: (casing_thickness.value / doorDimensions.value.width) * stageWidth.value,
                 y: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value,
@@ -109,7 +120,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 x: casing_thickness.value / doorDimensions.value.width * stageWidth.value,
                 y: 0,
                 width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
-                height: casing_thickness.value,
+                height: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value + 6,
             },
         },
         interior: {

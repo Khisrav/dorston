@@ -45,8 +45,16 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     })
 
     //if primary texture changed, then apply primary texture value to casing texture
-    watch(() => doorConfig.value.interior.primaryTexture, (newTexture) => doorConfig.value.interior.casingTexture = newTexture)
-    watch(() => doorConfig.value.exterior.primaryTexture, (newTexture) => doorConfig.value.exterior.casingTexture = newTexture)
+    watch(() => doorConfig.value.interior.primaryTexture, (newTexture) => {
+        if (doorConfig.value.interior.casingTexture === -1) {
+            doorConfig.value.interior.casingTexture = newTexture
+        }
+    })
+    watch(() => doorConfig.value.exterior.primaryTexture, (newTexture) => {
+        if (doorConfig.value.exterior.casingTexture === -1) {
+            doorConfig.value.exterior.casingTexture = newTexture
+        }
+    })
 
     const isStandard = computed(() => isDoorStandard(doorConfig.value.doorWidth, doorConfig.value.doorHeight))
 
