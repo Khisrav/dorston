@@ -22,7 +22,7 @@ export interface DoorConfig {
         secondaryTexture?: number;
         casingTexture?: number;
     };
-    metalPainting?: {
+    metalPainting: {
         undercoat?: boolean;
         primaryColor?: number;
         secondaryColor?: number;

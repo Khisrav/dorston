@@ -46,6 +46,7 @@ const doorCalcStore = useDoorCalc()
 doorCalcStore.paints = paints.value
 doorCalcStore.doorModels = doorModels.value
 doorCalcStore.filmColors = filmColors.value
+doorCalcStore.initializeDefaultConfig()
 
 // Computed properties to filter door models
 const exteriorDoorModels = computed(() => {
