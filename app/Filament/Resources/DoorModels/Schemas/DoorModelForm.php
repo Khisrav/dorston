@@ -72,10 +72,10 @@ class DoorModelForm
                                     ->image()
                                     ->imageEditor()
                                     ->maxSize(5120),
-                                FileUpload::make('additional_element_texture_image')
+                                FileUpload::make('additional_element_mask_image')
                                     ->label('Маска доп элемента')
                                     ->disk('public')
-                                    ->directory('door-models/additional-elements/textures')
+                                    ->directory('door-models/additional-elements/masks')
                                     ->image()
                                     ->imageEditor()
                                     ->maxSize(5120),

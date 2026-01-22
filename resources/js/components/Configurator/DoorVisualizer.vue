@@ -29,6 +29,7 @@ onMounted(() => {
         class="border-2 border-black/10 dark:border-white/10 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-800 dark:to-neutral-900 p-6 flex items-center justify-center relative overflow-hidden min-h-[400px]">
         <div ref="visualizerContainerRef" class="w-full h-full">
             <div class="z-10 flex justify-center items-center gap-6">
+                <!-- Exterior stage -->
                 <v-stage :config="{
                     width: doorVisualStore.stageWidth,
                     height: doorVisualStore.stageHeight,
@@ -49,17 +50,19 @@ onMounted(() => {
                     </v-layer>
                     <!-- Доп элемент -->
                     <v-layer>
-                        <v-group ref="additionalElementMaskedGroup">
-                            <!-- <v-image :config="{
-                                ...doorVisualStore.layersPositioning.exterior.doorItself,
-                                image: ,
-                            }" /> -->
+                        <v-group :ref="doorVisualStore.additionalElementMaskedGroupRef" v-if="doorVisualStore.layersImages.exterior.additionalElementTexture && doorVisualStore.layersImages.exterior.additionalElementMask">
                             <v-image :config="{
                                 ...doorVisualStore.layersPositioning.exterior.doorItself,
                                 image: doorVisualStore.layersImages.exterior.additionalElementTexture,
+                            }" />
+                            
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.doorItself,
+                                image: doorVisualStore.layersImages.exterior.additionalElementMask,
                                 globalCompositeOperation: 'destination-in',
                             }" />
                         </v-group>
+                        
                         <v-image :config="{
                             ...doorVisualStore.layersPositioning.exterior.doorItself,
                             image: doorVisualStore.layersImages.exterior.additionalElementDecor,
@@ -82,6 +85,7 @@ onMounted(() => {
                     </v-layer>
                 </v-stage>
 
+                <!-- Interior stage -->
                 <v-stage :config="{
                     width: doorVisualStore.stageWidth,
                     height: doorVisualStore.stageHeight,

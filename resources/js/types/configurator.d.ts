@@ -66,5 +66,5 @@ export interface DoorModel {
     milling_image?: string;
     milling_overflows_to_casing: boolean;
     additional_element_decor_image?: string;
-    additional_element_texture_image?: string;
+    additional_element_mask_image?: string;
 }

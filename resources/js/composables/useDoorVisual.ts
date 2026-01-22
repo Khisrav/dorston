@@ -20,6 +20,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const stageWidth = ref<number>(0);
     const stageHeight = ref<number>(0);
     const casing_thickness = ref<number>(85);
+    const additionalElementMaskedGroupRef = ref<any>(null);
     const doorDimensions = computed(() => {
         return {
             width: doorCalcStore.doorConfig.doorWidth,
@@ -56,15 +57,14 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         doorCalcStore.getSelectedModel('exterior')?.additional_element_decor_image ?? ''
     );
     const [additionalElementDecorImage] = useImage(computed(() => getImageUrl(additionalElementDecorImageUrl.value)));
+    const additionalElementMaskImageUrl = computed(() => 
+        doorCalcStore.getSelectedModel('exterior')?.additional_element_mask_image ?? ''
+    );
+    const [additionalElementMaskImage] = useImage(computed(() => getImageUrl(additionalElementMaskImageUrl.value)));
     const additionalElementTextureImageUrl = computed(() => 
-        doorCalcStore.getSelectedModel('exterior')?.additional_element_texture_image ?? ''
+        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)?.image ?? ''
     );
     const [additionalElementTextureImage] = useImage(computed(() => getImageUrl(additionalElementTextureImageUrl.value)));
-    // const additionalElementMaskImageUrl = computed(() => 
-    //     doorCalcStore.getSelectedModel('exterior')?.additional_element_mask_image ?? ''
-    // );
-    // const [additionalElementMaskImage] = useImage(computed(() => getImageUrl(additionalElementMaskImageUrl.value)));
-
     // interior images
     const interiorBgImageUrl = computed(() => 
         doorCalcStore.getFilmColor(doorCalcStore.doorConfig.interior.casingTexture ?? -1)?.image ?? ''
@@ -93,6 +93,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
             sideSpacers: casingSideSpacerImage.value,
             topSpacers: casingTopSpacerImage.value,
             additionalElementDecor: additionalElementDecorImage.value,
+            additionalElementMask: additionalElementMaskImage.value,
             additionalElementTexture: additionalElementTextureImage.value,
         },
         interior: {
@@ -153,11 +154,32 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         },
     }));
 
+    // Watcher for caching the masked group
+    watch(
+        () => [
+            layersImages.value.exterior.additionalElementTexture,
+            layersImages.value.exterior.additionalElementMask,
+        ],
+        async ([texture, mask]) => {
+            if (texture && mask && additionalElementMaskedGroupRef.value) {
+                await nextTick();
+                await nextTick();
+
+                const group = additionalElementMaskedGroupRef.value.getNode();
+                if (group) {
+                    group.cache();
+                    group.getLayer()?.batchDraw();
+                }
+            }
+        }
+    );
+
     return {
         layersPositioning,
         layersImages,
         setStageDimensions,
         stageWidth,
         stageHeight,
+        additionalElementMaskedGroupRef,
     }
 });
