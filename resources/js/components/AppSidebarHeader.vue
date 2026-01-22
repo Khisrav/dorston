@@ -18,7 +18,7 @@ withDefaults(
         class="elegant-header flex shrink-0 items-center gap-2 border-b border-black/10 dark:border-white/10 bg-white dark:bg-neutral-950 px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4"
     >
         <div class="flex items-center gap-4">
-            <!-- <SidebarTrigger class="-ml-1 elegant-trigger" /> -->
+            <SidebarTrigger class="-ml-1 elegant-trigger" />
             
             <!-- Decorative divider -->
             <!-- <div v-if="breadcrumbs && breadcrumbs.length > 0" class="h-6 w-px bg-black/10 dark:bg-white/10"></div> -->
@@ -36,10 +36,10 @@ withDefaults(
 
 .elegant-header {
     font-family: 'Playfair Display', serif;
-    /* padding-bottom: 18px;
-    padding-top: 18px; */
-    padding-top: 22px;
-    padding-bottom: 22px;
+    padding-bottom: 18px;
+    padding-top: 18px;
+    /* padding-top: 22px;
+    padding-bottom: 22px; */
 }
 
 :deep(.elegant-trigger) {

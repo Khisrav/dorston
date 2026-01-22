@@ -49,13 +49,20 @@ onMounted(() => {
                     </v-layer>
                     <!-- Доп элемент -->
                     <v-layer>
+                        <v-group ref="additionalElementMaskedGroup">
+                            <!-- <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.doorItself,
+                                image: ,
+                            }" /> -->
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.doorItself,
+                                image: doorVisualStore.layersImages.exterior.additionalElementTexture,
+                                globalCompositeOperation: 'destination-in',
+                            }" />
+                        </v-group>
                         <v-image :config="{
                             ...doorVisualStore.layersPositioning.exterior.doorItself,
                             image: doorVisualStore.layersImages.exterior.additionalElementDecor,
-                        }" />
-                        <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.doorItself,
-                            image: doorVisualStore.layersImages.exterior.additionalElementTexture,
                         }" />
                     </v-layer>
                     <!-- Зазоры между наличником и дверью -->
@@ -63,10 +70,14 @@ onMounted(() => {
                         <v-image :config="{
                             ...doorVisualStore.layersPositioning.exterior.sideSpacers,
                             image: doorVisualStore.layersImages.exterior.sideSpacers,
+                            // opacity: 0.75,
+                            globalCompositeOperation: 'multiply',
                         }" />
                         <v-image :config="{
                             ...doorVisualStore.layersPositioning.exterior.topSpacers,
                             image: doorVisualStore.layersImages.exterior.topSpacers,
+                            // opacity: 0.75,
+                            globalCompositeOperation: 'multiply',
                         }" />
                     </v-layer>
                 </v-stage>

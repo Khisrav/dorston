@@ -60,6 +60,10 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         doorCalcStore.getSelectedModel('exterior')?.additional_element_texture_image ?? ''
     );
     const [additionalElementTextureImage] = useImage(computed(() => getImageUrl(additionalElementTextureImageUrl.value)));
+    // const additionalElementMaskImageUrl = computed(() => 
+    //     doorCalcStore.getSelectedModel('exterior')?.additional_element_mask_image ?? ''
+    // );
+    // const [additionalElementMaskImage] = useImage(computed(() => getImageUrl(additionalElementMaskImageUrl.value)));
 
     // interior images
     const interiorBgImageUrl = computed(() => 
@@ -121,13 +125,13 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 globalCompositeOperation: 'multiply',
             },
             sideSpacers: {
-                x: casing_thickness.value / doorDimensions.value.width * stageWidth.value,
-                y: casing_thickness.value / doorDimensions.value.height * stageHeight.value,
+                x: Math.floor(casing_thickness.value / doorDimensions.value.width * stageWidth.value) - 1,
+                y: Math.floor(casing_thickness.value / doorDimensions.value.height * stageHeight.value) - 1,
                 width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
                 height: stageHeight.value - (stageHeight.value * (casing_thickness.value / doorDimensions.value.height)),
             },
             topSpacers: {
-                x: casing_thickness.value / doorDimensions.value.width * stageWidth.value,
+                x: Math.floor(casing_thickness.value / doorDimensions.value.width * stageWidth.value) - 1,
                 y: 0,
                 width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
                 height: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value + 6,
