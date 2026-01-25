@@ -45,6 +45,10 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)?.image ?? ''
     );
     const [exteriorMillingBackgroundImage] = useImage(computed(() => getImageUrl(exteriorMillingBackgroundImageUrl.value)));
+    const exteriorMillingImageUrl = computed(() => 
+        doorCalcStore.getSelectedModel('exterior')?.milling_image ?? ''
+    );
+    const [exteriorMillingImage] = useImage(computed(() => getImageUrl(exteriorMillingImageUrl.value)));
     const exteriorPrimaryImageUrl = computed(() => 
         doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)?.image ?? ''
     );
@@ -62,7 +66,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     );
     const [additionalElementMaskImage] = useImage(computed(() => getImageUrl(additionalElementMaskImageUrl.value)));
     const additionalElementTextureImageUrl = computed(() => 
-        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)?.image ?? ''
+        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.secondaryTexture ?? -1)?.image ?? ''
     );
     const [additionalElementTextureImage] = useImage(computed(() => getImageUrl(additionalElementTextureImageUrl.value)));
     // interior images
@@ -88,6 +92,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         exterior: {
             background: exteriorBgImage.value, //may be applied to casing texture
             millingBackground: exteriorMillingBackgroundImage.value, //applies to door itself (where milling is)
+            milling: exteriorMillingImage.value, //applies to door itself (where milling is)
             primary: exteriorPrimaryImage.value, //applies to door itself (where milling is)
             secondary: exteriorSecondaryImage.value, //applies to decorative element's textured surface (optional)
             sideSpacers: casingSideSpacerImage.value,
@@ -137,6 +142,12 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
                 height: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value + 6,
             },
+            peephole: {
+                x: (doorDimensions.value.width / 2 - 20) * (stageWidth.value / doorDimensions.value.width),
+                y: stageHeight.value - (1600 / doorDimensions.value.height * stageHeight.value),
+                width: 40 / doorDimensions.value.width * stageWidth.value,
+                height: 40 / doorDimensions.value.height * stageHeight.value,
+            }
         },
         interior: {
             background: {
