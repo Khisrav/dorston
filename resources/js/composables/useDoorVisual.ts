@@ -45,9 +45,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)?.image ?? ''
     );
     const [exteriorMillingBackgroundImage] = useImage(computed(() => getImageUrl(exteriorMillingBackgroundImageUrl.value)));
-    const exteriorMillingImageUrl = computed(() => 
-        doorCalcStore.getSelectedModel('exterior')?.milling_image ?? ''
-    );
+    const exteriorMillingImageUrl = computed(() => doorCalcStore.getSelectedModel('exterior')?.milling_image ?? '');
     const [exteriorMillingImage] = useImage(computed(() => getImageUrl(exteriorMillingImageUrl.value)));
     const exteriorPrimaryImageUrl = computed(() => 
         doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)?.image ?? ''
@@ -74,6 +72,12 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         doorCalcStore.getFilmColor(doorCalcStore.doorConfig.interior.casingTexture ?? -1)?.image ?? ''
     );
     const [interiorBgImage] = useImage(computed(() => getImageUrl(interiorBgImageUrl.value)));
+    const interiorMillingBackgroundImageUrl = computed(() => 
+        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)?.image ?? ''
+    );
+    const [interiorMillingBackgroundImage] = useImage(computed(() => getImageUrl(interiorMillingBackgroundImageUrl.value)));
+    const interiorMillingImageUrl = computed(() => doorCalcStore.getSelectedModel('interior')?.milling_image ?? '');
+    const [interiorMillingImage] = useImage(computed(() => getImageUrl(interiorMillingImageUrl.value)));
     const interiorPrimaryImageUrl = computed(() => 
         doorCalcStore.getFilmColor(doorCalcStore.doorConfig.interior.primaryTexture ?? -1)?.image ?? ''
     );
@@ -105,6 +109,8 @@ export const useDoorVisual = defineStore('doorVisual', () => {
             background: interiorBgImage.value, //may be applied to casing texture
             primary: interiorPrimaryImage.value, //applies to door itself (where milling is)
             secondary: interiorSecondaryImage.value, //applies to decorative element's textured surface (optional)
+            millingBackground: interiorMillingBackgroundImage.value, //applies to door itself (where milling is)
+            milling: interiorMillingImage.value, //applies to door itself (where milling is)
         }
     }));
     
@@ -118,10 +124,10 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 height: stageHeight.value,
             },
             doorItself: {
-                x: (casing_thickness.value / doorDimensions.value.width) * stageWidth.value,
-                y: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value,
-                width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
-                height: stageHeight.value - (stageHeight.value * (casing_thickness.value / doorDimensions.value.height)),
+                x: (casing_thickness.value / doorDimensions.value.width) * stageWidth.value + 1,
+                y: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value + 1,
+                width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)) - 2,
+                height: stageHeight.value - (stageHeight.value * (casing_thickness.value / doorDimensions.value.height)) - 2,
             },
             milling: {
                 x: (casing_thickness.value / doorDimensions.value.width) * stageWidth.value,
@@ -131,20 +137,20 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 globalCompositeOperation: 'multiply',
             },
             sideSpacers: {
-                x: Math.floor(casing_thickness.value / doorDimensions.value.width * stageWidth.value) - 1,
-                y: Math.floor(casing_thickness.value / doorDimensions.value.height * stageHeight.value) - 1,
+                x: Math.floor(casing_thickness.value / doorDimensions.value.width * stageWidth.value),
+                y: Math.floor(casing_thickness.value / doorDimensions.value.height * stageHeight.value),
                 width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
                 height: stageHeight.value - (stageHeight.value * (casing_thickness.value / doorDimensions.value.height)),
             },
             topSpacers: {
-                x: Math.floor(casing_thickness.value / doorDimensions.value.width * stageWidth.value) - 1,
+                x: Math.floor(casing_thickness.value / doorDimensions.value.width * stageWidth.value),
                 y: 0,
                 width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
                 height: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value + 6,
             },
             peephole: {
-                x: (doorDimensions.value.width / 2 - 20) * (stageWidth.value / doorDimensions.value.width),
-                y: stageHeight.value - (1600 / doorDimensions.value.height * stageHeight.value),
+                x: (doorDimensions.value.width / 2) * (stageWidth.value / doorDimensions.value.width),
+                y: stageHeight.value - (1400 / doorDimensions.value.height * stageHeight.value),
                 width: 40 / doorDimensions.value.width * stageWidth.value,
                 height: 40 / doorDimensions.value.height * stageHeight.value,
             }
