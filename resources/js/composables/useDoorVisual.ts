@@ -73,7 +73,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     );
     const [interiorBgImage] = useImage(computed(() => getImageUrl(interiorBgImageUrl.value)));
     const interiorMillingBackgroundImageUrl = computed(() => 
-        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)?.image ?? ''
+        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.interior.primaryTexture ?? -1)?.image ?? ''
     );
     const [interiorMillingBackgroundImage] = useImage(computed(() => getImageUrl(interiorMillingBackgroundImageUrl.value)));
     const interiorMillingImageUrl = computed(() => doorCalcStore.getSelectedModel('interior')?.milling_image ?? '');

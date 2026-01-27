@@ -104,6 +104,9 @@ const parametersSummary = computed(() => {
     ]
 })
 
+// View mode: exterior or interior
+const viewMode = ref<'exterior' | 'interior'>('exterior');
+
 // Drawer States
 const showOuterDesignDialog = ref(false);
 const showInnerDesignDialog = ref(false);
@@ -112,6 +115,11 @@ const showFilmSecondaryDrawer = ref(false);
 const showFilmCasingDrawer = ref(false);
 const showMetalPrimaryDrawer = ref(false);
 const showMetalSecondaryDrawer = ref(false);
+
+// Computed properties for current side configuration
+const currentSideConfig = computed(() => {
+    return viewMode.value === 'exterior' ? doorCalcStore.doorConfig.exterior : doorCalcStore.doorConfig.interior;
+});
 </script>
 
 <template>
@@ -250,72 +258,87 @@ const showMetalSecondaryDrawer = ref(false);
                 <!-- Right Column: Options Panel -->
                 <div class="lg:col-span-4 space-y-4">
                     
+                    <!-- View Mode Selector -->
+                    <div class="sticky top-0 z-10 bg-white dark:bg-neutral-900">
+                        <div class="flex items-center justify-center w-full gap-1 border border-black/10 dark:border-white/10 p-1 rounded-none">
+                            <button
+                                @click="viewMode = 'exterior'"
+                                :class="[
+                                    'p-2 sm:p-3 rounded-none bg-none dark:bg-none hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-300 w-full flex items-center justify-center font-serif text-sm sm:text-base tracking-wide',
+                                    viewMode === 'exterior' 
+                                        ? 'bg-black/5 dark:bg-white/5 text-black dark:text-white' 
+                                        : 'text-black/70 dark:text-white/70 hover:bg-black/5 hover:text-black dark:hover:text-white'
+                                ]">
+                                Снаружи
+                            </button>
+                            <button
+                                @click="viewMode = 'interior'"
+                                :class="[
+                                    'p-2 sm:p-3 rounded-none bg-none dark:bg-none hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-300 w-full flex items-center justify-center font-serif text-sm sm:text-base tracking-wide',
+                                    viewMode === 'interior' 
+                                        ? 'bg-black/5 dark:bg-white/5 text-black dark:text-white' 
+                                        : 'text-black/70 dark:text-white/70 hover:bg-black/5 hover:text-black dark:hover:text-white'
+                                ]">
+                                Изнутри
+                            </button>
+                        </div>
+                    </div>
+                    
                     <!-- I. Design Selection -->
                     <div class="space-y-4">
                         <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight border-b pb-2 border-black/10 dark:border-white/10">
                             <span class="italic text-gray-400 mr-2">I.</span> Дизайн отделки
                         </h2>
                         
-                        <div class="grid grid-cols-2 gap-3">
-                            <div @click="showOuterDesignDialog = true" 
-                                class="group flex flex-col items-center gap-2 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                
-                                <div class="w-full aspect-[2/3] relative flex-shrink-0 rounded-sm overflow-hidden flex items-center justify-center">
-                                    <img v-if="doorCalcStore.doorConfig.exterior.panelModel" 
-                                        :src="getDoorModelImage(doorCalcStore.getDoorModelInfo(doorCalcStore.doorConfig.exterior.panelModel)?.image ?? '')" 
-                                        
-                                        class="max-w-full max-h-full w-auto h-auto object-contain mix-blend-multiply dark:mix-blend-normal" />
-                                </div>
-
-                                <div class="text-center w-full">
-                                    <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Снаружи</p>
-                                    <p class="font-medium truncate text-black dark:text-white font-sans">
-                                        {{ doorCalcStore.getDoorModelInfo(doorCalcStore.doorConfig.exterior.panelModel)?.name || 'Не выбрано' }}
-                                    </p>
-                                </div>
-                                <Button variant="outlined" size="small" class="w-full" label="Изменить" />
+                        <!-- Single Design Card that changes based on view mode -->
+                        <div 
+                            @click="viewMode === 'exterior' ? showOuterDesignDialog = true : showInnerDesignDialog = true" 
+                            class="group flex flex-row items-center gap-3 p-4 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
+                            
+                            <div class="w-16 bg-gray-100 dark:bg-neutral-800 relative flex-shrink-0 flex items-center justify-center">
+                                <img v-if="currentSideConfig.panelModel" 
+                                    :src="getDoorModelImage(doorCalcStore.getDoorModelInfo(currentSideConfig.panelModel)?.image ?? '')" 
+                                    class="h-24 object-contain mix-blend-multiply dark:mix-blend-normal" />
                             </div>
 
-                            <div @click="showInnerDesignDialog = true" 
-                                class="group flex flex-col items-center gap-2 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                
-                                <div class="w-full aspect-[2/3] relative flex-shrink-0 rounded-sm overflow-hidden flex items-center justify-center">
-                                    <img v-if="doorCalcStore.doorConfig.interior.panelModel" 
-                                        :src="getDoorModelImage(doorCalcStore.getDoorModelInfo(doorCalcStore.doorConfig.interior.panelModel)?.image ?? '')" 
-                                        
-                                        class="max-w-full max-h-full w-auto h-auto object-contain mix-blend-multiply dark:mix-blend-normal" />
-                                </div>
-
-                                <div class="text-center w-full">
-                                    <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Изнутри</p>
-                                    <p class="font-medium truncate text-black dark:text-white font-sans">
-                                        {{ doorCalcStore.getDoorModelInfo(doorCalcStore.doorConfig.interior.panelModel)?.name || 'Не выбрано' }}
+                            <div class="flex flex-col flex-1 items-start justify-center">
+                                <div class="w-full">
+                                    <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5 text-left">
+                                        {{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }}
+                                    </p>
+                                    <p class="font-medium text-black dark:text-white font-sans text-left">
+                                        {{ doorCalcStore.getDoorModelInfo(currentSideConfig.panelModel)?.name || 'Не выбрано' }}
                                     </p>
                                 </div>
-                                <Button variant="outlined" size="small" class="w-full" label="Изменить" />
+                                <Button variant="outlined" size="small" class="w-full mt-2" label="Изменить дизайн" />
                             </div>
                         </div>
                     </div>
 
                     <!-- II. Film Colors Selection -->
                     <div class="space-y-4">
-                        <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight border-b pb-2 border-black/10 dark:border-white/10">
-                            <span class="italic text-gray-400 mr-2">II.</span> Цвет плёнки
-                        </h2>
+                        <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
+                            <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
+                                <span class="italic text-gray-400 mr-2">II.</span> Цвет плёнки
+                            </h2>
+                            <span class="text-xs font-serif text-gray-400 italic">
+                                {{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }}
+                            </span>
+                        </div>
 
                         <div class="grid grid-cols-1 gap-3">
                             <!-- Primary Texture Card -->
                             <div @click="showFilmPrimaryDrawer = true" 
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
-                                    <img v-if="doorCalcStore.doorConfig.exterior.primaryTexture" 
-                                            :src="getImageUrl(doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture)?.image ?? '')" 
+                                    <img v-if="currentSideConfig.primaryTexture" 
+                                            :src="getImageUrl(doorCalcStore.getFilmColor(currentSideConfig.primaryTexture)?.image ?? '')" 
                                             class="w-full h-full object-cover" />
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Основной цвет</p>
                                     <p class="font-medium truncate text-black dark:text-white">
-                                        {{ doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture)?.name || 'Не выбрано' }}
+                                        {{ currentSideConfig.primaryTexture ? doorCalcStore.getFilmColor(currentSideConfig.primaryTexture)?.name : 'Не выбрано' }}
                                     </p>
                                 </div>
                                 <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
@@ -324,14 +347,14 @@ const showMetalSecondaryDrawer = ref(false);
                             <div @click="showFilmSecondaryDrawer = true" 
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
-                                    <img v-if="doorCalcStore.doorConfig.exterior.secondaryTexture" 
-                                            :src="getImageUrl(doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.secondaryTexture)?.image ?? '')" 
+                                    <img v-if="currentSideConfig.secondaryTexture" 
+                                            :src="getImageUrl(doorCalcStore.getFilmColor(currentSideConfig.secondaryTexture)?.image ?? '')" 
                                             class="w-full h-full object-cover" />
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Дополнительный цвет</p>
                                     <p class="font-medium truncate text-black dark:text-white">
-                                        {{ doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.secondaryTexture)?.name || 'Не выбрано' }}
+                                        {{ currentSideConfig.secondaryTexture ? doorCalcStore.getFilmColor(currentSideConfig.secondaryTexture)?.name : 'Не выбрано' }}
                                     </p>
                                 </div>
                                 <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
@@ -341,14 +364,14 @@ const showMetalSecondaryDrawer = ref(false);
                             <div @click="showFilmCasingDrawer = true" 
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
-                                    <img v-if="doorCalcStore.doorConfig.exterior.casingTexture" 
-                                            :src="getImageUrl(doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.casingTexture)?.image ?? '')" 
+                                    <img v-if="currentSideConfig.casingTexture" 
+                                            :src="getImageUrl(doorCalcStore.getFilmColor(currentSideConfig.casingTexture)?.image ?? '')" 
                                             class="w-full h-full object-cover" />
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Цвет наличника</p>
                                     <p class="font-medium truncate text-black dark:text-white">
-                                        {{ doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.casingTexture)?.name || 'Не выбрано' }}
+                                        {{ currentSideConfig.casingTexture ? doorCalcStore.getFilmColor(currentSideConfig.casingTexture)?.name : 'Не выбрано' }}
                                     </p>
                                 </div>
                                 <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
@@ -382,7 +405,7 @@ const showMetalSecondaryDrawer = ref(false);
                                 <div class="flex-1 min-w-0">
                                     <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Основной цвет</p>
                                     <p class="font-medium truncate text-black dark:text-white">
-                                        {{ doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting?.primaryColor)?.name || 'Не выбрано' }}
+                                        {{ doorCalcStore.doorConfig.metalPainting?.primaryColor ? doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.primaryColor)?.name : 'Не выбрано' }}
                                     </p>
                                 </div>
                                 <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
@@ -406,7 +429,7 @@ const showMetalSecondaryDrawer = ref(false);
                                     <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Дополнительный цвет</p>
                                     <p class="font-medium truncate text-black dark:text-white">
                                         {{ hasSecondaryMetalPaint(doorCalcStore.doorConfig.exterior.panelModel) 
-                                            ? (doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting?.secondaryColor)?.name || 'Не выбрано')
+                                            ? (doorCalcStore.doorConfig.metalPainting?.secondaryColor ? doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.secondaryColor)?.name : 'Не выбрано')
                                             : 'Недоступно' 
                                         }}
                                     </p>
@@ -424,13 +447,13 @@ const showMetalSecondaryDrawer = ref(false);
                 </div>
 
                 <!-- Step timeline -->
-                <div class="lg:col-span-1 border-2 border-black/10 dark:border-white/10 pt-4">
+                <!-- <div class="lg:col-span-1 border-2 border-black/10 dark:border-white/10 pt-4">
                     <Timeline :value="steps" align="center" :pt="{
                         item: {
                             class: 'flex items-center justify-between'
                         }
                     }"></Timeline>
-                </div>
+                </div> -->
             </div>
         </div>
     </AppLayout>
@@ -483,15 +506,22 @@ const showMetalSecondaryDrawer = ref(false);
     <Drawer v-model:visible="showFilmPrimaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
         <template #header>
             <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight font-serif">
-                Цвет плёнки: Основной
+                Цвет плёнки: Основной <span class="text-gray-400">({{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }})</span>
             </h2>
         </template>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 p-1">
             <div v-for="(panel, idx) in filmColors" :key="idx" 
-                @click="() => { doorCalcStore.doorConfig.exterior.primaryTexture = panel.id; showFilmPrimaryDrawer = false; }"
+                @click="() => { 
+                    if (viewMode === 'exterior') {
+                        doorCalcStore.doorConfig.exterior.primaryTexture = panel.id;
+                    } else {
+                        doorCalcStore.doorConfig.interior.primaryTexture = panel.id;
+                    }
+                    showFilmPrimaryDrawer = false; 
+                }"
                 :class="[
                     'group cursor-pointer border transition-all duration-300 aspect-video',
-                    doorCalcStore.doorConfig.exterior.primaryTexture === panel.id
+                    currentSideConfig.primaryTexture === panel.id
                         ? 'border-black/40 dark:border-white/40 border-2'
                         : 'border-transparent dark:border-transparent hover:border-black/40 dark:hover:border-white/40 border-2'
                 ]">
@@ -505,15 +535,22 @@ const showMetalSecondaryDrawer = ref(false);
     <Drawer v-model:visible="showFilmSecondaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
         <template #header>
             <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight font-serif">
-                Цвет плёнки: Дополнительный
+                Цвет плёнки: Дополнительный <span class="text-gray-400">({{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }})</span>
             </h2>
         </template>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 p-1">
             <div v-for="(panel, idx) in filmColors" :key="idx" 
-                @click="() => { doorCalcStore.doorConfig.exterior.secondaryTexture = panel.id; showFilmSecondaryDrawer = false; }"
+                @click="() => { 
+                    if (viewMode === 'exterior') {
+                        doorCalcStore.doorConfig.exterior.secondaryTexture = panel.id;
+                    } else {
+                        doorCalcStore.doorConfig.interior.secondaryTexture = panel.id;
+                    }
+                    showFilmSecondaryDrawer = false; 
+                }"
                 :class="[
                     'group cursor-pointer border transition-all duration-300 aspect-video',
-                    doorCalcStore.doorConfig.exterior.secondaryTexture === panel.id
+                    currentSideConfig.secondaryTexture === panel.id
                         ? 'border-black/40 dark:border-white/40 border-2'
                         : 'border-transparent dark:border-transparent hover:border-black/40 dark:hover:border-white/40 border-2'
                 ]">
@@ -527,15 +564,22 @@ const showMetalSecondaryDrawer = ref(false);
     <Drawer v-model:visible="showFilmCasingDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
         <template #header>
             <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight font-serif">
-                Цвет плёнки: Наличник
+                Цвет плёнки: Наличник <span class="text-gray-400">({{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }})</span>
             </h2>
         </template>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 p-1">
             <div v-for="(panel, idx) in filmColors" :key="idx" 
-                @click="() => { doorCalcStore.doorConfig.exterior.casingTexture = panel.id; showFilmCasingDrawer = false; }"
+                @click="() => { 
+                    if (viewMode === 'exterior') {
+                        doorCalcStore.doorConfig.exterior.casingTexture = panel.id;
+                    } else {
+                        doorCalcStore.doorConfig.interior.casingTexture = panel.id;
+                    }
+                    showFilmCasingDrawer = false; 
+                }"
                 :class="[
                     'group cursor-pointer border transition-all duration-300 aspect-video',
-                    doorCalcStore.doorConfig.exterior.casingTexture === panel.id
+                    currentSideConfig.casingTexture === panel.id
                         ? 'border-black/40 dark:border-white/40 border-2'
                         : 'border-transparent dark:border-transparent hover:border-black/40 dark:hover:border-white/40 border-2'
                 ]">
