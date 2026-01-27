@@ -68,4 +68,4 @@ export const hasSecondaryMetalPaint = (modelId: number) => {
 }
 
 export const getDoorModelImage = (link: string) => link.startsWith('http') ? link : `/storage/${link}`
-export const getImageUrl = (image: string | null) => image ? image.startsWith('http') ? image : `/storage/${image}` : ''
+export const getImageUrl = (image: string | null) => image ? image.startsWith('http') ? image : `/storage/${image}` : '/assets/placeholder.png'

@@ -377,7 +377,7 @@ const currentSideConfig = computed(() => {
                                 <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                             </div>
                         </div>
-                    
+                    </div>
 
                     <!-- III. Metal Painting Selection -->
                     <div class="space-y-4">
@@ -443,7 +443,6 @@ const currentSideConfig = computed(() => {
                             </div>
                         </div>
                     </div>
-                </div>
                 </div>
 
                 <!-- Step timeline -->
