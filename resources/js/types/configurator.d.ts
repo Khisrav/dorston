@@ -22,7 +22,7 @@ export interface DoorConfig {
         secondaryTexture?: number;
         casingTexture?: number;
     };
-    metalPainting?: {
+    metalPainting: {
         undercoat?: boolean;
         primaryColor?: number;
         secondaryColor?: number;
@@ -65,6 +65,6 @@ export interface DoorModel {
     default_secondary_paint_id?: number;
     milling_image?: string;
     milling_overflows_to_casing: boolean;
-    decorative_element_image?: string;
-    additional_element_texture_image?: string;
+    additional_element_decor_image?: string;
+    additional_element_mask_image?: string;
 }

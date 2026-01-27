@@ -29,45 +29,117 @@ onMounted(() => {
         class="border-2 border-black/10 dark:border-white/10 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-800 dark:to-neutral-900 p-6 flex items-center justify-center relative overflow-hidden min-h-[400px]">
         <div ref="visualizerContainerRef" class="w-full h-full">
             <div class="z-10 flex justify-center items-center gap-6">
+                <!-- Exterior stage -->
                 <v-stage :config="{
                     width: doorVisualStore.stageWidth,
                     height: doorVisualStore.stageHeight,
                 }">
+                    <!-- Наличник (фон) -->
                     <v-layer>
                         <v-image :config="{
                             ...doorVisualStore.layersPositioning.exterior.background,
                             image: doorVisualStore.layersImages.exterior.background,
                         }" />
                     </v-layer>
+                    <!-- Фрезеровка -->
                     <v-layer>
                         <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.millingBackground,
+                            ...doorVisualStore.layersPositioning.exterior.doorItself,
                             image: doorVisualStore.layersImages.exterior.millingBackground,
                         }" />
+                        <v-image :config="{
+                            ...doorVisualStore.layersPositioning.exterior.doorItself,
+                            image: doorVisualStore.layersImages.exterior.milling,
+                            globalCompositeOperation: 'multiply',
+                            opacity: 0.5,
+                        }" />
                     </v-layer>
+                    <!-- Доп элемент -->
+                    <v-layer>
+                        <v-image :config="{
+                            ...doorVisualStore.layersPositioning.exterior.doorItself,
+                            image: doorVisualStore.layersImages.exterior.additionalElementDecor,
+                        }" />
+                    </v-layer>
+                    <v-layer>
+                        <v-group :ref="doorVisualStore.additionalElementMaskedGroupRef" v-if="doorVisualStore.layersImages.exterior.additionalElementTexture && doorVisualStore.layersImages.exterior.additionalElementMask">
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.doorItself,
+                                image: doorVisualStore.layersImages.exterior.additionalElementTexture,
+                            }" />
+                            
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.doorItself,
+                                image: doorVisualStore.layersImages.exterior.additionalElementMask,
+                                globalCompositeOperation: 'destination-in',
+                            }" />
+                        </v-group>
+                    </v-layer>
+                    <!-- Зазоры между наличником и дверью -->
                     <v-layer>
                         <v-image :config="{
                             ...doorVisualStore.layersPositioning.exterior.sideSpacers,
                             image: doorVisualStore.layersImages.exterior.sideSpacers,
+                            // opacity: 0.75,
+                            globalCompositeOperation: 'multiply',
                         }" />
                         <v-image :config="{
                             ...doorVisualStore.layersPositioning.exterior.topSpacers,
                             image: doorVisualStore.layersImages.exterior.topSpacers,
+                            // opacity: 0.75,
+                            globalCompositeOperation: 'multiply',
+                        }" />
+                    </v-layer>
+
+                    <!-- Глазок, ручка, петли, ночник и т.д. -->
+                    <v-layer>
+                        <v-circle :config="{
+                            ...doorVisualStore.layersPositioning.exterior.peephole,
+                            fill: 'red',
                         }" />
                     </v-layer>
                 </v-stage>
 
+                <!-- Interior stage -->
                 <v-stage :config="{
                     width: doorVisualStore.stageWidth,
                     height: doorVisualStore.stageHeight,
                 }">
+                    <!-- Наличник (фон) -->
                     <v-layer>
-                        <v-rect :x="0" :y="0" :width="doorVisualStore.layersPositioning.interior.background.width"
-                            :height="doorVisualStore.layersPositioning.interior.background.height" fill="blue" />
-                        <v-rect :x="doorVisualStore.layersPositioning.interior.milling.x"
-                            :y="doorVisualStore.layersPositioning.interior.milling.y"
-                            :width="doorVisualStore.layersPositioning.interior.milling.width"
-                            :height="doorVisualStore.layersPositioning.interior.milling.height" fill="yellow" />
+                        <v-image :config="{
+                            ...doorVisualStore.layersPositioning.exterior.background,
+                            image: doorVisualStore.layersImages.exterior.background,
+                        }" />
+                    </v-layer>
+                    <!-- Фрезеровка -->
+                    <v-layer>
+                        <v-image :config="{
+                            ...doorVisualStore.layersPositioning.exterior.doorItself,
+                            image: doorVisualStore.layersImages.interior.millingBackground,
+                        }" />
+                        <v-image :config="{
+                            ...doorVisualStore.layersPositioning.exterior.doorItself,
+                            image: doorVisualStore.layersImages.interior.milling,
+                            globalCompositeOperation: 'multiply',
+                            opacity: 0.5,
+                        }" />
+                    </v-layer>
+                    <!-- Зазоры между наличником и дверью -->
+                    <v-layer>
+                        <v-image :config="{
+                            ...doorVisualStore.layersPositioning.exterior.sideSpacers,
+                            image: doorVisualStore.layersImages.exterior.sideSpacers,
+                            // opacity: 0.75,
+                            globalCompositeOperation: 'multiply',
+                        }" />
+                    </v-layer>
+                    <!-- Глазок, ручка, петли, ночник и т.д. -->
+                    <v-layer>
+                        <v-circle :config="{
+                            ...doorVisualStore.layersPositioning.exterior.peephole,
+                            fill: 'red',
+                        }" />
                     </v-layer>
                 </v-stage>
             </div>
