@@ -22,9 +22,9 @@ class NomenclatureResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
     protected static string|UnitEnum|null $navigationGroup = 'Номенклатуры';
 
-    protected static ?string $navigationLabel = 'Номенклатура';
-    protected static ?string $pluralNavigationLabel = 'Номенклатура';
-    protected static ?string $pluralModelLabel = 'Номенклатура';
+    protected static ?string $navigationLabel = 'Номенклатуры';
+    protected static ?string $pluralNavigationLabel = 'Номенклатуры';
+    protected static ?string $pluralModelLabel = 'Номенклатуры';
     protected static ?string $modelLabel = 'Номенклатура';
 
     public static function form(Schema $schema): Schema
