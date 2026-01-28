@@ -9,6 +9,8 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     const paints = ref<Nomenclature[]>([]);
     const doorModels = ref<DoorModel[]>([]);
     const filmColors = ref<Nomenclature[]>([]);
+    const furnitures = ref<Nomenclature[]>([]);
+    const handles = ref<Nomenclature[]>([]);
 
     const total_price = ref(0)
 
@@ -119,10 +121,12 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         paints,
         doorModels,
         filmColors,
+        furnitures,
+        handles,
         getDoorModelInfo,
         getFilmColor,
         getPaintColor,
         getSelectedModel,
-        initializeDefaultConfig
+        initializeDefaultConfig,
     }
 })

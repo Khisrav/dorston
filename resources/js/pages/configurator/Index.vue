@@ -41,11 +41,15 @@ const steps = ref([
 const paints = ref(usePage().props.paints as Nomenclature[])
 const doorModels = ref(usePage().props.doorModels as DoorModel[])
 const filmColors = ref(usePage().props.filmColors as Nomenclature[])
+const furnitures = ref(usePage().props.furnitures as Nomenclature[])
+const handles = ref(usePage().props.handles as Nomenclature[])
 
 const doorCalcStore = useDoorCalc()
 doorCalcStore.paints = paints.value
 doorCalcStore.doorModels = doorModels.value
 doorCalcStore.filmColors = filmColors.value
+doorCalcStore.furnitures = furnitures.value
+doorCalcStore.handles = handles.value
 doorCalcStore.initializeDefaultConfig()
 
 // Computed properties to filter door models
@@ -120,6 +124,23 @@ const showMetalSecondaryDrawer = ref(false);
 const currentSideConfig = computed(() => {
     return viewMode.value === 'exterior' ? doorCalcStore.doorConfig.exterior : doorCalcStore.doorConfig.interior;
 });
+
+// Computed properties to check if current door model has color options
+const currentDoorModel = computed(() => {
+    const modelId = currentSideConfig.value.panelModel;
+    return doorCalcStore.getDoorModelInfo(modelId);
+});
+
+const exteriorDoorModel = computed(() => {
+    const modelId = doorCalcStore.doorConfig.exterior.panelModel;
+    return doorCalcStore.getDoorModelInfo(modelId);
+});
+
+const hasPrimaryFilmColor = computed(() => currentDoorModel.value?.has_primary_film_color ?? false);
+const hasSecondaryFilmColor = computed(() => currentDoorModel.value?.has_secondary_film_color ?? false);
+const hasCasingFilmColor = computed(() => currentDoorModel.value?.has_casing_film_color ?? false);
+const hasPrimaryPaint = computed(() => exteriorDoorModel.value?.has_primary_paint ?? false);
+const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_paint ?? false);
 </script>
 
 <template>
@@ -316,7 +337,7 @@ const currentSideConfig = computed(() => {
                     </div>
 
                     <!-- II. Film Colors Selection -->
-                    <div class="space-y-4">
+                    <div v-if="hasPrimaryFilmColor || hasSecondaryFilmColor || hasCasingFilmColor" class="space-y-4">
                         <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
                             <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
                                 <span class="italic text-gray-400 mr-2">II.</span> Цвет плёнки
@@ -328,7 +349,7 @@ const currentSideConfig = computed(() => {
 
                         <div class="grid grid-cols-1 gap-3">
                             <!-- Primary Texture Card -->
-                            <div @click="showFilmPrimaryDrawer = true" 
+                            <div v-if="hasPrimaryFilmColor" @click="showFilmPrimaryDrawer = true" 
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                     <img v-if="currentSideConfig.primaryTexture" 
@@ -344,7 +365,7 @@ const currentSideConfig = computed(() => {
                                 <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                             </div>
                             <!-- Secondary Texture Card -->
-                            <div @click="showFilmSecondaryDrawer = true" 
+                            <div v-if="hasSecondaryFilmColor" @click="showFilmSecondaryDrawer = true" 
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                     <img v-if="currentSideConfig.secondaryTexture" 
@@ -361,7 +382,7 @@ const currentSideConfig = computed(() => {
                             </div>
 
                             <!-- Casing Texture Card -->
-                            <div @click="showFilmCasingDrawer = true" 
+                            <div v-if="hasCasingFilmColor" @click="showFilmCasingDrawer = true" 
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                     <img v-if="currentSideConfig.casingTexture" 
@@ -380,7 +401,7 @@ const currentSideConfig = computed(() => {
                     </div>
 
                     <!-- III. Metal Painting Selection -->
-                    <div class="space-y-4">
+                    <div v-if="viewMode === 'exterior' && (hasPrimaryPaint || hasSecondaryPaint)" class="space-y-4">
                         <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
                             <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
                                 <span class="italic text-gray-400 mr-2">III.</span> Покраска металла
@@ -388,14 +409,14 @@ const currentSideConfig = computed(() => {
                         </div>
                         
                         <!-- Undercoat Toggle -->
-                        <div class="flex items-center justify-between py-2">
+                        <div v-if="hasPrimaryPaint || hasSecondaryPaint" class="flex items-center justify-between py-2">
                             <span class="font-serif text-sm text-gray-700 dark:text-gray-300">Цинкогрунтование</span>
                             <ToggleSwitch v-model="doorCalcStore.doorConfig.metalPainting!.undercoat" />
                         </div>
 
                         <div class="grid grid-cols-1 gap-3">
                             <!-- Primary Metal Color Card -->
-                            <div @click="showMetalPrimaryDrawer = true" 
+                            <div v-if="hasPrimaryPaint" @click="showMetalPrimaryDrawer = true" 
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                     <img v-if="doorCalcStore.doorConfig.metalPainting?.primaryColor" 
@@ -412,34 +433,21 @@ const currentSideConfig = computed(() => {
                             </div>
 
                             <!-- Secondary Metal Color Card -->
-                            <div
-                                @click="hasSecondaryMetalPaint(doorCalcStore.doorConfig.exterior.panelModel) ? showMetalSecondaryDrawer = true : null" 
-                                :class="[
-                                    'group flex items-center gap-4 p-3 border-2 transition-all duration-300',
-                                    hasSecondaryMetalPaint(doorCalcStore.doorConfig.exterior.panelModel)
-                                        ? 'border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 cursor-pointer'
-                                        : 'border-black/5 dark:border-white/5 bg-gray-50 dark:bg-white/5 opacity-60 cursor-not-allowed'
-                                ]">
+                            <div v-if="hasSecondaryPaint"
+                                @click="showMetalSecondaryDrawer = true" 
+                                class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
-                                    <img v-if="doorCalcStore.doorConfig.metalPainting?.secondaryColor && hasSecondaryMetalPaint(doorCalcStore.doorConfig.exterior.panelModel)" 
+                                    <img v-if="doorCalcStore.doorConfig.metalPainting?.secondaryColor" 
                                             :src="getImageUrl(doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.secondaryColor)?.image ?? '')" 
                                             class="w-full h-full object-cover" />
                                 </div>
                                 <div class="flex-1 min-w-0">
                                     <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Дополнительный цвет</p>
                                     <p class="font-medium truncate text-black dark:text-white">
-                                        {{ hasSecondaryMetalPaint(doorCalcStore.doorConfig.exterior.panelModel) 
-                                            ? (doorCalcStore.doorConfig.metalPainting?.secondaryColor ? doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.secondaryColor)?.name : 'Не выбрано')
-                                            : 'Недоступно' 
-                                        }}
+                                        {{ doorCalcStore.doorConfig.metalPainting?.secondaryColor ? doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.secondaryColor)?.name : 'Не выбрано' }}
                                     </p>
                                 </div>
-                                <i :class="[
-                                    'pi pi-chevron-right transition-colors',
-                                    hasSecondaryMetalPaint(doorCalcStore.doorConfig.exterior.panelModel)
-                                        ? 'text-gray-300 group-hover:text-black dark:group-hover:text-white'
-                                        : 'text-gray-200'
-                                ]"></i>
+                                <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                             </div>
                         </div>
                     </div>

@@ -3,6 +3,7 @@ import { ref, watch, nextTick, computed, Ref, ComputedRef } from 'vue';
 import { useImage } from 'vue-konva';
 import { useDoorCalc } from "./useDoorCalc";
 import { getImageUrl } from "@/lib/utils";
+import { doorHandleSide } from "@/types/configurator";
 
 // Helper to load multiple images
 function useImages(paths: string[]) {
@@ -90,6 +91,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     //casing spacer images are constant (applied to exterior only)
     const [casingSideSpacerImage] = useImage('assets/casing-side-spacers.png');
     const [casingTopSpacerImage] = useImage('assets/casing-top-spacers.png');
+    const [doorsillImage] = useImage('assets/porog.png');
 
     // combine all exterior+interior images
     const layersImages = computed(() => ({
@@ -104,6 +106,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
             additionalElementDecor: additionalElementDecorImage.value,
             additionalElementMask: additionalElementMaskImage.value,
             additionalElementTexture: additionalElementTextureImage.value,
+            doorsill: doorsillImage.value,
         },
         interior: {
             background: interiorBgImage.value, //may be applied to casing texture
@@ -113,6 +116,14 @@ export const useDoorVisual = defineStore('doorVisual', () => {
             milling: interiorMillingImage.value, //applies to door itself (where milling is)
         }
     }));
+
+    const furniturePositioningOnXAxis = (type: 'exterior' | 'interior', doorHandleSide: doorHandleSide) => {
+        if (doorHandleSide === 'Left') {
+            return type === 'exterior' ? 0 : stageWidth.value;
+        } else {
+            return type === 'exterior' ? stageWidth.value : 0;
+        }
+    }
     
     const layersPositioning = computed(() => ({
         exterior: {
@@ -137,13 +148,13 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 globalCompositeOperation: 'multiply',
             },
             sideSpacers: {
-                x: Math.floor(casing_thickness.value / doorDimensions.value.width * stageWidth.value),
-                y: Math.floor(casing_thickness.value / doorDimensions.value.height * stageHeight.value),
+                x: (casing_thickness.value / doorDimensions.value.width * stageWidth.value),
+                y: (casing_thickness.value / doorDimensions.value.height * stageHeight.value),
                 width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
                 height: stageHeight.value - (stageHeight.value * (casing_thickness.value / doorDimensions.value.height)),
             },
             topSpacers: {
-                x: Math.floor(casing_thickness.value / doorDimensions.value.width * stageWidth.value),
+                x: (casing_thickness.value / doorDimensions.value.width * stageWidth.value),
                 y: 0,
                 width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
                 height: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value + 6,
@@ -153,6 +164,12 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 y: stageHeight.value - (1400 / doorDimensions.value.height * stageHeight.value),
                 width: 40 / doorDimensions.value.width * stageWidth.value,
                 height: 40 / doorDimensions.value.height * stageHeight.value,
+            },
+            doorsill: {
+                x: (casing_thickness.value / doorDimensions.value.width) * stageWidth.value + 1,
+                y: stageHeight.value - (35 / doorDimensions.value.height * stageHeight.value),
+                width: (stageWidth.value - 2 * (casing_thickness.value / doorDimensions.value.width) * stageWidth.value) - 3,
+                height: 35 / doorDimensions.value.height * stageHeight.value,
             }
         },
         interior: {
