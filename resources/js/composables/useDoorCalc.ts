@@ -9,14 +9,16 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     const paints = ref<Nomenclature[]>([]);
     const doorModels = ref<DoorModel[]>([]);
     const filmColors = ref<Nomenclature[]>([]);
+    const furnitures = ref<Nomenclature[]>([]);
+    const handles = ref<Nomenclature[]>([]);
 
     const total_price = ref(0)
 
     const doorConfig = ref<DoorConfig>({
         doorType: 'Apartment',
         doorConstructive: 'Comfort',
-        doorWidth: 900,
-        doorHeight: 2030,
+        doorWidth: 960,
+        doorHeight: 2050,
         doorHandleSide: 'Left',
         doorBoxDesign: 'Opened',
         interior: {
@@ -37,10 +39,10 @@ export const useDoorCalc = defineStore('doorCalc', () => {
             secondaryColor: -1,
         },
         furniture: {
-            primaryLock: '',
-            primaryCylindricalLockMechanism: '',
-            secondaryLock: '',
-            secondaryCylindricalLockMechanism: '',
+            primaryLock: -1,
+            primaryCylindricalLockMechanism: -1,
+            secondaryLock: -1,
+            secondaryCylindricalLockMechanism: -1,
         },
     })
 
@@ -119,10 +121,12 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         paints,
         doorModels,
         filmColors,
+        furnitures,
+        handles,
         getDoorModelInfo,
         getFilmColor,
         getPaintColor,
         getSelectedModel,
-        initializeDefaultConfig
+        initializeDefaultConfig,
     }
 })

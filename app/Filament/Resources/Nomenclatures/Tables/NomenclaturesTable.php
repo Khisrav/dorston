@@ -17,6 +17,10 @@ class NomenclaturesTable
     {
         return $table
             ->columns([
+                ImageColumn::make('image')
+                    ->disk('public')
+                    ->height(64)
+                    ->label(''),
                 TextColumn::make('id')
                     ->label('ID')
                     ->sortable()
@@ -25,19 +29,16 @@ class NomenclaturesTable
                     ->label('Название')
                     ->searchable(),
                 TextColumn::make('nomenclature_category_id')
-                    ->label('ID категории')
-                    ->numeric()
+                    ->label('Категория')
+                    // ->badge()
+                    ->formatStateUsing(fn (int $state) => NomenclatureCategory::find($state)?->name)
                     ->sortable(),
-                ImageColumn::make('image')
-                    ->disk('public')
-                    ->height(64)
-                    ->label('Изображение'),
                 TextColumn::make('base_price')
                     ->label('Базовая цена')
-                    ->money()
+                    ->money('RUB')
                     ->sortable(),
                 TextColumn::make('unit')
-                    ->label('Единица измерения')
+                    ->label('Ед. изм.')
                     ->badge(),
                 TextColumn::make('created_at')
                     ->label('Создан')

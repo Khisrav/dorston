@@ -78,6 +78,10 @@ onMounted(() => {
                     <!-- Зазоры между наличником и дверью -->
                     <v-layer>
                         <v-image :config="{
+                            ...doorVisualStore.layersPositioning.exterior.doorsill,
+                            image: doorVisualStore.layersImages.exterior.doorsill,
+                        }" />
+                        <v-image :config="{
                             ...doorVisualStore.layersPositioning.exterior.sideSpacers,
                             image: doorVisualStore.layersImages.exterior.sideSpacers,
                             // opacity: 0.75,
@@ -127,6 +131,10 @@ onMounted(() => {
                     </v-layer>
                     <!-- Зазоры между наличником и дверью -->
                     <v-layer>
+                        <v-image :config="{
+                            ...doorVisualStore.layersPositioning.exterior.doorsill,
+                            image: doorVisualStore.layersImages.exterior.doorsill,
+                        }" />
                         <v-image :config="{
                             ...doorVisualStore.layersPositioning.exterior.sideSpacers,
                             image: doorVisualStore.layersImages.exterior.sideSpacers,
