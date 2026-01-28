@@ -28,11 +28,10 @@ export interface DoorConfig {
         secondaryColor?: number;
     }
     furniture: {
-        primaryLock: string;
-        primaryCylindricalLockMechanism: string;
-        secondaryLock?: string;
-        secondaryCylindricalLockMechanism?: string;
-        // hinges?: string;
+        primaryLock?: number;
+        primaryCylindricalLockMechanism?: number;
+        secondaryLock?: number;
+        secondaryCylindricalLockMechanism?: number;
     }
 }
 

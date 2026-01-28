@@ -17,8 +17,8 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     const doorConfig = ref<DoorConfig>({
         doorType: 'Apartment',
         doorConstructive: 'Comfort',
-        doorWidth: 900,
-        doorHeight: 2030,
+        doorWidth: 960,
+        doorHeight: 2050,
         doorHandleSide: 'Left',
         doorBoxDesign: 'Opened',
         interior: {
@@ -39,10 +39,10 @@ export const useDoorCalc = defineStore('doorCalc', () => {
             secondaryColor: -1,
         },
         furniture: {
-            primaryLock: '',
-            primaryCylindricalLockMechanism: '',
-            secondaryLock: '',
-            secondaryCylindricalLockMechanism: '',
+            primaryLock: -1,
+            primaryCylindricalLockMechanism: -1,
+            secondaryLock: -1,
+            secondaryCylindricalLockMechanism: -1,
         },
     })
 
