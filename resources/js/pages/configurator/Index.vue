@@ -8,7 +8,8 @@ import { type BreadcrumbItem } from '@/types';
 import { DoorModel, Nomenclature } from '@/types/configurator';
 import { usePage } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
-import { SelectButton, InputNumber, Dialog, Drawer, ToggleSwitch, Button, Timeline } from 'primevue';
+import { PlusIcon } from 'lucide-vue-next';
+import { SelectButton, InputNumber, Dialog, Drawer, ToggleSwitch, Button, Timeline, Select } from 'primevue';
 import { computed, ref, watchEffect, onMounted, onUnmounted } from 'vue';
 import { useImage } from 'vue-konva';
 
@@ -42,6 +43,7 @@ const paints = ref(usePage().props.paints as Nomenclature[])
 const doorModels = ref(usePage().props.doorModels as DoorModel[])
 const filmColors = ref(usePage().props.filmColors as Nomenclature[])
 const furnitures = ref(usePage().props.furnitures as Nomenclature[])
+const locks = ref(usePage().props.locks as { primary: Nomenclature[], secondary: Nomenclature[] })
 const handles = ref(usePage().props.handles as Nomenclature[])
 
 const doorCalcStore = useDoorCalc()
@@ -50,6 +52,7 @@ doorCalcStore.doorModels = doorModels.value
 doorCalcStore.filmColors = filmColors.value
 doorCalcStore.furnitures = furnitures.value
 doorCalcStore.handles = handles.value
+doorCalcStore.locks = locks.value
 doorCalcStore.initializeDefaultConfig()
 
 // Computed properties to filter door models
@@ -91,6 +94,9 @@ const boxDesignOptions = [
     { label: 'Закрытый', value: 'Closed' }
 ];
 
+const primaryLocks = computed(() => doorCalcStore.locks.primary);
+const secondaryLocks = computed(() => doorCalcStore.locks.secondary);
+
 const parametersSummary = computed(() => {
     let doorWidth = doorCalcStore.doorConfig.doorWidth
     let doorHeight = doorCalcStore.doorConfig.doorHeight
@@ -119,6 +125,8 @@ const showFilmSecondaryDrawer = ref(false);
 const showFilmCasingDrawer = ref(false);
 const showMetalPrimaryDrawer = ref(false);
 const showMetalSecondaryDrawer = ref(false);
+const showPrimaryLockDrawer = ref(false);
+const showSecondaryLockDrawer = ref(false);
 
 // Computed properties for current side configuration
 const currentSideConfig = computed(() => {
@@ -277,7 +285,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                 </div>
 
                 <!-- Right Column: Options Panel -->
-                <div class="lg:col-span-4 space-y-4">
+                <div class="lg:col-span-5 space-y-4">
                     <div class="space-y-4">   
                         <!-- View Mode Selector -->
                         <div class="sticky top-0 z-10 bg-white dark:bg-neutral-900">
@@ -314,7 +322,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                             <!-- Single Design Card that changes based on view mode -->
                             <div 
                                 @click="viewMode === 'exterior' ? showOuterDesignDialog = true : showInnerDesignDialog = true" 
-                                class="group flex flex-row items-center gap-3 p-4 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
+                                class="group flex flex-row items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 
                                 <div class="w-16 bg-gray-100 dark:bg-neutral-800 relative flex-shrink-0 flex items-center justify-center">
                                     <img v-if="currentSideConfig.panelModel" 
@@ -458,6 +466,51 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                 <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
                                     <span class="italic text-gray-400 mr-2">IV.</span> Фурнитура
                                 </h2>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-3">
+                                <!-- Primary Lock Card -->
+                                <div @click="showPrimaryLockDrawer = true" 
+                                    class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
+                                    <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
+                                        <img v-if="doorCalcStore.doorConfig.furniture.primaryLock && doorCalcStore.doorConfig.furniture.primaryLock !== -1" 
+                                                :src="getImageUrl(primaryLocks.find(l => l.id === doorCalcStore.doorConfig.furniture.primaryLock)?.image ?? '')" 
+                                                class="w-full h-full object-contain p-1" />
+                                        <i v-else class="pi pi-lock text-3xl text-gray-400"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Основной замок</p>
+                                        <p class="font-medium truncate text-black dark:text-white">
+                                            {{ doorCalcStore.doorConfig.furniture.primaryLock && doorCalcStore.doorConfig.furniture.primaryLock !== -1 ? primaryLocks.find(l => l.id === doorCalcStore.doorConfig.furniture.primaryLock)?.name : 'Не выбрано' }}
+                                        </p>
+                                    </div>
+                                    <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                </div>
+
+                                <!-- Secondary Lock Toggle -->
+                                <div class="flex items-center justify-between py-2 px-1">
+                                    <span class="font-serif text-sm text-gray-700 dark:text-gray-300">Дополнительный замок</span>
+                                    <ToggleSwitch v-model="doorCalcStore.doorConfig.furniture.hasSecondaryLock" />
+                                </div>
+
+                                <!-- Secondary Lock Card -->
+                                <div v-if="doorCalcStore.doorConfig.furniture.hasSecondaryLock" 
+                                    @click="showSecondaryLockDrawer = true" 
+                                    class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
+                                    <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
+                                        <img v-if="doorCalcStore.doorConfig.furniture.secondaryLock && doorCalcStore.doorConfig.furniture.secondaryLock !== -1" 
+                                                :src="getImageUrl(secondaryLocks.find(l => l.id === doorCalcStore.doorConfig.furniture.secondaryLock)?.image ?? '')" 
+                                                class="w-full h-full object-contain p-1" />
+                                        <i v-else class="pi pi-lock text-3xl text-gray-400"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Дополнительный замок</p>
+                                        <p class="font-medium truncate text-black dark:text-white">
+                                            {{ doorCalcStore.doorConfig.furniture.secondaryLock && doorCalcStore.doorConfig.furniture.secondaryLock !== -1 ? secondaryLocks.find(l => l.id === doorCalcStore.doorConfig.furniture.secondaryLock)?.name : 'Не выбрано' }}
+                                        </p>
+                                    </div>
+                                    <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -646,6 +699,80 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                 ]">
                 <img :src="getImageUrl(panel.image ?? null)" :alt="panel.name ?? ''" class="w-full h-full object-cover" />
                 <div class="text-xs text-center p-1 truncate">{{ panel.name }}</div>
+            </div>
+        </div>
+    </Drawer>
+
+    <!-- DRAWER: Primary Lock -->
+    <Drawer v-model:visible="showPrimaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+        <template #header>
+            <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight font-serif">
+                Выбор основного замка
+            </h2>
+        </template>
+        <div class="space-y-3 p-1">
+            <div v-for="lock in primaryLocks" :key="lock.id" 
+                @click="() => { doorCalcStore.doorConfig.furniture.primaryLock = lock.id; showPrimaryLockDrawer = false; }"
+                :class="[
+                    'group flex items-center gap-4 p-4 border-2 cursor-pointer transition-all duration-300',
+                    doorCalcStore.doorConfig.furniture.primaryLock === lock.id
+                        ? 'border-black dark:border-white bg-black/5 dark:bg-white/5'
+                        : 'border-black/10 dark:border-white/10 hover:border-black dark:hover:border-white'
+                ]">
+                <div class="h-20 w-20 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
+                    <img v-if="lock.image" 
+                            :src="getImageUrl(lock.image)" 
+                            :alt="lock.name"
+                            class="w-full h-full object-contain p-2" />
+                    <i v-else class="pi pi-lock text-4xl text-gray-400"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-medium text-base text-black dark:text-white mb-1">
+                        {{ lock.name }}
+                    </p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        {{ lock.base_price.toLocaleString('ru-RU') }} ₽
+                    </p>
+                </div>
+                <i v-if="doorCalcStore.doorConfig.furniture.primaryLock === lock.id" 
+                    class="pi pi-check-circle text-2xl text-black dark:text-white"></i>
+            </div>
+        </div>
+    </Drawer>
+
+    <!-- DRAWER: Secondary Lock -->
+    <Drawer v-model:visible="showSecondaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+        <template #header>
+            <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight font-serif">
+                Выбор дополнительного замка
+            </h2>
+        </template>
+        <div class="space-y-3 p-1">
+            <div v-for="lock in secondaryLocks" :key="lock.id" 
+                @click="() => { doorCalcStore.doorConfig.furniture.secondaryLock = lock.id; showSecondaryLockDrawer = false; }"
+                :class="[
+                    'group flex items-center gap-4 p-4 border-2 cursor-pointer transition-all duration-300',
+                    doorCalcStore.doorConfig.furniture.secondaryLock === lock.id
+                        ? 'border-black dark:border-white bg-black/5 dark:bg-white/5'
+                        : 'border-black/10 dark:border-white/10 hover:border-black dark:hover:border-white'
+                ]">
+                <div class="h-20 w-20 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
+                    <img v-if="lock.image" 
+                            :src="getImageUrl(lock.image)" 
+                            :alt="lock.name"
+                            class="w-full h-full object-contain p-2" />
+                    <i v-else class="pi pi-lock text-4xl text-gray-400"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-medium text-base text-black dark:text-white mb-1">
+                        {{ lock.name }}
+                    </p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        {{ lock.base_price.toLocaleString('ru-RU') }} ₽
+                    </p>
+                </div>
+                <i v-if="doorCalcStore.doorConfig.furniture.secondaryLock === lock.id" 
+                    class="pi pi-check-circle text-2xl text-black dark:text-white"></i>
             </div>
         </div>
     </Drawer>

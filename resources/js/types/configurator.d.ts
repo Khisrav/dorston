@@ -30,6 +30,7 @@ export interface DoorConfig {
     furniture: {
         primaryLock?: number;
         primaryCylindricalLockMechanism?: number;
+        hasSecondaryLock?: boolean;
         secondaryLock?: number;
         secondaryCylindricalLockMechanism?: number;
     }
@@ -44,6 +45,7 @@ export interface Nomenclature {
     nomenclature_category_id: number;
     created_at?: any;
     updated_at?: any;
+    tag?: string;
 }
 
 export interface DoorModel {

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Nomenclature extends Model
 {
-    protected $fillable = ['name', 'nomenclature_category_id', 'image', 'base_price', 'unit'];
+    protected $fillable = ['name', 'nomenclature_category_id', 'image', 'base_price', 'unit', 'tag'];
 
     public function nomenclatureCategory()
     {

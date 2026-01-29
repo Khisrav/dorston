@@ -7,6 +7,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\MultiSelectFilter;
 use Filament\Tables\Table;
@@ -40,6 +41,14 @@ class NomenclaturesTable
                 TextColumn::make('unit')
                     ->label('Ед. изм.')
                     ->badge(),
+                SelectColumn::make('tag')
+                    ->label('Метка')
+                    ->options([
+                        'primary-lock' => 'Основной замок',
+                        'secondary-lock' => 'Вторичный замок',
+                    ]),
+                    // ->badge()
+                    // ->color('info'),
                 TextColumn::make('created_at')
                     ->label('Создан')
                     ->dateTime()
