@@ -11,6 +11,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     const filmColors = ref<Nomenclature[]>([]);
     const furnitures = ref<Nomenclature[]>([]);
     const handles = ref<Nomenclature[]>([]);
+    const locks = ref<{ primary: Nomenclature[], secondary: Nomenclature[] }>({ primary: [], secondary: [] });
 
     const total_price = ref(0)
 
@@ -41,6 +42,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         furniture: {
             primaryLock: -1,
             primaryCylindricalLockMechanism: -1,
+            hasSecondaryLock: false,
             secondaryLock: -1,
             secondaryCylindricalLockMechanism: -1,
         },
@@ -113,6 +115,14 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         }
     })
 
+    // Reset secondary lock when toggle is turned off
+    watch(() => doorConfig.value.furniture.hasSecondaryLock, (hasSecondaryLock) => {
+        if (!hasSecondaryLock) {
+            doorConfig.value.furniture.secondaryLock = -1
+            doorConfig.value.furniture.secondaryCylindricalLockMechanism = -1
+        }
+    })
+
 
     return {
         doorConfig,
@@ -123,6 +133,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         filmColors,
         furnitures,
         handles,
+        locks,
         getDoorModelInfo,
         getFilmColor,
         getPaintColor,
