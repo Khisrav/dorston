@@ -1,4 +1,4 @@
-import { DoorConfig, doorConstructive, DoorModel, doorType, Nomenclature } from "@/types/configurator";
+import { DoorConfig, doorConstructive, DoorModel, doorType, Nomenclature, Furniture } from "@/types/configurator";
 import { defineStore } from "pinia";
 import { ref, watch, computed } from "vue";
 import { useComfortConstructive } from "./door-constructives/useComfortConstructive";
@@ -9,7 +9,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     const paints = ref<Nomenclature[]>([]);
     const doorModels = ref<DoorModel[]>([]);
     const filmColors = ref<Nomenclature[]>([]);
-    const furnitures = ref<Nomenclature[]>([]);
+    const furnitures = ref<Furniture[]>([]);
     const handles = ref<Nomenclature[]>([]);
     const locks = ref<{ primary: Nomenclature[], secondary: Nomenclature[] }>({ primary: [], secondary: [] });
 
@@ -40,6 +40,9 @@ export const useDoorCalc = defineStore('doorCalc', () => {
             secondaryColor: -1,
         },
         furniture: {
+            furnitureSetId: -1,
+            furnitureShape: undefined,
+            furnitureColor: undefined,
             primaryLock: -1,
             primaryCylindricalLockMechanism: -1,
             hasSecondaryLock: false,
@@ -53,6 +56,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     const getDoorModelInfo = (id: number) => doorModels.value.find((model: DoorModel) => model.id === id) ?? null
     const getFilmColor = (id: number) => filmColors.value.find((film: Nomenclature) => film.id === id) ?? null
     const getPaintColor = (id: number) => paints.value.find((paint: Nomenclature) => paint.id === id) ?? null
+    const getFurnitureSet = (id: number) => furnitures.value.find((furniture: Furniture) => furniture.id === id) ?? null
     const getSelectedModel = (type: 'exterior' | 'interior') => {
         const modelId = type === 'exterior' ? doorConfig.value.exterior.panelModel : doorConfig.value.interior.panelModel;
         return doorModels.value.find((m: DoorModel) => m.id === modelId);
@@ -64,6 +68,13 @@ export const useDoorCalc = defineStore('doorCalc', () => {
 
         applyDoorModelConfig(defaultExteriorModel?.id ?? 59, 'exterior')
         applyDoorModelConfig(defaultInteriorModel?.id ?? 2, 'interior')
+
+        // Auto-select furniture if only one available
+        if (furnitures.value.length === 1) {
+            doorConfig.value.furniture.furnitureShape = furnitures.value[0].shape
+            doorConfig.value.furniture.furnitureColor = furnitures.value[0].color
+            doorConfig.value.furniture.furnitureSetId = furnitures.value[0].id
+        }
     }
 
     const applyDoorModelConfig = (modelId: number, type: 'exterior' | 'interior') => {
@@ -123,6 +134,23 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         }
     })
 
+    // Auto-select furniture set when both shape and color are selected
+    watch([
+        () => doorConfig.value.furniture.furnitureShape,
+        () => doorConfig.value.furniture.furnitureColor
+    ], ([shape, color]) => {
+        if (shape && color) {
+            const matchingFurniture = furnitures.value.find(f => f.shape === shape && f.color === color)
+            if (matchingFurniture) {
+                doorConfig.value.furniture.furnitureSetId = matchingFurniture.id
+            } else {
+                doorConfig.value.furniture.furnitureSetId = -1
+            }
+        } else {
+            doorConfig.value.furniture.furnitureSetId = -1
+        }
+    })
+
 
     return {
         doorConfig,
@@ -137,6 +165,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         getDoorModelInfo,
         getFilmColor,
         getPaintColor,
+        getFurnitureSet,
         getSelectedModel,
         initializeDefaultConfig,
     }

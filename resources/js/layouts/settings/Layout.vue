@@ -19,10 +19,10 @@ const sidebarNavItems: NavItem[] = [
         title: 'Пароль',
         href: editPassword(),
     },
-    {
-        title: 'Двухфакторная аутентификация',
-        href: show(),
-    },
+    // {
+    //     title: 'Двухфакторная аутентификация',
+    //     href: show(),
+    // },
     {
         title: 'Внешний вид',
         href: editAppearance(),

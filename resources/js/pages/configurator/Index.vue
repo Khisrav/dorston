@@ -5,7 +5,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { getDoorModelImage, getImageUrl, hasSecondaryMetalPaint } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { DoorModel, Nomenclature } from '@/types/configurator';
+import { DoorModel, Nomenclature, Furniture } from '@/types/configurator';
 import { usePage } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
 import { PlusIcon } from 'lucide-vue-next';
@@ -42,7 +42,7 @@ const steps = ref([
 const paints = ref(usePage().props.paints as Nomenclature[])
 const doorModels = ref(usePage().props.doorModels as DoorModel[])
 const filmColors = ref(usePage().props.filmColors as Nomenclature[])
-const furnitures = ref(usePage().props.furnitures as Nomenclature[])
+const furnitures = ref(usePage().props.furnitures as Furniture[])
 const locks = ref(usePage().props.locks as { primary: Nomenclature[], secondary: Nomenclature[] })
 const handles = ref(usePage().props.handles as Nomenclature[])
 
@@ -96,6 +96,45 @@ const boxDesignOptions = [
 
 const primaryLocks = computed(() => doorCalcStore.locks.primary);
 const secondaryLocks = computed(() => doorCalcStore.locks.secondary);
+
+// Furniture computed properties
+const availableFurnitureShapes = computed(() => {
+    const shapes = [...new Set(furnitures.value.map(f => f.shape))];
+    return shapes.map(shape => ({
+        label: shape === 'rectangular' ? 'Прямоугольная' : shape === 'oval' ? 'Овальная' : shape,
+        value: shape
+    }));
+});
+
+const availableFurnitureColors = computed(() => {
+    const colors = [...new Set(furnitures.value.map(f => f.color))];
+    return colors.map(color => ({
+        label: color === 'gold' ? 'Золото' : 
+               color === 'chrome' ? 'Хром' : 
+               color === 'bronze' ? 'Бронза' : 
+               color === 'black' ? 'Чёрный' : color,
+        value: color
+    }));
+});
+
+const selectedFurnitureSet = computed(() => {
+    if (!doorCalcStore.doorConfig.furniture.furnitureSetId) return null;
+    return furnitures.value.find(f => f.id === doorCalcStore.doorConfig.furniture.furnitureSetId) ?? null;
+});
+
+const filteredFurniture = computed(() => {
+    let filtered = furnitures.value;
+    
+    if (doorCalcStore.doorConfig.furniture.furnitureShape) {
+        filtered = filtered.filter(f => f.shape === doorCalcStore.doorConfig.furniture.furnitureShape);
+    }
+    
+    if (doorCalcStore.doorConfig.furniture.furnitureColor) {
+        filtered = filtered.filter(f => f.color === doorCalcStore.doorConfig.furniture.furnitureColor);
+    }
+    
+    return filtered;
+});
 
 const parametersSummary = computed(() => {
     let doorWidth = doorCalcStore.doorConfig.doorWidth
@@ -173,7 +212,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                 <div class="lg:col-span-7">
                     <div class="sticky top-0 space-y-4">
                         <!-- Visualization Area -->
-                        <div class="relative min-h-[400px]">
+                        <div class="relative">
                             <div class="sticky top-0">
                                 <DoorVisualizer />
                             </div>
@@ -276,10 +315,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                             <div>
                                 <span class="font-medium font-sans text-xl">{{ doorCalcStore.total_price }} ₽</span>
                             </div>
-                            <button
-                                class="px-6 sm:px-8 py-2.5 sm:py-3 font-serif text-xs sm:text-sm tracking-[0.15em] uppercase text-white bg-black dark:bg-white dark:text-black border border-black dark:border-white transition-all duration-300 hover:tracking-[0.2em]">
-                                Сохранить конфигурацию
-                            </button>
+                            <Button label="Сохранить конфигурацию" size="large" class="w-full sm:w-auto" />
                         </div>
                     </div>
                 </div>
@@ -490,7 +526,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                 </div>
 
                                 <!-- Secondary Lock Toggle -->
-                                <div class="flex items-center justify-between py-2 px-1">
+                                <div class="flex items-center justify-between px-1">
                                     <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Дополнительный замок</span>
                                     <ToggleSwitch v-model="doorCalcStore.doorConfig.furniture.hasSecondaryLock" />
                                 </div>
@@ -512,6 +548,41 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                         </p>
                                     </div>
                                     <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                </div>
+                                <!-- Furniture Shape Selection -->
+                                <div>
+                                    <Select 
+                                        v-model="doorCalcStore.doorConfig.furniture.furnitureShape" 
+                                        :options="availableFurnitureShapes" 
+                                        optionLabel="label" 
+                                        optionValue="value"
+                                        placeholder="Выберите форму"
+                                        showClear
+                                        class="w-full"
+                                    />
+                                </div>
+
+                                <!-- Furniture Color Selection -->
+                                <div>
+                                    <Select 
+                                        v-model="doorCalcStore.doorConfig.furniture.furnitureColor" 
+                                        :options="availableFurnitureColors" 
+                                        optionLabel="label" 
+                                        optionValue="value"
+                                        placeholder="Выберите цвет"
+                                        showClear
+                                        class="w-full"
+                                    />
+                                </div>
+
+                                <div class="flex items-center justify-between px-1">
+                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Ночная задвижка + поворотник</span>
+                                    <ToggleSwitch />
+                                </div>
+
+                                <div class="flex items-center justify-between px-1">
+                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Глазок</span>
+                                    <ToggleSwitch />
                                 </div>
                             </div>
                         </div>
