@@ -28,6 +28,9 @@ export interface DoorConfig {
         secondaryColor?: number;
     }
     furniture: {
+        furnitureSetId?: number;
+        furnitureShape?: string;
+        furnitureColor?: string;
         primaryLock?: number;
         primaryCylindricalLockMechanism?: number;
         hasSecondaryLock?: boolean;
@@ -69,4 +72,24 @@ export interface DoorModel {
     milling_overflows_to_casing: boolean;
     additional_element_decor_image?: string;
     additional_element_mask_image?: string;
+}
+
+export interface Furniture {
+    id: number;
+    shape: 'rectangular' | 'oval' | 'other';
+    color: 'black' | 'chrome' | 'gold' | 'bronze';
+    cylindrical_lock_cover_image?: string | null;
+    lever_lock_cover_image?: string | null;
+    peephole_cover_image?: string | null;
+    night_latch_turner_cover_image?: string | null;
+    cylinder_rod_cover_image?: string | null;
+    handle_cover_image?: string | null;
+    cylindrical_lock_id?: number | null;
+    lever_lock_id?: number | null;
+    peephole_id?: number | null;
+    night_latch_turner_id?: number | null;
+    cylinder_rod_id?: number | null;
+    handle_id?: number | null;
+    created_at?: any;
+    updated_at?: any;
 }

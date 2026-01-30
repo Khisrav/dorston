@@ -26,9 +26,9 @@ onMounted(() => {
 
 <template>
     <div
-        class="border-2 border-black/10 dark:border-white/10 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-800 dark:to-neutral-900 p-6 flex items-center justify-center relative overflow-hidden min-h-[400px]">
+        class="border-2 border-black/10 dark:border-white/10 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-800 dark:to-neutral-900 p-4 md:p-6 flex items-center justify-center relative overflow-hidden">
         <div ref="visualizerContainerRef" class="w-full h-full">
-            <div class="z-10 flex justify-center items-center gap-6">
+            <div class="z-10 flex justify-center items-center gap-4 md:gap-6">
                 <!-- Exterior stage -->
                 <v-stage :config="{
                     width: doorVisualStore.stageWidth,
