@@ -46,6 +46,7 @@ export interface Nomenclature {
     created_at?: any;
     updated_at?: any;
     tag?: string;
+    properties?: any;
 }
 
 export interface DoorModel {

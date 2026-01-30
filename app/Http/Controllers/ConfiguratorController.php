@@ -26,10 +26,10 @@ class ConfiguratorController extends Controller
             'furnitures' => Furniture::all(),
             'locks' => [
                 'primary' => Nomenclature::where('tag', 'primary-lock')
-                    ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id')
+                    ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id', 'properties')
                     ->get(),
                 'secondary' => Nomenclature::where('tag', 'secondary-lock')
-                    ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id')
+                    ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id', 'properties')
                     ->get(),
             ],
             

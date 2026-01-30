@@ -183,7 +183,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         <div class="border-2 border-black/10 dark:border-white/10 bg-white dark:bg-neutral-800">
                             <!-- Accordion Header -->
                             <button @click="isParametersExpanded = !isParametersExpanded"
-                                class="w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between text-left transition-colors hover:bg-gray-50 dark:hover:bg-neutral-700">
+                                class="w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between text-left transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-700">
                                 <div class="flex-1">
                                     <h3 class="font-serif text-base sm:text-lg text-black dark:text-white mb-1">
                                         Параметры двери
@@ -316,7 +316,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         <!-- I. Design Selection -->
                         <div class="space-y-4">
                             <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight border-b pb-2 border-black/10 dark:border-white/10">
-                                <span class="italic text-gray-400 mr-2">I.</span> Дизайн отделки
+                                <span class="italic text-neutral-400 mr-2">I.</span> Дизайн отделки
                             </h2>
                             
                             <!-- Single Design Card that changes based on view mode -->
@@ -324,7 +324,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                 @click="viewMode === 'exterior' ? showOuterDesignDialog = true : showInnerDesignDialog = true" 
                                 class="group flex flex-row items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 
-                                <div class="w-16 bg-gray-100 dark:bg-neutral-800 relative flex-shrink-0 flex items-center justify-center">
+                                <div class="w-16 bg-neutral-100 dark:bg-neutral-800 relative flex-shrink-0 flex items-center justify-center">
                                     <img v-if="currentSideConfig.panelModel" 
                                         :src="getDoorModelImage(doorCalcStore.getDoorModelInfo(currentSideConfig.panelModel)?.image ?? '')" 
                                         class="h-24 object-contain mix-blend-multiply dark:mix-blend-normal" />
@@ -332,7 +332,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
 
                                 <div class="flex flex-col flex-1 items-start justify-center">
                                     <div class="w-full">
-                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5 text-left">
+                                        <p class="font-serif text-xs text-neutral-500 uppercase tracking-wider mb-0.5 text-left">
                                             {{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }}
                                         </p>
                                         <p class="font-medium text-black dark:text-white font-sans text-left">
@@ -348,9 +348,9 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         <div v-if="hasPrimaryFilmColor || hasSecondaryFilmColor || hasCasingFilmColor" class="space-y-4">
                             <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
                                 <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
-                                    <span class="italic text-gray-400 mr-2">II.</span> Цвет плёнки
+                                    <span class="italic text-neutral-400 mr-2">II.</span> Цвет плёнки
                                 </h2>
-                                <span class="text-xs font-serif text-gray-400 italic">
+                                <span class="text-xs font-serif text-neutral-400 italic">
                                     {{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }}
                                 </span>
                             </div>
@@ -359,51 +359,51 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                 <!-- Primary Texture Card -->
                                 <div v-if="hasPrimaryFilmColor" @click="showFilmPrimaryDrawer = true" 
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
+                                    <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                         <img v-if="currentSideConfig.primaryTexture" 
                                                 :src="getImageUrl(doorCalcStore.getFilmColor(currentSideConfig.primaryTexture)?.image ?? '')" 
                                                 class="w-full h-full object-cover" />
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Основной цвет</p>
+                                        <p class="font-serif text-xs text-neutral-500 uppercase tracking-wider mb-0.5">Основной цвет</p>
                                         <p class="font-medium truncate text-black dark:text-white">
                                             {{ currentSideConfig.primaryTexture ? doorCalcStore.getFilmColor(currentSideConfig.primaryTexture)?.name : 'Не выбрано' }}
                                         </p>
                                     </div>
-                                    <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                    <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                                 </div>
                                 <!-- Secondary Texture Card -->
                                 <div v-if="hasSecondaryFilmColor" @click="showFilmSecondaryDrawer = true" 
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
+                                    <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                         <img v-if="currentSideConfig.secondaryTexture" 
                                                 :src="getImageUrl(doorCalcStore.getFilmColor(currentSideConfig.secondaryTexture)?.image ?? '')" 
                                                 class="w-full h-full object-cover" />
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Дополнительный цвет</p>
+                                        <p class="font-serif text-xs text-neutral-500 uppercase tracking-wider mb-0.5">Дополнительный цвет</p>
                                         <p class="font-medium truncate text-black dark:text-white">
                                             {{ currentSideConfig.secondaryTexture ? doorCalcStore.getFilmColor(currentSideConfig.secondaryTexture)?.name : 'Не выбрано' }}
                                         </p>
                                     </div>
-                                    <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                    <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                                 </div>
 
                                 <!-- Casing Texture Card -->
                                 <div v-if="hasCasingFilmColor" @click="showFilmCasingDrawer = true" 
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
+                                    <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                         <img v-if="currentSideConfig.casingTexture" 
                                                 :src="getImageUrl(doorCalcStore.getFilmColor(currentSideConfig.casingTexture)?.image ?? '')" 
                                                 class="w-full h-full object-cover" />
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Цвет наличника</p>
+                                        <p class="font-serif text-xs text-neutral-500 uppercase tracking-wider mb-0.5">Цвет наличника</p>
                                         <p class="font-medium truncate text-black dark:text-white">
                                             {{ currentSideConfig.casingTexture ? doorCalcStore.getFilmColor(currentSideConfig.casingTexture)?.name : 'Не выбрано' }}
                                         </p>
                                     </div>
-                                    <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                    <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                                 </div>
                             </div>
                         </div>
@@ -412,13 +412,13 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         <div v-if="viewMode === 'exterior' && (hasPrimaryPaint || hasSecondaryPaint)" class="space-y-4">
                             <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
                                 <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
-                                    <span class="italic text-gray-400 mr-2">III.</span> Покраска металла
+                                    <span class="italic text-neutral-400 mr-2">III.</span> Покраска металла
                                 </h2>
                             </div>
                             
                             <!-- Undercoat Toggle -->
                             <div v-if="hasPrimaryPaint || hasSecondaryPaint" class="flex items-center justify-between py-2">
-                                <span class="font-serif text-sm text-gray-700 dark:text-gray-300">Цинкогрунтование</span>
+                                <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Цинкогрунтование</span>
                                 <ToggleSwitch v-model="doorCalcStore.doorConfig.metalPainting!.undercoat" />
                             </div>
 
@@ -426,36 +426,36 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                 <!-- Primary Metal Color Card -->
                                 <div v-if="hasPrimaryPaint" @click="showMetalPrimaryDrawer = true" 
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
+                                    <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                         <img v-if="doorCalcStore.doorConfig.metalPainting?.primaryColor" 
                                                 :src="getImageUrl(doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.primaryColor)?.image ?? '')" 
                                                 class="w-full h-full object-cover" />
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Основной цвет</p>
+                                        <p class="font-serif text-xs text-neutral-500 uppercase tracking-wider mb-0.5">Основной цвет</p>
                                         <p class="font-medium truncate text-black dark:text-white">
                                             {{ doorCalcStore.doorConfig.metalPainting?.primaryColor ? doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.primaryColor)?.name : 'Не выбрано' }}
                                         </p>
                                     </div>
-                                    <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                    <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                                 </div>
 
                                 <!-- Secondary Metal Color Card -->
                                 <div v-if="hasSecondaryPaint"
                                     @click="showMetalSecondaryDrawer = true" 
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
+                                    <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                         <img v-if="doorCalcStore.doorConfig.metalPainting?.secondaryColor" 
                                                 :src="getImageUrl(doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.secondaryColor)?.image ?? '')" 
                                                 class="w-full h-full object-cover" />
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Дополнительный цвет</p>
+                                        <p class="font-serif text-xs text-neutral-500 uppercase tracking-wider mb-0.5">Дополнительный цвет</p>
                                         <p class="font-medium truncate text-black dark:text-white">
                                             {{ doorCalcStore.doorConfig.metalPainting?.secondaryColor ? doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.secondaryColor)?.name : 'Не выбрано' }}
                                         </p>
                                     </div>
-                                    <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                    <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                                 </div>
                             </div>
                         </div>
@@ -464,7 +464,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         <div class="space-y-4">
                             <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
                                 <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
-                                    <span class="italic text-gray-400 mr-2">IV.</span> Фурнитура
+                                    <span class="italic text-neutral-400 mr-2">IV.</span> Фурнитура
                                 </h2>
                             </div>
 
@@ -472,24 +472,26 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                 <!-- Primary Lock Card -->
                                 <div @click="showPrimaryLockDrawer = true" 
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
+                                    <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
                                         <img v-if="doorCalcStore.doorConfig.furniture.primaryLock && doorCalcStore.doorConfig.furniture.primaryLock !== -1" 
                                                 :src="getImageUrl(primaryLocks.find(l => l.id === doorCalcStore.doorConfig.furniture.primaryLock)?.image ?? '')" 
                                                 class="w-full h-full object-contain p-1" />
-                                        <i v-else class="pi pi-lock text-3xl text-gray-400"></i>
+                                        <i v-else class="pi pi-lock text-3xl text-neutral-400"></i>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Основной замок</p>
-                                        <p class="font-medium truncate text-black dark:text-white">
-                                            {{ doorCalcStore.doorConfig.furniture.primaryLock && doorCalcStore.doorConfig.furniture.primaryLock !== -1 ? primaryLocks.find(l => l.id === doorCalcStore.doorConfig.furniture.primaryLock)?.name : 'Не выбрано' }}
+                                        <p class="font-serif text-xs text-neutral-500 uppercase tracking-wider mb-0.5">Основной замок</p>
+                                        <p 
+                                            v-if="doorCalcStore.doorConfig.furniture.primaryLock && doorCalcStore.doorConfig.furniture.primaryLock !== -1"
+                                            class="font-medium truncate text-black dark:text-white">
+                                            {{ primaryLocks.find(l => l.id === doorCalcStore.doorConfig.furniture.primaryLock)?.name }}
                                         </p>
                                     </div>
-                                    <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                    <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                                 </div>
 
                                 <!-- Secondary Lock Toggle -->
                                 <div class="flex items-center justify-between py-2 px-1">
-                                    <span class="font-serif text-sm text-gray-700 dark:text-gray-300">Дополнительный замок</span>
+                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Дополнительный замок</span>
                                     <ToggleSwitch v-model="doorCalcStore.doorConfig.furniture.hasSecondaryLock" />
                                 </div>
 
@@ -497,19 +499,19 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                 <div v-if="doorCalcStore.doorConfig.furniture.hasSecondaryLock" 
                                     @click="showSecondaryLockDrawer = true" 
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
+                                    <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
                                         <img v-if="doorCalcStore.doorConfig.furniture.secondaryLock && doorCalcStore.doorConfig.furniture.secondaryLock !== -1" 
                                                 :src="getImageUrl(secondaryLocks.find(l => l.id === doorCalcStore.doorConfig.furniture.secondaryLock)?.image ?? '')" 
                                                 class="w-full h-full object-contain p-1" />
-                                        <i v-else class="pi pi-lock text-3xl text-gray-400"></i>
+                                        <i v-else class="pi pi-lock text-3xl text-neutral-400"></i>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-gray-500 uppercase tracking-wider mb-0.5">Дополнительный замок</p>
+                                        <p class="font-serif text-xs text-neutral-500 uppercase tracking-wider mb-0.5">Дополнительный замок</p>
                                         <p class="font-medium truncate text-black dark:text-white">
                                             {{ doorCalcStore.doorConfig.furniture.secondaryLock && doorCalcStore.doorConfig.furniture.secondaryLock !== -1 ? secondaryLocks.find(l => l.id === doorCalcStore.doorConfig.furniture.secondaryLock)?.name : 'Не выбрано' }}
                                         </p>
                                     </div>
-                                    <i class="pi pi-chevron-right text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                    <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                                 </div>
                             </div>
                         </div>
@@ -543,7 +545,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                 @click="() => { doorCalcStore.doorConfig.exterior.panelModel = doorModel.id; showOuterDesignDialog = false; }">
                 <img :src="getDoorModelImage(doorModel.image)" :alt="doorModel.name" class="w-full rounded-sm">
                 <p class="font-medium tracking-tight text-center text-sm transition-colors duration-300 px-1" 
-                    :class="[doorCalcStore.doorConfig.exterior.panelModel === doorModel.id ? 'text-black dark:text-white font-bold' : 'text-gray-500 dark:text-gray-400']">
+                    :class="[doorCalcStore.doorConfig.exterior.panelModel === doorModel.id ? 'text-black dark:text-white font-bold' : 'text-neutral-500 dark:text-neutral-400']">
                     {{ doorModel.name }}
                 </p>
             </div>
@@ -565,7 +567,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                 @click="() => { doorCalcStore.doorConfig.interior.panelModel = doorModel.id; showInnerDesignDialog = false; }">
                 <img :src="getDoorModelImage(doorModel.image)" :alt="doorModel.name" class="w-full h-full object-cover rounded-sm">
                 <p class="font-medium tracking-tight text-center text-sm transition-colors duration-300 px-1"
-                    :class="[doorCalcStore.doorConfig.interior.panelModel === doorModel.id ? 'text-black dark:text-white font-bold' : 'text-gray-500 dark:text-gray-400']">
+                    :class="[doorCalcStore.doorConfig.interior.panelModel === doorModel.id ? 'text-black dark:text-white font-bold' : 'text-neutral-500 dark:text-neutral-400']">
                     {{ doorModel.name }}
                 </p>
             </div>
@@ -576,7 +578,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
     <Drawer v-model:visible="showFilmPrimaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
         <template #header>
             <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight font-serif">
-                Цвет плёнки: Основной <span class="text-gray-400">({{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }})</span>
+                Цвет плёнки: Основной <span class="text-neutral-400">({{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }})</span>
             </h2>
         </template>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 p-1">
@@ -605,7 +607,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
     <Drawer v-model:visible="showFilmSecondaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
         <template #header>
             <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight font-serif">
-                Цвет плёнки: Дополнительный <span class="text-gray-400">({{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }})</span>
+                Цвет плёнки: Дополнительный <span class="text-neutral-400">({{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }})</span>
             </h2>
         </template>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 p-1">
@@ -634,7 +636,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
     <Drawer v-model:visible="showFilmCasingDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
         <template #header>
             <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight font-serif">
-                Цвет плёнки: Наличник <span class="text-gray-400">({{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }})</span>
+                Цвет плёнки: Наличник <span class="text-neutral-400">({{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }})</span>
             </h2>
         </template>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 p-1">
@@ -719,18 +721,18 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         ? 'border-black dark:border-white bg-black/5 dark:bg-white/5'
                         : 'border-black/10 dark:border-white/10 hover:border-black dark:hover:border-white'
                 ]">
-                <div class="h-20 w-20 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
+                <div class="h-20 w-20 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
                     <img v-if="lock.image" 
                             :src="getImageUrl(lock.image)" 
                             :alt="lock.name"
                             class="w-full h-full object-contain p-2" />
-                    <i v-else class="pi pi-lock text-4xl text-gray-400"></i>
+                    <i v-else class="pi pi-lock text-4xl text-neutral-400"></i>
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="font-medium text-base text-black dark:text-white mb-1">
                         {{ lock.name }}
                     </p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400">
                         {{ lock.base_price.toLocaleString('ru-RU') }} ₽
                     </p>
                 </div>
@@ -756,18 +758,18 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         ? 'border-black dark:border-white bg-black/5 dark:bg-white/5'
                         : 'border-black/10 dark:border-white/10 hover:border-black dark:hover:border-white'
                 ]">
-                <div class="h-20 w-20 bg-gray-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
+                <div class="h-20 w-20 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
                     <img v-if="lock.image" 
                             :src="getImageUrl(lock.image)" 
                             :alt="lock.name"
                             class="w-full h-full object-contain p-2" />
-                    <i v-else class="pi pi-lock text-4xl text-gray-400"></i>
+                    <i v-else class="pi pi-lock text-4xl text-neutral-400"></i>
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="font-medium text-base text-black dark:text-white mb-1">
                         {{ lock.name }}
                     </p>
-                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400">
                         {{ lock.base_price.toLocaleString('ru-RU') }} ₽
                     </p>
                 </div>
