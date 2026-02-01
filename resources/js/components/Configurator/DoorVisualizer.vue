@@ -30,126 +30,180 @@ onMounted(() => {
         <div ref="visualizerContainerRef" class="w-full h-full">
             <div class="z-10 flex justify-center items-center gap-4 md:gap-6">
                 <!-- Exterior stage -->
-                <v-stage :config="{
-                    width: doorVisualStore.stageWidth,
-                    height: doorVisualStore.stageHeight,
-                }">
-                    <!-- Наличник (фон) -->
-                    <v-layer>
-                        <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.background,
-                            image: doorVisualStore.layersImages.exterior.background,
-                        }" />
-                    </v-layer>
-                    <!-- Фрезеровка -->
-                    <v-layer>
-                        <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.doorItself,
-                            image: doorVisualStore.layersImages.exterior.millingBackground,
-                        }" />
-                        <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.doorItself,
-                            image: doorVisualStore.layersImages.exterior.milling,
-                            globalCompositeOperation: 'multiply',
-                            opacity: 0.5,
-                        }" />
-                    </v-layer>
-                    <!-- Доп элемент -->
-                    <v-layer>
-                        <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.doorItself,
-                            image: doorVisualStore.layersImages.exterior.additionalElementDecor,
-                        }" />
-                    </v-layer>
-                    <v-layer>
-                        <v-group :ref="doorVisualStore.additionalElementMaskedGroupRef" v-if="doorVisualStore.layersImages.exterior.additionalElementTexture && doorVisualStore.layersImages.exterior.additionalElementMask">
+                <div :class="{ '-scale-x-100': doorCalcStore.doorConfig.doorHandleSide === 'Right' }">
+                    <v-stage
+                        :config="{
+                            width: doorVisualStore.stageWidth,
+                            height: doorVisualStore.stageHeight,
+                        }"
+                    >
+                        <!-- Наличник (фон) -->
+                        <v-layer>
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.background,
+                                image: doorVisualStore.layersImages.exterior.background,
+                            }" />
+                        </v-layer>
+                        <!-- Фрезеровка -->
+                        <v-layer>
                             <v-image :config="{
                                 ...doorVisualStore.layersPositioning.exterior.doorItself,
-                                image: doorVisualStore.layersImages.exterior.additionalElementTexture,
+                                image: doorVisualStore.layersImages.exterior.millingBackground,
                             }" />
-                            
                             <v-image :config="{
                                 ...doorVisualStore.layersPositioning.exterior.doorItself,
-                                image: doorVisualStore.layersImages.exterior.additionalElementMask,
-                                globalCompositeOperation: 'destination-in',
+                                image: doorVisualStore.layersImages.exterior.milling,
+                                globalCompositeOperation: 'multiply',
+                                opacity: 0.5,
                             }" />
-                        </v-group>
-                    </v-layer>
-                    <!-- Зазоры между наличником и дверью -->
-                    <v-layer>
-                        <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.doorsill,
-                            image: doorVisualStore.layersImages.exterior.doorsill,
-                        }" />
-                        <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.sideSpacers,
-                            image: doorVisualStore.layersImages.exterior.sideSpacers,
-                            // opacity: 0.75,
-                            globalCompositeOperation: 'multiply',
-                        }" />
-                        <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.topSpacers,
-                            image: doorVisualStore.layersImages.exterior.topSpacers,
-                            // opacity: 0.75,
-                            globalCompositeOperation: 'multiply',
-                        }" />
-                    </v-layer>
+                        </v-layer>
+                        <!-- Доп элемент -->
+                        <v-layer>
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.doorItself,
+                                image: doorVisualStore.layersImages.exterior.additionalElementDecor,
+                            }" />
+                        </v-layer>
+                        <v-layer>
+                            <v-group :ref="doorVisualStore.additionalElementMaskedGroupRef" v-if="doorVisualStore.layersImages.exterior.additionalElementTexture && doorVisualStore.layersImages.exterior.additionalElementMask">
+                                <v-image :config="{
+                                    ...doorVisualStore.layersPositioning.exterior.doorItself,
+                                    image: doorVisualStore.layersImages.exterior.additionalElementTexture,
+                                }" />
+                                
+                                <v-image :config="{
+                                    ...doorVisualStore.layersPositioning.exterior.doorItself,
+                                    image: doorVisualStore.layersImages.exterior.additionalElementMask,
+                                    globalCompositeOperation: 'destination-in',
+                                }" />
+                            </v-group>
+                        </v-layer>
+                        <!-- Зазоры между наличником и дверью -->
+                        <v-layer>
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.doorsill,
+                                image: doorVisualStore.layersImages.exterior.doorsill,
+                            }" />
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.sideSpacers,
+                                image: doorVisualStore.layersImages.exterior.sideSpacers,
+                                // opacity: 0.75,
+                                globalCompositeOperation: 'multiply',
+                            }" />
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.topSpacers,
+                                image: doorVisualStore.layersImages.exterior.topSpacers,
+                                // opacity: 0.75,
+                                globalCompositeOperation: 'multiply',
+                            }" />
+                        </v-layer>
 
-                    <!-- Глазок, ручка, петли, ночник и т.д. -->
-                    <v-layer>
-                        <v-circle :config="{
-                            ...doorVisualStore.layersPositioning.exterior.peephole,
-                            fill: 'red',
-                        }" />
-                    </v-layer>
-                </v-stage>
-
+                        <!-- Глазок, ручка, петли, ночник и т.д. -->
+                        <v-layer>
+                            <!-- <v-circle :config="{
+                                ...doorVisualStore.layersPositioning.exterior.peephole,
+                                fill: 'red',
+                            }" /> -->
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.cylindricalLock,
+                                image: doorVisualStore.layersImages.furniture.cylindricalLock,
+                            }" />
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.leverLock,
+                                image: doorVisualStore.layersImages.furniture.leverLock,
+                            }" />
+                            <v-image v-if="doorCalcStore.doorConfig.furniture.hasPeephole" :config="{
+                                ...doorVisualStore.layersPositioning.exterior.peephole,
+                                image: doorVisualStore.layersImages.furniture.peephole,
+                            }" />
+                            <!-- <v-image v-if="doorCalcStore.doorConfig.furniture.hasNightLatchTurner" :config="{
+                                ...doorVisualStore.layersPositioning.exterior.nightLatchTurner,
+                                image: doorVisualStore.layersImages.furniture.nightLatchTurner,
+                            }" />
+                            <v-image v-if="doorCalcStore.doorConfig.furniture.hasCylinderRod" :config="{
+                                ...doorVisualStore.layersPositioning.exterior.cylinderRod,
+                                image: doorVisualStore.layersImages.furniture.cylinderRod,
+                            }" /> -->
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.handle,
+                                image: doorVisualStore.layersImages.furniture.handle,
+                            }" />
+                        </v-layer>
+                    </v-stage>
+                </div>
+                
                 <!-- Interior stage -->
-                <v-stage :config="{
-                    width: doorVisualStore.stageWidth,
-                    height: doorVisualStore.stageHeight,
-                }">
-                    <!-- Наличник (фон) -->
-                    <v-layer>
-                        <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.background,
-                            image: doorVisualStore.layersImages.exterior.background,
-                        }" />
-                    </v-layer>
-                    <!-- Фрезеровка -->
-                    <v-layer>
-                        <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.doorItself,
-                            image: doorVisualStore.layersImages.interior.millingBackground,
-                        }" />
-                        <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.doorItself,
-                            image: doorVisualStore.layersImages.interior.milling,
-                            globalCompositeOperation: 'multiply',
-                            opacity: 0.5,
-                        }" />
-                    </v-layer>
-                    <!-- Зазоры между наличником и дверью -->
-                    <v-layer>
-                        <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.doorsill,
-                            image: doorVisualStore.layersImages.exterior.doorsill,
-                        }" />
-                        <v-image :config="{
-                            ...doorVisualStore.layersPositioning.exterior.sideSpacers,
-                            image: doorVisualStore.layersImages.exterior.sideSpacers,
-                            // opacity: 0.75,
-                            globalCompositeOperation: 'multiply',
-                        }" />
-                    </v-layer>
-                    <!-- Глазок, ручка, петли, ночник и т.д. -->
-                    <v-layer>
-                        <v-circle :config="{
-                            ...doorVisualStore.layersPositioning.exterior.peephole,
-                            fill: 'red',
-                        }" />
-                    </v-layer>
-                </v-stage>
+                <div :class="{ '-scale-x-100': doorCalcStore.doorConfig.doorHandleSide === 'Left' }">
+                    <v-stage :config="{
+                        width: doorVisualStore.stageWidth,
+                        height: doorVisualStore.stageHeight,
+                    }">
+                        <!-- Наличник (фон) -->
+                        <v-layer>
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.background,
+                                image: doorVisualStore.layersImages.exterior.background,
+                            }" />
+                        </v-layer>
+                        <!-- Фрезеровка -->
+                        <v-layer>
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.doorItself,
+                                image: doorVisualStore.layersImages.interior.millingBackground,
+                            }" />
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.doorItself,
+                                image: doorVisualStore.layersImages.interior.milling,
+                                globalCompositeOperation: 'multiply',
+                                opacity: 0.5,
+                            }" />
+                        </v-layer>
+                        <!-- Зазоры между наличником и дверью -->
+                        <v-layer>
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.doorsill,
+                                image: doorVisualStore.layersImages.exterior.doorsill,
+                            }" />
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.sideSpacers,
+                                image: doorVisualStore.layersImages.exterior.sideSpacers,
+                                // opacity: 0.75,
+                                globalCompositeOperation: 'multiply',
+                            }" />
+                        </v-layer>
+                        <!-- Глазок, ручка, петли, ночник и т.д. -->
+                        <v-layer>
+                            <!-- <v-circle :config="{
+                                ...doorVisualStore.layersPositioning.exterior.peephole,
+                                fill: 'red',
+                            }" /> -->
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.cylindricalLock,
+                                image: doorVisualStore.layersImages.furniture.cylindricalLock,
+                            }" />
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.leverLock,
+                                image: doorVisualStore.layersImages.furniture.leverLock,
+                            }" />
+                            <v-image v-if="doorCalcStore.doorConfig.furniture.hasPeephole" :config="{
+                                ...doorVisualStore.layersPositioning.exterior.peephole,
+                                image: doorVisualStore.layersImages.furniture.peephole,
+                            }" />
+                            <!-- <v-image v-if="doorCalcStore.doorConfig.furniture.hasNightLatchTurner" :config="{
+                                ...doorVisualStore.layersPositioning.exterior.nightLatchTurner,
+                                image: doorVisualStore.layersImages.furniture.nightLatchTurner,
+                            }" />
+                            <v-image v-if="doorCalcStore.doorConfig.furniture.hasCylinderRod" :config="{
+                                ...doorVisualStore.layersPositioning.exterior.cylinderRod,
+                                image: doorVisualStore.layersImages.furniture.cylinderRod,
+                            }" /> -->
+                            <v-image :config="{
+                                ...doorVisualStore.layersPositioning.exterior.handle,
+                                image: doorVisualStore.layersImages.furniture.handle,
+                            }" />
+                        </v-layer>
+                    </v-stage>
+                </div>
             </div>
         </div>
     </div>

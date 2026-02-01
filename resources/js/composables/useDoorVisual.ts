@@ -88,6 +88,37 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     );
     const [interiorSecondaryImage] = useImage(computed(() => getImageUrl(interiorSecondaryImageUrl.value)));
 
+    //furniture images
+    const furniture = computed(() => 
+        doorCalcStore.getFurnitureSet(doorCalcStore.doorConfig.furniture.furnitureSetId ?? -1) ?? null
+    );
+    const furnitureCylindricalLockImageUrl = computed(() => 
+        furniture.value?.cylindrical_lock_cover_image ?? ''
+    );
+    const [furnitureCylindricalLockImage] = useImage(computed(() => getImageUrl(furnitureCylindricalLockImageUrl.value)));
+    const furnitureLeverLockImageUrl = computed(() => 
+        furniture.value?.lever_lock_cover_image ?? ''
+    );
+    const [furnitureLeverLockImage] = useImage(computed(() => getImageUrl(furnitureLeverLockImageUrl.value)));
+    const furniturePeepholeImageUrl = computed(() => 
+        furniture.value?.peephole_cover_image ?? ''
+    );
+    const [furniturePeepholeImage] = useImage(computed(() => getImageUrl(furniturePeepholeImageUrl.value)));
+    const furnitureNightLatchTurnerImageUrl = computed(() => 
+        furniture.value?.night_latch_turner_cover_image ?? ''
+    );
+    const [furnitureNightLatchTurnerImage] = useImage(computed(() => getImageUrl(furnitureNightLatchTurnerImageUrl.value)));
+    const furnitureCylinderRodImageUrl = computed(() => 
+        furniture.value?.cylinder_rod_cover_image ?? ''
+    );
+    const [furnitureCylinderRodImage] = useImage(computed(() => getImageUrl(furnitureCylinderRodImageUrl.value)));
+    const furnitureHandleImageUrl = computed(() => 
+        furniture.value?.handle_cover_image ?? ''
+    );
+    const [furnitureHandleImage] = useImage(computed(() => getImageUrl(furnitureHandleImageUrl.value)));
+
+    console.log(furniture.value);
+
     //casing spacer images are constant (applied to exterior only)
     const [casingSideSpacerImage] = useImage('assets/casing-side-spacers.png');
     const [casingTopSpacerImage] = useImage('assets/casing-top-spacers.png');
@@ -114,15 +145,25 @@ export const useDoorVisual = defineStore('doorVisual', () => {
             secondary: interiorSecondaryImage.value, //applies to decorative element's textured surface (optional)
             millingBackground: interiorMillingBackgroundImage.value, //applies to door itself (where milling is)
             milling: interiorMillingImage.value, //applies to door itself (where milling is)
-        }
+        },
+        furniture: {
+            cylindricalLock: furnitureCylindricalLockImage.value,
+            leverLock: furnitureLeverLockImage.value,
+            peephole: furniturePeepholeImage.value,
+            nightLatchTurner: furnitureNightLatchTurnerImage.value,
+            cylinderRod: furnitureCylinderRodImage.value,
+            handle: furnitureHandleImage.value,
+        },
     }));
 
     const furniturePositioningOnXAxis = (type: 'exterior' | 'interior', doorHandleSide: doorHandleSide) => {
-        if (doorHandleSide === 'Left') {
-            return type === 'exterior' ? 0 : stageWidth.value;
-        } else {
-            return type === 'exterior' ? stageWidth.value : 0;
-        }
+        const offset = (94 - 63 / 2 + casing_thickness.value) / doorDimensions.value.width * stageWidth.value;
+        return offset;
+        // if (doorHandleSide === 'Left') {
+        //     return type === 'exterior' ? offset : stageWidth.value - offset;
+        // } else {
+        //     return type === 'exterior' ? stageWidth.value - offset : offset;
+        // }
     }
     
     const layersPositioning = computed(() => ({
@@ -160,8 +201,8 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 height: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value + 6,
             },
             peephole: {
-                x: (doorDimensions.value.width / 2) * (stageWidth.value / doorDimensions.value.width),
-                y: stageHeight.value - (1400 / doorDimensions.value.height * stageHeight.value),
+                x: (doorDimensions.value.width / 2 - 40 / 2) * (stageWidth.value / doorDimensions.value.width),
+                y: stageHeight.value - (1500 / doorDimensions.value.height * stageHeight.value),
                 width: 40 / doorDimensions.value.width * stageWidth.value,
                 height: 40 / doorDimensions.value.height * stageHeight.value,
             },
@@ -170,7 +211,37 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 y: stageHeight.value - (35 / doorDimensions.value.height * stageHeight.value),
                 width: (stageWidth.value - 2 * (casing_thickness.value / doorDimensions.value.width) * stageWidth.value) - 3,
                 height: 35 / doorDimensions.value.height * stageHeight.value,
-            }
+            },
+            cylindricalLock: {
+                x: furniturePositioningOnXAxis('exterior', doorCalcStore.doorConfig.doorHandleSide),
+                y: (doorDimensions.value.height - 1000 - 80 / 2 + 92) / doorDimensions.value.height * stageHeight.value,
+                width: 63 / doorDimensions.value.width * stageWidth.value,
+                height: 80 / doorDimensions.value.height * stageHeight.value,
+            },
+            leverLock: {
+                x: furniturePositioningOnXAxis('exterior', doorCalcStore.doorConfig.doorHandleSide),
+                y: (doorDimensions.value.height - 1302 - 80 / 2) / doorDimensions.value.height * stageHeight.value,
+                width: 72 / doorDimensions.value.width * stageWidth.value,
+                height: 82 / doorDimensions.value.height * stageHeight.value,
+            },
+            // nightLatchTurner: {
+            //     x: furniturePositioningOnXAxis('exterior', doorCalcStore.doorConfig.doorHandleSide),
+            //     y: stageHeight.value - (1500 / doorDimensions.value.height * stageHeight.value) - (120 / doorDimensions.value.height * stageHeight.value),
+            //     width: 72 / doorDimensions.value.width * stageWidth.value,
+            //     height: 82 / doorDimensions.value.height * stageHeight.value,
+            // },
+            // cylinderRod: {
+            //     x: furniturePositioningOnXAxis('exterior', doorCalcStore.doorConfig.doorHandleSide),
+            //     y: stageHeight.value - (1500 / doorDimensions.value.height * stageHeight.value) - (160 / doorDimensions.value.height * stageHeight.value),
+            //     width: 72 / doorDimensions.value.width * stageWidth.value,
+            //     height: 82 / doorDimensions.value.height * stageHeight.value,
+            // },
+            handle: {
+                x: furniturePositioningOnXAxis('exterior', doorCalcStore.doorConfig.doorHandleSide),
+                y: (doorDimensions.value.height - 1000 - 61 / 2) / doorDimensions.value.height * stageHeight.value,
+                width: 160 / doorDimensions.value.width * stageWidth.value,
+                height: 61 / doorDimensions.value.height * stageHeight.value,
+            },
         },
         interior: {
             background: {
