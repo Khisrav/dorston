@@ -48,6 +48,8 @@ export const useDoorCalc = defineStore('doorCalc', () => {
             hasSecondaryLock: false,
             secondaryLock: -1,
             secondaryCylindricalLockMechanism: -1,
+            hasPeephole: true,
+            hasNightLatchTurner: false,
         },
     })
 

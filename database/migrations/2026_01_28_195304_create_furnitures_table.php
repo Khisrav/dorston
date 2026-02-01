@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('night_latch_turner_cover_image')->nullable(); //накладка на ночник
             $table->string('cylinder_rod_cover_image')->nullable(); //вертушок на шток цилиндра
             $table->string('handle_cover_image')->nullable(); //накладка на ручку
-            $table->unsignedInteger('cylindrical_lock_id')->nullable();
+            $table->unsignedInteger('cylindrical_lock_id')->nullable(); //id цилиндрического замка
             $table->unsignedInteger('lever_lock_id')->nullable(); //id сувальдного замка
             $table->unsignedInteger('peephole_id')->nullable(); //id глазка
             $table->unsignedInteger('night_latch_turner_id')->nullable(); //id ночника

@@ -57,6 +57,7 @@ class FurnitureForm
                                 '1:1',
                             ])
                             ->maxSize(2048)
+                            ->disk('public')
                             ->directory('furniture/cylindrical-lock-covers')
                             ->columnSpan(1),
 
@@ -81,6 +82,7 @@ class FurnitureForm
                             ])
                             ->maxSize(2048)
                             ->directory('furniture/lever-lock-covers')
+                            ->disk('public')
                             ->columnSpan(1),
 
                         // Peephole
@@ -104,6 +106,7 @@ class FurnitureForm
                             ])
                             ->maxSize(2048)
                             ->directory('furniture/peephole-covers')
+                            ->disk('public')
                             ->columnSpan(1),
 
                         // Night Latch Turner
@@ -127,6 +130,7 @@ class FurnitureForm
                             ])
                             ->maxSize(2048)
                             ->directory('furniture/night-latch-covers')
+                            ->disk('public')
                             ->columnSpan(1),
 
                         // Cylinder Rod
@@ -150,6 +154,7 @@ class FurnitureForm
                             ])
                             ->maxSize(2048)
                             ->directory('furniture/cylinder-rod-covers')
+                            ->disk('public')
                             ->columnSpan(1),
 
                         // Handle
@@ -173,6 +178,7 @@ class FurnitureForm
                             ])
                             ->maxSize(2048)
                             ->directory('furniture/handle-covers')
+                            ->disk('public')
                             ->columnSpan(1),
                     ])
                     ->columns(2)

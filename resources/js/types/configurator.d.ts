@@ -34,6 +34,8 @@ export interface DoorConfig {
         primaryLock?: number;
         primaryCylindricalLockMechanism?: number;
         hasSecondaryLock?: boolean;
+        hasPeephole?: boolean;
+        hasNightLatchTurner?: boolean;
         secondaryLock?: number;
         secondaryCylindricalLockMechanism?: number;
     }

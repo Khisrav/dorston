@@ -69,7 +69,6 @@ class FurnitureTable
 
                 ImageColumn::make('cylindrical_lock_cover_image')
                     ->label('Накладка')
-                    ->circular()
                     ->toggleable()
                     ->defaultImageUrl(url('/images/placeholder.png')),
 
@@ -83,7 +82,6 @@ class FurnitureTable
 
                 ImageColumn::make('lever_lock_cover_image')
                     ->label('Накладка')
-                    ->circular()
                     ->toggleable()
                     ->defaultImageUrl(url('/images/placeholder.png')),
 
@@ -97,7 +95,6 @@ class FurnitureTable
 
                 ImageColumn::make('peephole_cover_image')
                     ->label('Накладка')
-                    ->circular()
                     ->toggleable()
                     ->defaultImageUrl(url('/images/placeholder.png')),
 
@@ -111,7 +108,6 @@ class FurnitureTable
 
                 ImageColumn::make('night_latch_turner_cover_image')
                     ->label('Накладка')
-                    ->circular()
                     ->toggleable()
                     ->defaultImageUrl(url('/images/placeholder.png')),
 
@@ -125,7 +121,6 @@ class FurnitureTable
 
                 ImageColumn::make('cylinder_rod_cover_image')
                     ->label('Вертушка')
-                    ->circular()
                     ->toggleable()
                     ->defaultImageUrl(url('/images/placeholder.png')),
 
@@ -139,7 +134,6 @@ class FurnitureTable
 
                 ImageColumn::make('handle_cover_image')
                     ->label('Накладка')
-                    ->circular()
                     ->toggleable()
                     ->defaultImageUrl(url('/images/placeholder.png')),
 
