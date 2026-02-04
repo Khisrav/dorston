@@ -70,7 +70,8 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const [additionalElementTextureImage] = useImage(computed(() => getImageUrl(additionalElementTextureImageUrl.value)));
     // interior images
     const interiorBgImageUrl = computed(() => 
-        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.interior.casingTexture ?? -1)?.image ?? ''
+        // doorCalcStore.getFilmColor(doorCalcStore.doorConfig.interior.casingTexture ?? -1)?.image ?? ''
+        doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.primaryColor ?? -1)?.image ?? ''
     );
     const [interiorBgImage] = useImage(computed(() => getImageUrl(interiorBgImageUrl.value)));
     const interiorMillingBackgroundImageUrl = computed(() => 
@@ -255,6 +256,12 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 y: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value,
                 width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
                 height: stageHeight.value - (stageHeight.value * (casing_thickness.value / doorDimensions.value.height)),
+            },
+            doorsill: {
+                x: (casing_thickness.value / doorDimensions.value.width) * stageWidth.value + 1,
+                y: stageHeight.value - (60 / doorDimensions.value.height * stageHeight.value),
+                width: (stageWidth.value - 2 * (casing_thickness.value / doorDimensions.value.width) * stageWidth.value) - 3,
+                height: 60 / doorDimensions.value.height * stageHeight.value,
             },
         },
     }));

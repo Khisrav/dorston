@@ -93,8 +93,8 @@ export const useDoorCalc = defineStore('doorCalc', () => {
             doorConfig.value.interior.primaryTexture = model?.default_primary_film_color_id ?? -1
             doorConfig.value.interior.secondaryTexture = model?.default_secondary_film_color_id ?? -1
             doorConfig.value.interior.casingTexture = model?.default_casing_film_color_id ?? -1
-            doorConfig.value.metalPainting.primaryColor = model?.default_primary_paint_id ?? -1
-            doorConfig.value.metalPainting.secondaryColor = model?.default_secondary_paint_id ?? -1
+            // doorConfig.value.metalPainting.primaryColor = model?.default_primary_paint_id ?? -1
+            // doorConfig.value.metalPainting.secondaryColor = model?.default_secondary_paint_id ?? -1
         }
     }
 
@@ -123,9 +123,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     })
 
     watch(() => doorConfig.value.exterior.primaryTexture, (newTexture) => {
-        if (doorConfig.value.exterior.casingTexture === -1) {
-            doorConfig.value.exterior.casingTexture = newTexture
-        }
+        doorConfig.value.exterior.casingTexture = newTexture
     })
 
     // Reset secondary lock when toggle is turned off

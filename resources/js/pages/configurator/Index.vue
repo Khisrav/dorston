@@ -426,7 +426,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                 </div>
 
                                 <!-- Casing Texture Card -->
-                                <div v-if="hasCasingFilmColor" @click="showFilmCasingDrawer = true" 
+                                <!-- <div v-if="hasCasingFilmColor" @click="showFilmCasingDrawer = true" 
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                     <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                         <img v-if="currentSideConfig.casingTexture" 
@@ -440,7 +440,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                         </p>
                                     </div>
                                     <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
 

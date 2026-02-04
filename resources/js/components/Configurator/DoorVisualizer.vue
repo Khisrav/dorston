@@ -141,8 +141,8 @@ onMounted(() => {
                         <!-- Наличник (фон) -->
                         <v-layer>
                             <v-image :config="{
-                                ...doorVisualStore.layersPositioning.exterior.background,
-                                image: doorVisualStore.layersImages.exterior.background,
+                                ...doorVisualStore.layersPositioning.interior.background,
+                                image: doorVisualStore.layersImages.interior.background,
                             }" />
                         </v-layer>
                         <!-- Фрезеровка -->
@@ -161,7 +161,7 @@ onMounted(() => {
                         <!-- Зазоры между наличником и дверью -->
                         <v-layer>
                             <v-image :config="{
-                                ...doorVisualStore.layersPositioning.exterior.doorsill,
+                                ...doorVisualStore.layersPositioning.interior.doorsill,
                                 image: doorVisualStore.layersImages.exterior.doorsill,
                             }" />
                             <v-image :config="{
