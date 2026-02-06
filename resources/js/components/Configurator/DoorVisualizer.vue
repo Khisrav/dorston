@@ -112,7 +112,7 @@ onMounted(() => {
                                 ...doorVisualStore.layersPositioning.exterior.leverLock,
                                 image: doorVisualStore.layersImages.furniture.leverLock,
                             }" />
-                            <v-image v-if="doorCalcStore.doorConfig.furniture.hasPeephole" :config="{
+                            <v-image v-if="doorCalcStore.doorConfig.furniture.hasPeephole && doorCalcStore.doorConfig.peepholePosition !== 'None'" :config="{
                                 ...doorVisualStore.layersPositioning.exterior.peephole,
                                 image: doorVisualStore.layersImages.furniture.peephole,
                             }" />
@@ -185,7 +185,7 @@ onMounted(() => {
                                 ...doorVisualStore.layersPositioning.exterior.leverLock,
                                 image: doorVisualStore.layersImages.furniture.leverLock,
                             }" />
-                            <v-image v-if="doorCalcStore.doorConfig.furniture.hasPeephole" :config="{
+                            <v-image v-if="doorCalcStore.doorConfig.furniture.hasPeephole && doorCalcStore.doorConfig.peepholePosition !== 'None'" :config="{
                                 ...doorVisualStore.layersPositioning.exterior.peephole,
                                 image: doorVisualStore.layersImages.furniture.peephole,
                             }" />

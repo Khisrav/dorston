@@ -22,6 +22,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         doorHeight: 2050,
         doorHandleSide: 'Left',
         doorBoxDesign: 'Opened',
+        peepholePosition: 'Center',
         interior: {
             panelModel: 2, //Ф-11
             primaryTexture: -1,
@@ -134,22 +135,30 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         }
     })
 
-    // Auto-select furniture set when both shape and color are selected
-    watch([
-        () => doorConfig.value.furniture.furnitureShape,
-        () => doorConfig.value.furniture.furnitureColor
-    ], ([shape, color]) => {
-        if (shape && color) {
-            const matchingFurniture = furnitures.value.find(f => f.shape === shape && f.color === color)
-            if (matchingFurniture) {
-                doorConfig.value.furniture.furnitureSetId = matchingFurniture.id
+    // Auto-select furniture set when color is selected
+    watch(
+        () => doorConfig.value.furniture.furnitureColor,
+        (color) => {
+            if (color) {
+                const matchingFurniture = furnitures.value.filter(f => f.color === color)
+                if (matchingFurniture.length === 1) {
+                    // Only one furniture set with this color, auto-select it
+                    doorConfig.value.furniture.furnitureSetId = matchingFurniture[0].id
+                    doorConfig.value.furniture.furnitureShape = matchingFurniture[0].shape
+                } else if (matchingFurniture.length > 1) {
+                    // Multiple options, select the first one
+                    doorConfig.value.furniture.furnitureSetId = matchingFurniture[0].id
+                    doorConfig.value.furniture.furnitureShape = matchingFurniture[0].shape
+                } else {
+                    doorConfig.value.furniture.furnitureSetId = -1
+                    doorConfig.value.furniture.furnitureShape = undefined
+                }
             } else {
                 doorConfig.value.furniture.furnitureSetId = -1
+                doorConfig.value.furniture.furnitureShape = undefined
             }
-        } else {
-            doorConfig.value.furniture.furnitureSetId = -1
         }
-    })
+    )
 
 
     return {

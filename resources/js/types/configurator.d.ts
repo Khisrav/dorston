@@ -1,6 +1,7 @@
 export type doorConstructive = 'Comfort' | 'Absolut' | 'Termo';
 export type doorType = 'Apartment' | 'Street';
 export type doorHandleSide = 'Left' | 'Right';
+export type peepholePosition = 'None' | 'Side' | 'Center';
 export type doorBoxDesign = 'Closed' | 'Opened';
 
 export interface DoorConfig {
@@ -10,6 +11,7 @@ export interface DoorConfig {
     doorHeight: number;
     doorHandleSide: doorHandleSide;
     doorBoxDesign: doorBoxDesign;
+    peepholePosition?: peepholePosition | undefined;
     interior: {
         panelModel: number;
         primaryTexture?: number;

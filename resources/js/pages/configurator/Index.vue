@@ -94,18 +94,16 @@ const boxDesignOptions = [
     { label: 'Закрытый', value: 'Closed' }
 ];
 
+const peepholePositionOptions = [
+    { label: 'Нет', value: 'None' },
+    { label: 'С боку', value: 'Side' },
+    { label: 'По центру', value: 'Center' }
+];
+
 const primaryLocks = computed(() => doorCalcStore.locks.primary);
 const secondaryLocks = computed(() => doorCalcStore.locks.secondary);
 
 // Furniture computed properties
-const availableFurnitureShapes = computed(() => {
-    const shapes = [...new Set(furnitures.value.map(f => f.shape))];
-    return shapes.map(shape => ({
-        label: shape === 'rectangular' ? 'Прямоугольная' : shape === 'oval' ? 'Овальная' : shape,
-        value: shape
-    }));
-});
-
 const availableFurnitureColors = computed(() => {
     const colors = [...new Set(furnitures.value.map(f => f.color))];
     return colors.map(color => ({
@@ -120,20 +118,6 @@ const availableFurnitureColors = computed(() => {
 const selectedFurnitureSet = computed(() => {
     if (!doorCalcStore.doorConfig.furniture.furnitureSetId) return null;
     return furnitures.value.find(f => f.id === doorCalcStore.doorConfig.furniture.furnitureSetId) ?? null;
-});
-
-const filteredFurniture = computed(() => {
-    let filtered = furnitures.value;
-    
-    if (doorCalcStore.doorConfig.furniture.furnitureShape) {
-        filtered = filtered.filter(f => f.shape === doorCalcStore.doorConfig.furniture.furnitureShape);
-    }
-    
-    if (doorCalcStore.doorConfig.furniture.furnitureColor) {
-        filtered = filtered.filter(f => f.color === doorCalcStore.doorConfig.furniture.furnitureColor);
-    }
-    
-    return filtered;
 });
 
 const parametersSummary = computed(() => {
@@ -313,7 +297,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         <!-- Action buttons -->
                         <div class="mt-4 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
                             <div>
-                                <span class="font-medium font-sans text-xl">{{ doorCalcStore.total_price }} ₽</span>
+                                <span class="font-medium font-sans text-xl">{{ doorCalcStore.total_price.toFixed(2) }} ₽</span>
                             </div>
                             <Button label="Сохранить конфигурацию" size="large" class="w-full sm:w-auto" />
                         </div>
@@ -426,7 +410,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                 </div>
 
                                 <!-- Casing Texture Card -->
-                                <!-- <div v-if="hasCasingFilmColor" @click="showFilmCasingDrawer = true" 
+                                <div v-if="hasCasingFilmColor" @click="showFilmCasingDrawer = true" 
                                     class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                     <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
                                         <img v-if="currentSideConfig.casingTexture" 
@@ -440,7 +424,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                         </p>
                                     </div>
                                     <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
-                                </div> -->
+                                </div>
                             </div>
                         </div>
 
@@ -496,11 +480,11 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                             </div>
                         </div>
 
-                        <!-- IV. Furniture Selection -->
+                        <!-- IV. Locks Selection -->
                         <div class="space-y-4">
                             <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
                                 <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
-                                    <span class="italic text-neutral-400 mr-2">IV.</span> Фурнитура
+                                    <span class="italic text-neutral-400 mr-2">IV.</span> Замки
                                 </h2>
                             </div>
 
@@ -549,40 +533,49 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                     </div>
                                     <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                                 </div>
-                                <!-- Furniture Shape Selection -->
-                                <div>
-                                    <Select 
-                                        v-model="doorCalcStore.doorConfig.furniture.furnitureShape" 
-                                        :options="availableFurnitureShapes" 
-                                        optionLabel="label" 
-                                        optionValue="value"
-                                        placeholder="Выберите форму"
-                                        showClear
-                                        class="w-full"
-                                    />
-                                </div>
+                            </div>
+                        </div>
 
+                        <!-- V. Furniture Selection -->
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
+                                <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
+                                    <span class="italic text-neutral-400 mr-2">V.</span> Фурнитура
+                                </h2>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-3">
                                 <!-- Furniture Color Selection -->
                                 <div>
+                                    <label class="block font-serif text-sm text-black dark:text-white mb-2">
+                                        Цвет фурнитуры
+                                    </label>
                                     <Select 
                                         v-model="doorCalcStore.doorConfig.furniture.furnitureColor" 
                                         :options="availableFurnitureColors" 
                                         optionLabel="label" 
                                         optionValue="value"
                                         placeholder="Выберите цвет"
+                                        size="small"
                                         showClear
                                         class="w-full"
                                     />
                                 </div>
 
-                                <div class="flex items-center justify-between px-1">
-                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Ночная задвижка + поворотник</span>
-                                    <ToggleSwitch />
+                                <!-- Peephole Position Selection -->
+                                <div>
+                                    <label class="block font-serif text-sm text-black dark:text-white mb-2">
+                                        Глазок
+                                    </label>
+                                    <SelectButton :options="peepholePositionOptions"
+                                        v-model="doorCalcStore.doorConfig.peepholePosition" optionLabel="label"
+                                        optionValue="value" size="small" fluid />
                                 </div>
 
+                                <!-- Night Latch Turner Toggle -->
                                 <div class="flex items-center justify-between px-1">
-                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Глазок</span>
-                                    <ToggleSwitch />
+                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Ночная задвижка + поворотник</span>
+                                    <ToggleSwitch v-model="doorCalcStore.doorConfig.furniture.hasNightLatchTurner" />
                                 </div>
                             </div>
                         </div>
