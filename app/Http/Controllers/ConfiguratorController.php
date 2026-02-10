@@ -32,7 +32,9 @@ class ConfiguratorController extends Controller
                     ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id', 'properties')
                     ->get(),
             ],
-            
+            'cylinders' => Nomenclature::where('nomenclature_category_id', 5)
+                ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id')
+                ->get(),
             'handles' => Nomenclature::where('nomenclature_category_id', 6)
                 ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id')
                 ->get(),

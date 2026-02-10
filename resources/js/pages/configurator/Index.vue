@@ -44,6 +44,7 @@ const doorModels = ref(usePage().props.doorModels as DoorModel[])
 const filmColors = ref(usePage().props.filmColors as Nomenclature[])
 const furnitures = ref(usePage().props.furnitures as Furniture[])
 const locks = ref(usePage().props.locks as { primary: Nomenclature[], secondary: Nomenclature[] })
+const cylinders = ref(usePage().props.cylinders as Nomenclature[])
 const handles = ref(usePage().props.handles as Nomenclature[])
 
 const doorCalcStore = useDoorCalc()
@@ -53,6 +54,7 @@ doorCalcStore.filmColors = filmColors.value
 doorCalcStore.furnitures = furnitures.value
 doorCalcStore.handles = handles.value
 doorCalcStore.locks = locks.value
+doorCalcStore.cylinders = cylinders.value
 doorCalcStore.initializeDefaultConfig()
 
 // Computed properties to filter door models
@@ -102,6 +104,24 @@ const peepholePositionOptions = [
 
 const primaryLocks = computed(() => doorCalcStore.locks.primary);
 const secondaryLocks = computed(() => doorCalcStore.locks.secondary);
+
+// Cylinders computed properties
+const availableCylinders = computed(() => {
+    return cylinders.value.map(cylinder => ({
+        label: cylinder.name,
+        value: cylinder.id
+    }));
+});
+
+const selectedPrimaryCylinder = computed(() => {
+    if (!doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism || doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism === -1) return null;
+    return cylinders.value.find(c => c.id === doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism) ?? null;
+});
+
+const selectedSecondaryCylinder = computed(() => {
+    if (!doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism || doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism === -1) return null;
+    return cylinders.value.find(c => c.id === doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism) ?? null;
+});
 
 // Furniture computed properties
 const availableFurnitureColors = computed(() => {
@@ -532,6 +552,51 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                         </p>
                                     </div>
                                     <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
+                                </div>
+
+                                <!-- Primary Cylinder Selection -->
+                                <div>
+                                    <label class="block font-serif text-sm text-black dark:text-white mb-2">
+                                        Основной цилиндр
+                                    </label>
+                                    <Select 
+                                        v-model="doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism" 
+                                        :options="availableCylinders" 
+                                        optionLabel="label" 
+                                        optionValue="value"
+                                        placeholder="Выберите цилиндр"
+                                        size="small"
+                                        showClear
+                                        class="w-full"
+                                    />
+                                    <p v-if="selectedPrimaryCylinder" class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                                        {{ selectedPrimaryCylinder.base_price.toLocaleString('ru-RU') }} ₽
+                                    </p>
+                                </div>
+
+                                <!-- Secondary Cylinder Selection (только если выбран дополнительный замок) -->
+                                <div v-if="doorCalcStore.doorConfig.furniture.hasSecondaryLock">
+                                    <label class="block font-serif text-sm text-black dark:text-white mb-2">
+                                        Дополнительный цилиндр <span class="text-red-500">*</span>
+                                    </label>
+                                    <Select 
+                                        v-model="doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism" 
+                                        :options="availableCylinders" 
+                                        optionLabel="label" 
+                                        optionValue="value"
+                                        placeholder="Выберите цилиндр"
+                                        size="small"
+                                        showClear
+                                        class="w-full"
+                                        :class="{'border-red-500': doorCalcStore.doorConfig.furniture.hasSecondaryLock && (!doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism || doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism === -1)}"
+                                    />
+                                    <p v-if="selectedSecondaryCylinder" class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                                        {{ selectedSecondaryCylinder.base_price.toLocaleString('ru-RU') }} ₽
+                                    </p>
+                                    <p v-if="doorCalcStore.doorConfig.furniture.hasSecondaryLock && (!doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism || doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism === -1)" 
+                                        class="text-xs text-red-500 mt-1">
+                                        Обязательное поле при выборе дополнительного замка
+                                    </p>
                                 </div>
                             </div>
                         </div>
