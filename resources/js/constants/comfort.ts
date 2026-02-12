@@ -22,5 +22,6 @@ export const comfortItems = [
 // Function to calculate the total sum of all items
 export const getComfortTotalSum = () => {
     // return comfortItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    return 4360.5;
+    // return 4360.5;
+    return 4162.3
 };
