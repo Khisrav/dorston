@@ -27,7 +27,7 @@ class NomenclaturesTable
                     ->label('ID')
                     ->sortable()
                     ->searchable(),
-                TextColumn::make('name')
+                TextInputColumn::make('name')
                     ->label('Название')
                     ->searchable(),
                 TextColumn::make('nomenclature_category_id')
@@ -35,9 +35,11 @@ class NomenclaturesTable
                     // ->badge()
                     ->formatStateUsing(fn (int $state) => NomenclatureCategory::find($state)?->name)
                     ->sortable(),
-                TextColumn::make('base_price')
+                TextInputColumn::make('base_price')
                     ->label('Базовая цена')
-                    ->money('RUB')
+                    ->type('number')
+                    ->suffix('₽')
+                    // ->money('RUB')
                     ->sortable(),
                 TextColumn::make('unit')
                     ->label('Ед. изм.')
