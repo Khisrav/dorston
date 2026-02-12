@@ -22,6 +22,19 @@ export const isDoorStandard = (width: number, height: number) => {
     return (width <= 2050 && height <= 960) ? true : false
 }
 
+export const isDoorPanelStandard = (width: number, height: number, isExterior: boolean = true) => {
+    let a, b
+    if (isExterior) {
+        a = (width - 67) >  934 ? false : true
+        b = (height - 65) >  2052 ? false : true
+        return a && b
+    } else {
+        a = (width - 127) >  2052 ? false : true
+        b = (height - 128) >  934 ? false : true
+        return a && b
+    }
+}
+
 export const isMetallicDoor = (doorConfig: DoorConfig) => {
     /*
      * 35 - Kombi

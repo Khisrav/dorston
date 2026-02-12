@@ -25,12 +25,13 @@ class NomenclaturesSeeder extends Seeder
     public function run(): void
     {
         //clear all nomenclatures
-        DB::table('nomenclatures')->truncate();
+        // DB::table('nomenclatures')->truncate();
 
         //import csv
         $csvFilesList = [
-            'database/data/nomenclatures/2_poroshkovaya_pokraska.csv',
-            'database/data/nomenclatures/nomenclatures_1.csv',
+            // 'database/data/nomenclatures/2_poroshkovaya_pokraska.csv',
+            // 'database/data/nomenclatures/nomenclatures_1.csv',
+            'database/data/nomenclatures/dlya_raschetov_mdf_paneley.csv',
         ];
 
         foreach ($csvFilesList as $csvFile) {

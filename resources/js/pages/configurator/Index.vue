@@ -44,6 +44,7 @@ const doorModels = ref(usePage().props.doorModels as DoorModel[])
 const filmColors = ref(usePage().props.filmColors as Nomenclature[])
 const furnitures = ref(usePage().props.furnitures as Furniture[])
 const locks = ref(usePage().props.locks as { primary: Nomenclature[], secondary: Nomenclature[] })
+const cylinders = ref(usePage().props.cylinders as Nomenclature[])
 const handles = ref(usePage().props.handles as Nomenclature[])
 
 const doorCalcStore = useDoorCalc()
@@ -53,6 +54,7 @@ doorCalcStore.filmColors = filmColors.value
 doorCalcStore.furnitures = furnitures.value
 doorCalcStore.handles = handles.value
 doorCalcStore.locks = locks.value
+doorCalcStore.cylinders = cylinders.value
 doorCalcStore.initializeDefaultConfig()
 
 // Computed properties to filter door models
@@ -94,18 +96,34 @@ const boxDesignOptions = [
     { label: 'Закрытый', value: 'Closed' }
 ];
 
+const peepholePositionOptions = [
+    { label: 'Нет', value: 'None' },
+    { label: 'С боку', value: 'Side' },
+    { label: 'По центру', value: 'Center' }
+];
+
 const primaryLocks = computed(() => doorCalcStore.locks.primary);
 const secondaryLocks = computed(() => doorCalcStore.locks.secondary);
 
-// Furniture computed properties
-const availableFurnitureShapes = computed(() => {
-    const shapes = [...new Set(furnitures.value.map(f => f.shape))];
-    return shapes.map(shape => ({
-        label: shape === 'rectangular' ? 'Прямоугольная' : shape === 'oval' ? 'Овальная' : shape,
-        value: shape
+// Cylinders computed properties
+const availableCylinders = computed(() => {
+    return cylinders.value.map(cylinder => ({
+        label: cylinder.name,
+        value: cylinder.id
     }));
 });
 
+const selectedPrimaryCylinder = computed(() => {
+    if (!doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism || doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism === -1) return null;
+    return cylinders.value.find(c => c.id === doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism) ?? null;
+});
+
+const selectedSecondaryCylinder = computed(() => {
+    if (!doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism || doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism === -1) return null;
+    return cylinders.value.find(c => c.id === doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism) ?? null;
+});
+
+// Furniture computed properties
 const availableFurnitureColors = computed(() => {
     const colors = [...new Set(furnitures.value.map(f => f.color))];
     return colors.map(color => ({
@@ -120,20 +138,6 @@ const availableFurnitureColors = computed(() => {
 const selectedFurnitureSet = computed(() => {
     if (!doorCalcStore.doorConfig.furniture.furnitureSetId) return null;
     return furnitures.value.find(f => f.id === doorCalcStore.doorConfig.furniture.furnitureSetId) ?? null;
-});
-
-const filteredFurniture = computed(() => {
-    let filtered = furnitures.value;
-    
-    if (doorCalcStore.doorConfig.furniture.furnitureShape) {
-        filtered = filtered.filter(f => f.shape === doorCalcStore.doorConfig.furniture.furnitureShape);
-    }
-    
-    if (doorCalcStore.doorConfig.furniture.furnitureColor) {
-        filtered = filtered.filter(f => f.color === doorCalcStore.doorConfig.furniture.furnitureColor);
-    }
-    
-    return filtered;
 });
 
 const parametersSummary = computed(() => {
@@ -313,7 +317,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         <!-- Action buttons -->
                         <div class="mt-4 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
                             <div>
-                                <span class="font-medium font-sans text-xl">{{ doorCalcStore.total_price }} ₽</span>
+                                <span class="font-medium font-sans text-xl">{{ doorCalcStore.total_price.toFixed(2) }} ₽</span>
                             </div>
                             <Button label="Сохранить конфигурацию" size="large" class="w-full sm:w-auto" />
                         </div>
@@ -496,11 +500,11 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                             </div>
                         </div>
 
-                        <!-- IV. Furniture Selection -->
+                        <!-- IV. Locks Selection -->
                         <div class="space-y-4">
                             <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
                                 <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
-                                    <span class="italic text-neutral-400 mr-2">IV.</span> Фурнитура
+                                    <span class="italic text-neutral-400 mr-2">IV.</span> Замки
                                 </h2>
                             </div>
 
@@ -549,40 +553,94 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                     </div>
                                     <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                                 </div>
-                                <!-- Furniture Shape Selection -->
+
+                                <!-- Primary Cylinder Selection -->
                                 <div>
+                                    <label class="block font-serif text-sm text-black dark:text-white mb-2">
+                                        Основной цилиндр
+                                    </label>
                                     <Select 
-                                        v-model="doorCalcStore.doorConfig.furniture.furnitureShape" 
-                                        :options="availableFurnitureShapes" 
+                                        v-model="doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism" 
+                                        :options="availableCylinders" 
                                         optionLabel="label" 
                                         optionValue="value"
-                                        placeholder="Выберите форму"
+                                        placeholder="Выберите цилиндр"
+                                        size="small"
                                         showClear
                                         class="w-full"
                                     />
+                                    <p v-if="selectedPrimaryCylinder" class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                                        {{ selectedPrimaryCylinder.base_price.toLocaleString('ru-RU') }} ₽
+                                    </p>
                                 </div>
 
+                                <!-- Secondary Cylinder Selection (только если выбран дополнительный замок) -->
+                                <div v-if="doorCalcStore.doorConfig.furniture.hasSecondaryLock">
+                                    <label class="block font-serif text-sm text-black dark:text-white mb-2">
+                                        Дополнительный цилиндр <span class="text-red-500">*</span>
+                                    </label>
+                                    <Select 
+                                        v-model="doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism" 
+                                        :options="availableCylinders" 
+                                        optionLabel="label" 
+                                        optionValue="value"
+                                        placeholder="Выберите цилиндр"
+                                        size="small"
+                                        showClear
+                                        class="w-full"
+                                        :class="{'border-red-500': doorCalcStore.doorConfig.furniture.hasSecondaryLock && (!doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism || doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism === -1)}"
+                                    />
+                                    <p v-if="selectedSecondaryCylinder" class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                                        {{ selectedSecondaryCylinder.base_price.toLocaleString('ru-RU') }} ₽
+                                    </p>
+                                    <p v-if="doorCalcStore.doorConfig.furniture.hasSecondaryLock && (!doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism || doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism === -1)" 
+                                        class="text-xs text-red-500 mt-1">
+                                        Обязательное поле при выборе дополнительного замка
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- V. Furniture Selection -->
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
+                                <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
+                                    <span class="italic text-neutral-400 mr-2">V.</span> Фурнитура
+                                </h2>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-3">
                                 <!-- Furniture Color Selection -->
                                 <div>
+                                    <label class="block font-serif text-sm text-black dark:text-white mb-2">
+                                        Цвет фурнитуры
+                                    </label>
                                     <Select 
                                         v-model="doorCalcStore.doorConfig.furniture.furnitureColor" 
                                         :options="availableFurnitureColors" 
                                         optionLabel="label" 
                                         optionValue="value"
                                         placeholder="Выберите цвет"
+                                        size="small"
                                         showClear
                                         class="w-full"
                                     />
                                 </div>
 
-                                <div class="flex items-center justify-between px-1">
-                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Ночная задвижка + поворотник</span>
-                                    <ToggleSwitch />
+                                <!-- Peephole Position Selection -->
+                                <div>
+                                    <label class="block font-serif text-sm text-black dark:text-white mb-2">
+                                        Глазок
+                                    </label>
+                                    <SelectButton :options="peepholePositionOptions"
+                                        v-model="doorCalcStore.doorConfig.peepholePosition" optionLabel="label"
+                                        optionValue="value" size="small" fluid />
                                 </div>
 
+                                <!-- Night Latch Turner Toggle -->
                                 <div class="flex items-center justify-between px-1">
-                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Глазок</span>
-                                    <ToggleSwitch />
+                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Ночная задвижка + поворотник</span>
+                                    <ToggleSwitch v-model="doorCalcStore.doorConfig.furniture.hasNightLatchTurner" />
                                 </div>
                             </div>
                         </div>

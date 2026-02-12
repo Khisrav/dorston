@@ -9,6 +9,7 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Filters\MultiSelectFilter;
 use Filament\Tables\Table;
 
@@ -41,14 +42,10 @@ class NomenclaturesTable
                 TextColumn::make('unit')
                     ->label('Ед. изм.')
                     ->badge(),
-                SelectColumn::make('tag')
+                TextInputColumn::make('tag')
                     ->label('Метка')
-                    ->options([
-                        'primary-lock' => 'Основной замок',
-                        'secondary-lock' => 'Вторичный замок',
-                    ]),
-                    // ->badge()
-                    // ->color('info'),
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->label('Создан')
                     ->dateTime()

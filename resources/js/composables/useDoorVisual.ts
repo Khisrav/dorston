@@ -20,7 +20,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
 
     const stageWidth = ref<number>(0);
     const stageHeight = ref<number>(0);
-    const casing_thickness = ref<number>(85);
+    const casing_thickness = ref<number>(85); // could be 93
     const additionalElementMaskedGroupRef = ref<any>(null);
     const doorDimensions = computed(() => {
         return {
@@ -28,6 +28,8 @@ export const useDoorVisual = defineStore('doorVisual', () => {
             height: doorCalcStore.doorConfig.doorHeight,
         }
     });
+    
+    casing_thickness.value = doorCalcStore.getDoorModelInfo(doorCalcStore.doorConfig.exterior.panelModel)?.has_casing_film_color ? 93 : 85;
 
     const setStageDimensions = (width: number, height: number) => {
         stageWidth.value = width;
@@ -35,6 +37,29 @@ export const useDoorVisual = defineStore('doorVisual', () => {
 
         console.log('stage size set to', stageWidth.value, stageHeight.value);
     }
+
+    const peepholePosition = computed(() => {
+        const baseY = stageHeight.value - (1500 / doorDimensions.value.height * stageHeight.value);
+        const width = 40 / doorDimensions.value.width * stageWidth.value;
+        const height = 40 / doorDimensions.value.height * stageHeight.value;
+        
+        let x = 0;  
+        
+        if (doorCalcStore.doorConfig.peepholePosition === 'Center') {
+            // Center position
+            x = (doorDimensions.value.width / 2 - 40 / 2) * (stageWidth.value / doorDimensions.value.width);
+        } else if (doorCalcStore.doorConfig.peepholePosition === 'Side') {
+            // Side position with x = 80
+            x = (80 + casing_thickness.value) / doorDimensions.value.width * stageWidth.value;
+        }
+        
+        return {
+            x,
+            y: baseY,
+            width,
+            height,
+        };
+    });
 
     // Load all images at once
     // exterior images
@@ -70,7 +95,8 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const [additionalElementTextureImage] = useImage(computed(() => getImageUrl(additionalElementTextureImageUrl.value)));
     // interior images
     const interiorBgImageUrl = computed(() => 
-        doorCalcStore.getFilmColor(doorCalcStore.doorConfig.interior.casingTexture ?? -1)?.image ?? ''
+        // doorCalcStore.getFilmColor(doorCalcStore.doorConfig.interior.casingTexture ?? -1)?.image ?? ''
+        doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.primaryColor ?? -1)?.image ?? ''
     );
     const [interiorBgImage] = useImage(computed(() => getImageUrl(interiorBgImageUrl.value)));
     const interiorMillingBackgroundImageUrl = computed(() => 
@@ -200,12 +226,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
                 height: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value + 6,
             },
-            peephole: {
-                x: (doorDimensions.value.width / 2 - 40 / 2) * (stageWidth.value / doorDimensions.value.width),
-                y: stageHeight.value - (1500 / doorDimensions.value.height * stageHeight.value),
-                width: 40 / doorDimensions.value.width * stageWidth.value,
-                height: 40 / doorDimensions.value.height * stageHeight.value,
-            },
+            peephole: peepholePosition.value,
             doorsill: {
                 x: (casing_thickness.value / doorDimensions.value.width) * stageWidth.value + 1,
                 y: stageHeight.value - (35 / doorDimensions.value.height * stageHeight.value),
@@ -255,6 +276,12 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 y: (casing_thickness.value / doorDimensions.value.height) * stageHeight.value,
                 width: stageWidth.value - (stageWidth.value * ((casing_thickness.value * 2) / doorDimensions.value.width)),
                 height: stageHeight.value - (stageHeight.value * (casing_thickness.value / doorDimensions.value.height)),
+            },
+            doorsill: {
+                x: (casing_thickness.value / doorDimensions.value.width) * stageWidth.value + 1,
+                y: stageHeight.value - (60 / doorDimensions.value.height * stageHeight.value),
+                width: (stageWidth.value - 2 * (casing_thickness.value / doorDimensions.value.width) * stageWidth.value) - 3,
+                height: 60 / doorDimensions.value.height * stageHeight.value,
             },
         },
     }));

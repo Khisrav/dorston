@@ -12,6 +12,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     const furnitures = ref<Furniture[]>([]);
     const handles = ref<Nomenclature[]>([]);
     const locks = ref<{ primary: Nomenclature[], secondary: Nomenclature[] }>({ primary: [], secondary: [] });
+    const cylinders = ref<Nomenclature[]>([]);
 
     const total_price = ref(0)
 
@@ -22,6 +23,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         doorHeight: 2050,
         doorHandleSide: 'Left',
         doorBoxDesign: 'Opened',
+        peepholePosition: 'Center',
         interior: {
             panelModel: 2, //Ф-11
             primaryTexture: -1,
@@ -93,8 +95,8 @@ export const useDoorCalc = defineStore('doorCalc', () => {
             doorConfig.value.interior.primaryTexture = model?.default_primary_film_color_id ?? -1
             doorConfig.value.interior.secondaryTexture = model?.default_secondary_film_color_id ?? -1
             doorConfig.value.interior.casingTexture = model?.default_casing_film_color_id ?? -1
-            doorConfig.value.metalPainting.primaryColor = model?.default_primary_paint_id ?? -1
-            doorConfig.value.metalPainting.secondaryColor = model?.default_secondary_paint_id ?? -1
+            // doorConfig.value.metalPainting.primaryColor = model?.default_primary_paint_id ?? -1
+            // doorConfig.value.metalPainting.secondaryColor = model?.default_secondary_paint_id ?? -1
         }
     }
 
@@ -123,9 +125,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     })
 
     watch(() => doorConfig.value.exterior.primaryTexture, (newTexture) => {
-        if (doorConfig.value.exterior.casingTexture === -1) {
-            doorConfig.value.exterior.casingTexture = newTexture
-        }
+        doorConfig.value.exterior.casingTexture = newTexture
     })
 
     // Reset secondary lock when toggle is turned off
@@ -136,22 +136,30 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         }
     })
 
-    // Auto-select furniture set when both shape and color are selected
-    watch([
-        () => doorConfig.value.furniture.furnitureShape,
-        () => doorConfig.value.furniture.furnitureColor
-    ], ([shape, color]) => {
-        if (shape && color) {
-            const matchingFurniture = furnitures.value.find(f => f.shape === shape && f.color === color)
-            if (matchingFurniture) {
-                doorConfig.value.furniture.furnitureSetId = matchingFurniture.id
+    // Auto-select furniture set when color is selected
+    watch(
+        () => doorConfig.value.furniture.furnitureColor,
+        (color) => {
+            if (color) {
+                const matchingFurniture = furnitures.value.filter(f => f.color === color)
+                if (matchingFurniture.length === 1) {
+                    // Only one furniture set with this color, auto-select it
+                    doorConfig.value.furniture.furnitureSetId = matchingFurniture[0].id
+                    doorConfig.value.furniture.furnitureShape = matchingFurniture[0].shape
+                } else if (matchingFurniture.length > 1) {
+                    // Multiple options, select the first one
+                    doorConfig.value.furniture.furnitureSetId = matchingFurniture[0].id
+                    doorConfig.value.furniture.furnitureShape = matchingFurniture[0].shape
+                } else {
+                    doorConfig.value.furniture.furnitureSetId = -1
+                    doorConfig.value.furniture.furnitureShape = undefined
+                }
             } else {
                 doorConfig.value.furniture.furnitureSetId = -1
+                doorConfig.value.furniture.furnitureShape = undefined
             }
-        } else {
-            doorConfig.value.furniture.furnitureSetId = -1
         }
-    })
+    )
 
 
     return {
@@ -164,6 +172,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         furnitures,
         handles,
         locks,
+        cylinders,
         getDoorModelInfo,
         getFilmColor,
         getPaintColor,
