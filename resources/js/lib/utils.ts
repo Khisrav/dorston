@@ -19,7 +19,7 @@ export function toUrl(href: NonNullable<InertiaLinkProps['href']>) {
 }
 
 export const isDoorStandard = (width: number, height: number) => {
-    return (width <= 2050 && height <= 960) ? true : false
+    return (width <= 960 && height <= 2050) ? true : false
 }
 
 export const isDoorPanelStandard = (width: number, height: number, isExterior: boolean = true) => {
@@ -45,15 +45,9 @@ export const isMetallicDoor = (doorConfig: DoorConfig) => {
     return [35, 36, 37, 38].includes(doorConfig.exterior.panelModel)
 }
 
-export const getPaintPrice = (doorConfig: DoorConfig) => {
-    let total = 0
+// export const getPaintPrice = (doorConfig: DoorConfig) => {
     
-    if (doorConfig.metalPainting?.undercoat) {
-        total += (isDoorStandard(doorConfig.doorWidth, doorConfig.doorHeight) ? 1 : 1.1) * 420
-    }
-    
-    return total
-}
+// }
 
 export const hasPrimaryTexture = (type: doorType, isExterior: boolean, modelId: number) => {
     if (isExterior && type == 'Apartment') {
@@ -82,3 +76,16 @@ export const hasSecondaryMetalPaint = (modelId: number) => {
 
 export const getDoorModelImage = (link: string) => link.startsWith('http') ? link : `/storage/${link}`
 export const getImageUrl = (image: string | null) => image ? image.startsWith('http') ? image : `/storage/${image}` : '/assets/placeholder.png'
+export const getFurnitureColorImage = (color: string) => {
+    // Map database color values to actual image filenames
+    const colorMap: Record<string, string> = {
+        'black': 'matte-black',
+        'chrome': 'chrome',
+        'gold': 'gold',
+        'bronze': 'bronze',
+        'matte-black': 'matte-black',
+        'matte-chrome': 'matte-chrome'
+    };
+    const mappedColor = colorMap[color] || color;
+    return `/assets/furniture-colors/${mappedColor}.png`;
+}
