@@ -364,7 +364,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         <!-- I. Design Selection -->
                         <div class="space-y-4">
                             <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight border-b pb-2 border-black/10 dark:border-white/10">
-                                <span class="italic text-neutral-400 mr-2">I.</span> Дизайн отделки
+                                Дизайн отделки
                             </h2>
                             
                             <!-- Single Design Card that changes based on view mode -->
@@ -396,7 +396,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         <div v-if="hasPrimaryFilmColor || hasSecondaryFilmColor || hasCasingFilmColor" class="space-y-4">
                             <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
                                 <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
-                                    <span class="italic text-neutral-400 mr-2">II.</span> Цвет плёнки
+                                    Цвет плёнки
                                 </h2>
                                 <span class="text-xs font-serif text-neutral-400 italic">
                                     {{ viewMode === 'exterior' ? 'Снаружи' : 'Изнутри' }}
@@ -460,7 +460,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         <div v-if="viewMode === 'exterior' && (hasPrimaryPaint || hasSecondaryPaint)" class="space-y-4">
                             <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
                                 <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
-                                    <span class="italic text-neutral-400 mr-2">III.</span> Покраска металла
+                                    Покраска металла
                                 </h2>
                             </div>
                             
@@ -512,7 +512,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         <div class="space-y-4">
                             <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
                                 <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
-                                    <span class="italic text-neutral-400 mr-2">IV.</span> Замки
+                                    Замки
                                 </h2>
                             </div>
 
@@ -613,7 +613,7 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                         <div class="space-y-4">
                             <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
                                 <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
-                                    <span class="italic text-neutral-400 mr-2">V.</span> Фурнитура
+                                    Фурнитура
                                 </h2>
                             </div>
 
