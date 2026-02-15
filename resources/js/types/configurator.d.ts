@@ -94,6 +94,12 @@ export interface Furniture {
     night_latch_turner_id?: number | null;
     cylinder_rod_id?: number | null;
     handle_id?: number | null;
+    cylindrical_lock_price?: number | null;
+    lever_lock_price?: number | null;
+    peephole_price?: number | null;
+    night_latch_turner_price?: number | null;
+    cylinder_rod_price?: number | null;
+    handle_price?: number | null;
     created_at?: any;
     updated_at?: any;
 }

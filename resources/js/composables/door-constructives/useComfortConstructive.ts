@@ -1,5 +1,4 @@
-import { getComfortTotalSum } from '@/constants/comfort';
-import { getPaintPrice, isDoorPanelStandard, isDoorStandard, isMetallicDoor } from '@/lib/utils';
+import { isDoorPanelStandard, isDoorStandard, isMetallicDoor } from '@/lib/utils';
 import { DoorConfig } from '@/types/configurator';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
@@ -8,29 +7,27 @@ import { useDoorCalc } from '../useDoorCalc';
 export const useComfortConstructive = defineStore('comfortConstructive', () => {
     const total_price = ref(0);
 
-    const staticPriceValues = getComfortTotalSum();
-
     const getTotalPrice = (isStandard: boolean, doorConfig: DoorConfig) => {
         const doorCalcStore = useDoorCalc();
 
         total_price.value = 0;
-        total_price.value += staticPriceValues;
-        console.log('Стандартное [Неменяемое]', staticPriceValues);
-        //цинкогрунт и цвет
-        total_price.value += powderPriceValue(doorConfig);
-        console.log('Цинкогрунт и цвет', powderPriceValue(doorConfig));
+        total_price.value += nonChangeablePricesValue(doorConfig)
+        console.log('Стандартное [Неменяемое]', nonChangeablePricesValue(doorConfig));
+        //Порошок
+        total_price.value += powderPriceValue(doorConfig, doorCalcStore);
+        console.log('Порошок', powderPriceValue(doorConfig, doorCalcStore));
         //Уникальное [Неменяемое]
         total_price.value += changeablePricesValue(doorConfig);
-        console.log('Уникальное [Неменяемое]', changeablePricesValue(doorConfig));
+        console.log('Уникальное [Меняемое]', changeablePricesValue(doorConfig));
         //Закрыть короб
         total_price.value += closedBoxPriceValue(doorConfig);
         console.log('Закрыть короб', closedBoxPriceValue(doorConfig));
         //Дополнительно крепеж если ПП
         total_price.value += isMetallicDoor(doorConfig) ? 0 : 100 * 0.18 + 4 * 1.6;
         console.log('Дополнительно крепеж если ПП', isMetallicDoor(doorConfig) ? 0 : 100 * 0.18 + 4 * 1.6);
-        //Замок
+        //Замки и цилиндры
         total_price.value += locksPriceValue(doorConfig, doorCalcStore);
-        console.log('Замок', locksPriceValue(doorConfig, doorCalcStore));
+        console.log('Замки и цилиндры', locksPriceValue(doorConfig, doorCalcStore));
         //Фурнитура
         total_price.value += furniturePriceValue(doorConfig, doorCalcStore);
         console.log('Фурнитура', furniturePriceValue(doorConfig, doorCalcStore));
@@ -187,6 +184,8 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
     const interiorPanelsPriceValue = (doorConfig: DoorConfig, doorCalcStore: ReturnType<typeof useDoorCalc>) => {
         let sum = 0;
         const isStandard = doorConfig.doorHeight > 2052 ? false : true;
+
+        if (doorConfig.interior.panelModel === -1) return 0
     
         // МДФ t=10 мм, м2 - сюда же вшита 12мм мдф под панели с зеркалами, upd вшита 16мм
         const modelName = doorCalcStore.doorModels?.find((m) => m.id === doorConfig.interior.panelModel)?.name;
@@ -281,7 +280,7 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
                     return 0
             }
         }
-        sum += qntTemp(modelName) * (isStandard ? 315 : 366)
+        sum += qntTemp(modelName) * (isStandard ? 315 : 366) 
         // console.log('Стекло+обработка', qntTemp(modelName) * (isStandard ? 315 : 366))
 
         //Клей 88
@@ -318,89 +317,59 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
     //Модуль расчёта МДФ-наличников [Г-Образные]
     const mdfGObraznyeNalichnikiPriceValue = (doorConfig: DoorConfig, doorCalcStore: ReturnType<typeof useDoorCalc>) => {
         let sum = 0;
-        const modelName = doorCalcStore.doorModels?.find((m) => m.id === doorConfig.interior.panelModel)?.name;
+        const modelName = doorCalcStore.doorModels?.find((m) => m.id === doorConfig.exterior.panelModel)?.name;
         //МДФ t=10 мм, м2
         sum += (isDoorPanelStandard(doorConfig.doorWidth, doorConfig.doorHeight, true) ? 0.82 : 1) * 272
         // console.log('МДФ t=10 мм, м2', (isDoorPanelStandard(doorConfig.doorWidth, doorConfig.doorHeight, true) ? 0.82 : 1) * 272)
 
         //Цвет пленки наличника
-        const primaryFilmColorPrice = doorCalcStore.filmColors?.find((f) => f.id === doorConfig.interior.primaryTexture)?.base_price;
-        sum += (isDoorPanelStandard(doorConfig.doorWidth, doorConfig.doorHeight, true) ? 3.5 : 4.55) * (primaryFilmColorPrice ?? 0);
-        // console.log('Цвет пленки наличника', (isDoorPanelStandard(doorConfig.doorWidth, doorConfig.doorHeight, true) ? 3.5 : 4.55) * (primaryFilmColorPrice ?? 0))
+        const casingFilmColorPrice = doorCalcStore.filmColors?.find((f) => f.id === doorConfig.exterior.casingTexture)?.base_price;
+        sum += (isDoorPanelStandard(doorConfig.doorWidth, doorConfig.doorHeight, true) ? 3.5 : 4.55) * (casingFilmColorPrice ?? 0);
+        // console.log('Цвет пленки наличника', (isDoorPanelStandard(doorConfig.doorWidth, doorConfig.doorHeight, true) ? 3.5 : 4.55) * (casingFilmColorPrice ?? 0), casingFilmColorPrice)
 
         //Клей, Наждачная бумага, м2, Губка шлифовальная, Колер, Упаковка, накладные расходы, Зарплата
-        sum += 0.15 * 1000 + 0.001 * 214 + 0.05 * 60 + 0.018 * 55 + 1 * 20 + 1 * 734 + 1 * 75;
+        sum += 0.15 * 1000 + 0.005 * 214 + 0.05 * 60 + 0.018 * 55 + 1 * 20 + 1 * 734 + 1 * 75;
         // console.log('Мелочь', 0.15 * 1000 + 0.001 * 214 + 0.05 * 60 + 0.018 * 55 + 1 * 20 + 1 * 734 + 1 * 75);
 
-        const difficultyPrice = (modelName: string) => ({'BC-45':500, 'BC-24':400, 'BC-13':400, 'BC-6':300, 'BC-22':300, 'BC-41':300, 'BC-46':300, 'BC-47':300, 'BC-32':300, 'BC-48':300, 'BC-49':300, 'BC-50':300, 'BC-43':300, 'BC-51':300, 'НФ-6':300, 'BC-52':300, 'BC-34':300, 'BC-30':300, 'BC-44':300, 'BC-19':300, 'BC-38':300, 'ВС-17':300}[modelName] || 0)
+        const difficultyPrice = (modelName: string) => ({
+            'ВС-45': 500, 'ВС-24': 400, 'ВС-13': 400, 'ВС-6': 300, 'ВС-22': 300,
+            'ВС-41': 300, 'ВС-46': 300, 'ВС-47': 300, 'ВС-32': 300, 'ВС-48': 300,
+            'ВС-49': 300, 'ВС-50': 300, 'ВС-43': 300, 'ВС-51': 300, 'НФ-6': 300,
+            'ВС-52': 300, 'ВС-34': 300, 'ВС-30': 300, 'ВС-44': 300, 'ВС-19': 300,
+            'ВС-38': 300, 'ВС-17': 300
+        }[modelName] || 0);
+        
         sum += 1 * difficultyPrice(modelName ?? '');
-        // console.log('Заложенная сложность', difficultyPrice(modelName ?? ''));
+        // console.log('Заложенная сложность', difficultyPrice(modelName ?? ''), modelName);
 
         return sum;
     };
 
-    const locksPriceValue = (
-        doorConfig: DoorConfig,
-        doorCalcStore: ReturnType<typeof useDoorCalc>,
-    ) => {
+    const locksPriceValue = (doorConfig: DoorConfig, doorCalcStore: ReturnType<typeof useDoorCalc>) => {
         let sum = 0;
 
         // Primary lock price
-        if (
-            doorConfig.furniture.primaryLock &&
-            doorConfig.furniture.primaryLock !== -1
-        ) {
-            const primaryLock = doorCalcStore.locks.primary.find(
-                (l) => l.id === doorConfig.furniture.primaryLock,
-            );
-            if (primaryLock) {
-                sum += primaryLock.base_price;
-            }
+        if (doorConfig.furniture.primaryLock &&doorConfig.furniture.primaryLock !== -1) {
+            const primaryLock = doorCalcStore.locks.primary.find((l) => l.id === doorConfig.furniture.primaryLock,);
+            if (primaryLock) sum += primaryLock.base_price
         }
 
         // Secondary lock price (if enabled)
-        if (
-            doorConfig.furniture.hasSecondaryLock &&
-            doorConfig.furniture.secondaryLock &&
-            doorConfig.furniture.secondaryLock !== -1
-        ) {
-            const secondaryLock = doorCalcStore.locks.secondary.find(
-                (l) => l.id === doorConfig.furniture.secondaryLock,
-            );
-            if (secondaryLock) {
-                sum += secondaryLock.base_price;
-            }
+        if (doorConfig.furniture.hasSecondaryLock && doorConfig.furniture.secondaryLock && doorConfig.furniture.secondaryLock !== -1) {
+            const secondaryLock = doorCalcStore.locks.secondary.find((l) => l.id === doorConfig.furniture.secondaryLock)
+            if (secondaryLock) sum += secondaryLock.base_price
         }
 
         // Primary cylinder price
-        if (
-            doorConfig.furniture.primaryCylindricalLockMechanism &&
-            doorConfig.furniture.primaryCylindricalLockMechanism !== -1
-        ) {
-            const primaryCylinder = doorCalcStore.cylinders.find(
-                (c) =>
-                    c.id ===
-                    doorConfig.furniture.primaryCylindricalLockMechanism,
-            );
-            if (primaryCylinder) {
-                sum += primaryCylinder.base_price;
-            }
+        if (doorConfig.furniture.primaryCylindricalLockMechanism && doorConfig.furniture.primaryCylindricalLockMechanism !== -1) {
+            const primaryCylinder = doorCalcStore.cylinders.find((c) => c.id === doorConfig.furniture.primaryCylindricalLockMechanism)
+            if (primaryCylinder) sum += primaryCylinder.base_price
         }
 
         // Secondary cylinder price (if enabled)
-        if (
-            doorConfig.furniture.hasSecondaryLock &&
-            doorConfig.furniture.secondaryCylindricalLockMechanism &&
-            doorConfig.furniture.secondaryCylindricalLockMechanism !== -1
-        ) {
-            const secondaryCylinder = doorCalcStore.cylinders.find(
-                (c) =>
-                    c.id ===
-                    doorConfig.furniture.secondaryCylindricalLockMechanism,
-            );
-            if (secondaryCylinder) {
-                sum += secondaryCylinder.base_price;
-            }
+        if (doorConfig.furniture.hasSecondaryLock && doorConfig.furniture.secondaryCylindricalLockMechanism && doorConfig.furniture.secondaryCylindricalLockMechanism !== -1) {
+            const secondaryCylinder = doorCalcStore.cylinders.find((c) => c.id === doorConfig.furniture.secondaryCylindricalLockMechanism)
+            if (secondaryCylinder) sum += secondaryCylinder.base_price
         }
 
         return sum;
@@ -412,11 +381,57 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
     ) => {
         let sum = 0;
 
+        if (doorConfig.furniture.furnitureSetId && doorConfig.furniture.furnitureSetId !== -1) {
+            const furniture = doorCalcStore.furnitures.find((f) => f.id === doorConfig.furniture.furnitureSetId)
+            if (furniture) {
+                sum += (furniture.cylindrical_lock_price ?? 0)
+                console.log('--Цилиндрический замок', sum, (furniture.cylindrical_lock_price ?? 0))
+
+                sum += (furniture.lever_lock_price ?? 0)
+                console.log('--Сувальдный замок', sum, (furniture.lever_lock_price ?? 0))
+
+                sum += ((furniture.peephole_price && doorConfig.peepholePosition !== 'None') ? furniture.peephole_price : 0)
+                console.log('--Глазок', sum, ((furniture.peephole_price && doorConfig.furniture.hasPeephole) ? furniture.peephole_price : 0))
+                
+                sum += ((furniture.night_latch_turner_price && doorConfig.furniture.hasNightLatchTurner) ? furniture.night_latch_turner_price : 0)
+                console.log('--Ночник', sum, ((furniture.night_latch_turner_price && doorConfig.furniture.hasNightLatchTurner) ? furniture.night_latch_turner_price : 0))
+                
+                sum += ((furniture.cylinder_rod_price && doorConfig.furniture.hasSecondaryLock) ? furniture.cylinder_rod_price : 0)
+                console.log('--Вертушка на шток цилиндра', sum, ((furniture.cylinder_rod_price && doorConfig.furniture.hasSecondaryLock) ? furniture.cylinder_rod_price : 0))
+                
+                sum += (furniture.handle_price ?? 0)
+                console.log('--Ручка', sum, (furniture.handle_price ?? 0))
+            }
+        }
+
         return sum;
     };
 
-    const noChangeablePricesValue = (doorConfig: DoorConfig) => {
+    const nonChangeablePricesValue = (doorConfig: DoorConfig) => {
         let sum = 0;
+
+        const hasSecondaryLock = doorConfig.furniture.hasSecondaryLock;
+        const hasUndercoat = doorConfig.metalPainting.undercoat;
+        
+        //Навесы каплевидные
+        sum += 3 * 49
+        //Заклепки вытяжные диам.4*10 мм, алюминий/сталь
+        sum += 4 * 0.65
+        //Проволока для полуавтомата,кг
+        sum += 0.4 * 130
+        //Противосъём приварной
+        sum += 3 * 3.2
+
+        //E11, E13, E38, E39, E42, E45, E46, E47, E48, E49
+        sum += 1*1.6 + 0.13*125 + 12*21 + 6*23 + 4*1.6 + 1*32 + 1*4.94 + 2*0.37 + 1*0.66 + 2*4.67
+        //E52, E53, E54, E56, E57, E58, E59
+        sum += 6*3 + (hasSecondaryLock ? 6 : 3)*6 + 1*2.15 + 1*19.31 + 0.0045*3250 + 0.6*11 + 1.5*17.7
+        //E61-E68
+        sum += 1*22.7 + 10*0.43 + 4*0.9 + 8*1.92 + 0.39*0.66 + 0.16*119 + 1*54.08 + 1*35.5
+        //E70-73
+        sum += 2*0.61 + 0.165*169 + 1*3000 + (hasUndercoat ? 2 : 1)*200
+
+
         return sum;
     };
 
@@ -469,10 +484,70 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
         return sum;
     };
 
-    const powderPriceValue = (doorConfig: DoorConfig) => doorConfig.exterior.panelModel !== 37 ? getPaintPrice(doorConfig) : 0; // verso
+    const powderPriceValue = (doorConfig: DoorConfig, doorCalcStore: ReturnType<typeof useDoorCalc>) => {
+        let sum = 0
+        const modelName = doorCalcStore.doorModels?.find((m) => m.id === doorConfig.exterior.panelModel)?.name
+        const isStandard = isDoorStandard(doorConfig.doorWidth, doorConfig.doorHeight)
+        const isMetallic = isMetallicDoor(doorConfig)
+        const paintInfo = doorCalcStore.paints?.find((p) => p.id === doorConfig.metalPainting.primaryColor)
 
-    const closedBoxPriceValue = (doorConfig: DoorConfig) =>
-        doorConfig.doorBoxDesign === 'Closed' ? 7.56 * 84 + 0.035 * 2300 : 0; // E75+E76
+        const paintConsumptionByModel = (paintId: number, modelName: string) => {
+            let consumption = 0
+
+            const config: Record<number, { std: number; nonStd: number; subtract: number }> = {
+                2: { std: 2, nonStd: 2.2, subtract: 0.6 },
+                3: { std: 2.2, nonStd: 2.42, subtract: 0.6 },
+                4: { std: 1.9, nonStd: 2.1, subtract: 0.5 },
+                5: { std: 2, nonStd: 2.2, subtract: 0.5 },
+                6: { std: 1.8, nonStd: 2, subtract: 0.5 },
+                7: { std: 1.8, nonStd: 2, subtract: 0.4 },
+                8: { std: 1.8, nonStd: 2, subtract: 0.4 },
+                9: { std: 1.8, nonStd: 2, subtract: 0.4 },
+                10: { std: 1.8, nonStd: 2, subtract: 0.4 },
+                //Муар 9003
+                11: { std: 1.8, nonStd: 2, subtract: 0.4 },
+                //Муар 6028
+                12: { std: 1.8, nonStd: 2, subtract: 0.4 },
+                //Бронза 74П-566
+                13: { std: 2, nonStd: 2.5, subtract: 0 },
+                //Синий 74П-220
+                14: { std: 2, nonStd: 2.5, subtract: 0 },
+                //Золото на белом
+                15: { std: 2, nonStd: 2.5, subtract: 0 },
+                //Серебро на белом
+                16: { std: 2, nonStd: 2.5, subtract: 0 },
+                //Шагрень 9003
+                17: { std: 2, nonStd: 2.5, subtract: 0 },
+                //Муар металлик бронзовый
+                18: { std: 2, nonStd: 2.5, subtract: 0 },
+                //Муар металлик 8019
+                19: { std: 2, nonStd: 2.5, subtract: 0 },
+                //Муар металлик синий
+                20: { std: 2, nonStd: 2.5, subtract: 0 },
+                21: { std: 2, nonStd: 2.5, subtract: 0 },
+                22: { std: 2, nonStd: 2.5, subtract: 0 },
+            };
+            
+            const cfg = config[paintId];
+            consumption = cfg ? (isStandard ? cfg.std : cfg.nonStd) - (isMetallic ? 0 : cfg.subtract) : 0;
+            
+            return consumption
+        }
+
+        sum += paintConsumptionByModel(paintInfo?.id ?? 0, modelName ?? '') * (paintInfo?.base_price ?? 0)
+        // console.log('Расход порошка', sum, paintConsumptionByModel(paintInfo?.id ?? 0, modelName ?? ''), (paintInfo?.base_price ?? 0))
+
+        //Арбиталка на МУАР
+        sum += ([7, 8, 9, 10, 11, 12, 18, 19, 20, 21, 22].includes(paintInfo?.id ?? 0) ? 50 : 0)
+
+        //цинкогрунт (вроде не одно и то же что в doorConfig.metalPainting.undercoat)
+        sum += (isStandard ? 1 : 1.1) * 420
+        // console.log('Цинкогрунт', sum, (isStandard ? 1 : 1.1) * 420)
+        
+        return sum
+    }
+
+    const closedBoxPriceValue = (doorConfig: DoorConfig) => doorConfig.doorBoxDesign === 'Closed' ? 7.56 * 84 + 0.035 * 2300 : 0; // E75+E76
 
     const additionalElementsOfDecorationPriceValue = (doorConfig: DoorConfig, doorCalcStore: ReturnType<typeof useDoorCalc>) => {
         let sum = 0;
