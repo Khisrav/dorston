@@ -46,6 +46,12 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
         //Цинкогрунт если Verso и ZN
         total_price.value += doorConfig.exterior.panelModel === 37 && doorConfig.metalPainting.undercoat ? (isDoorStandard(doorConfig.doorWidth, doorConfig.doorHeight) ? 1 : 1.1) * 420 : 0;
         console.log('Цинкогрунт если Verso и ZN', doorConfig.exterior.panelModel === 37 && doorConfig.metalPainting.undercoat ? (isDoorStandard(doorConfig.doorWidth, doorConfig.doorHeight) ? 1 : 1.1) * 420 : 0);
+        //ФЗП
+        total_price.value += fzp(doorConfig);
+        console.log('ФЗП', fzp(doorConfig));
+        //Порог из нержавейки
+        total_price.value += (doorConfig.stainlessSteelDoorsill ? 1.344 : 0) * 187;
+        console.log('Порог из нержавейки', (doorConfig.stainlessSteelDoorsill ? 1.344 : 0) * 187);
 
         return total_price.value;
     };
@@ -590,7 +596,32 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
         }
 
         return sum;
-    };
+    }
+
+    const fzp = (doorConfig: DoorConfig) => {
+        let sum = 0
+
+        const isStandard = doorConfig.doorHeight <= 2110 && doorConfig.doorWidth <= 1010 ? true : false
+        
+        sum += (isMetallicDoor(doorConfig) ? 1995 : 2203)
+        //console.log('--Базовая ФЗП дверной системы', sum)
+        sum += (doorConfig.metalPainting.undercoat ? 1 : 0) * (230 + 500)
+        //console.log('--Цинкогрунтование', (doorConfig.metalPainting.undercoat ? 1 : 0) * (230 + 500))
+        sum += (doorConfig.stainlessSteelDoorsill ? 1 : 0) * (114 + 500)
+        //console.log('--Порог из нержавейки', (doorConfig.stainlessSteelDoorsill ? 1 : 0) * (114 + 500))
+        sum += (doorConfig.doorBoxDesign === 'Closed' ? 1 : 0) * 122
+        //console.log('--Закрыть короб', (doorConfig.doorBoxDesign === 'Closed' ? 1 : 0) * 122)
+        const panelModelPrices: Record<number, number> = {
+            37: 505,  // Verso
+            36: 289,  // Stark
+            34: 400,  // Forta
+        };
+        const panelPrice = panelModelPrices[doorConfig.exterior.panelModel as number];
+        if (panelPrice) sum += panelPrice
+        //console.log('--Панелька', panelPrice)
+
+        return isStandard ? sum : sum * 1.05
+    }
 
     return {
         getTotalPrice,

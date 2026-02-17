@@ -12,6 +12,7 @@ export interface DoorConfig {
     doorHandleSide: doorHandleSide;
     doorBoxDesign: doorBoxDesign;
     peepholePosition?: peepholePosition | undefined;
+    stainlessSteelDoorsill?: boolean | undefined;
     interior: {
         panelModel: number;
         primaryTexture?: number;

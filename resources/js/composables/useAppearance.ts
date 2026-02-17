@@ -87,9 +87,9 @@ export function useAppearance() {
         localStorage.setItem('appearance', value);
 
         // Store in cookie for SSR...
-        setCookie('appearance', value);
+        setCookie('appearance', value)
 
-        updateTheme(value);
+        updateTheme(value)
     }
 
     return {

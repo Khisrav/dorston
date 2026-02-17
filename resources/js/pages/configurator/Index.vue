@@ -707,6 +707,23 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                 </div>
                             </div>
                         </div>
+
+                        <!-- VI. Additional Options -->
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
+                                <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
+                                    Доп. опции
+                                </h2>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-3">
+                                <!-- Stainless Steel Doorsill Toggle -->
+                                <div class="flex items-center justify-between px-1">
+                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Порог из нержавейки</span>
+                                    <ToggleSwitch v-model="doorCalcStore.doorConfig.stainlessSteelDoorsill" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
