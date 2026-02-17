@@ -24,6 +24,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         doorHandleSide: 'Left',
         doorBoxDesign: 'Opened',
         peepholePosition: 'Center',
+        stainlessSteelDoorsill: false,
         interior: {
             panelModel: 2, //Ф-11
             primaryTexture: -1,
@@ -109,7 +110,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     
     watch(doorConfig, () => {
         if (doorConfig.value.doorConstructive === 'Comfort') {
-            total_price.value = useComfortConstructive().getTotalPrice(isStandard.value, doorConfig.value)
+            total_price.value = useComfortConstructive().getTotalPrice(doorConfig.value)
         } 
         //other constructives
         else {

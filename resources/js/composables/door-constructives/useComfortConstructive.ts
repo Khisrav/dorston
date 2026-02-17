@@ -7,7 +7,7 @@ import { useDoorCalc } from '../useDoorCalc';
 export const useComfortConstructive = defineStore('comfortConstructive', () => {
     const total_price = ref(0);
 
-    const getTotalPrice = (isStandard: boolean, doorConfig: DoorConfig) => {
+    const getTotalPrice = (doorConfig: DoorConfig) => {
         const doorCalcStore = useDoorCalc();
 
         total_price.value = 0;
