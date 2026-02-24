@@ -4,7 +4,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useDoorCalc } from '../useDoorCalc';
 
-export const useComfortConstructive = defineStore('comfortConstructive', () => {
+export const useAbsolutConstructive = defineStore('absolutConstructive', () => {
     const total_price = ref(0);
 
     const getTotalPrice = (doorConfig: DoorConfig) => {
@@ -50,8 +50,8 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
         total_price.value += fzp(doorConfig);
         console.log('ФЗП', fzp(doorConfig));
         //Порог из нержавейки
-        total_price.value += (doorConfig.stainlessSteelDoorsill ? 1.344 : 0) * 187;
-        console.log('Порог из нержавейки', (doorConfig.stainlessSteelDoorsill ? 1.344 : 0) * 187);
+        total_price.value += (doorConfig.stainlessSteelDoorsill ? 1.6318 : 0) * 187;
+        console.log('Порог из нержавейки', (doorConfig.stainlessSteelDoorsill ? 1.6318 : 0) * 187);
 
         return total_price.value;
     };
@@ -428,15 +428,8 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
         //Противосъём приварной
         sum += 3 * 3.2
 
-        //E11, E13, E38, E39, E42, E45, E46, E47, E48, E49
-        sum += 1*1.6 + 0.13*125 + 12*21 + 6*23 + 4*1.6 + 1*32 + 1*4.94 + 2*0.37 + 1*0.66 + 2*4.67
-        //E52, E53, E54, E56, E57, E58, E59
-        sum += 6*3 + (hasSecondaryLock ? 6 : 3)*6 + 1*2.15 + 1*19.31 + 0.0045*3250 + 0.6*11 + 1.5*17.7
-        //E61-E68
-        sum += 1*22.7 + 10*0.43 + 4*0.9 + 8*1.92 + 0.39*0.66 + 0.16*119 + 1*54.08 + 1*35.5
-        //E70-73
-        sum += 2*0.61 + 0.165*169 + 1*3000 + (hasUndercoat ? 2 : 1)*200
-
+        //     E11,    E13,       E38,    E41,   E44,    E48-E52,                     E55-E57,                            E59-E62,                            E64-E71,                                                    E73-E76
+        sum += 1*1.6 + 0.13*125 + 12*21 + 2*23 + 8*1.6 + 32+4.94+2*0.37+0.66+2*4.67 + 6*3+(hasSecondaryLock?6:3)*6+2.15 + 19.31+0.0045*3250+0.6*11+1.5*17.7 + 16*0.43+4*0.9+13*1.92+22.7+0.39*0.66+0.13*119+1.5*54+35.5 + 2*0.61+0.165*169+1*3000+(hasUndercoat?2:1)*200
 
         return sum;
     };
@@ -444,49 +437,43 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
     const changeablePricesValue = (doorConfig: DoorConfig) => {
         let sum = 0;
         //E4
-        if (doorConfig.doorHeight <= 2050 && doorConfig.doorWidth <= 960) {
-            sum += 43.175;
-        } else if (
-            doorConfig.doorHeight <= 2050 &&
-            doorConfig.doorWidth > 960 &&
-            doorConfig.doorWidth <= 1050
-        ) {
-            sum += 47.4925;
-        } else if (
-            doorConfig.doorHeight > 2050 &&
-            doorConfig.doorHeight <= 2130 &&
-            doorConfig.doorWidth <= 1050
-        ) {
-            sum += 47.4925;
-        } else if (doorConfig.doorHeight > 2130) {
-            sum += 49.06;
-        }
+        if (doorConfig.doorHeight <= 2050 && doorConfig.doorWidth <= 960) sum = 51.81;
+        if (doorConfig.doorHeight <= 2050 && doorConfig.doorWidth > 960 && doorConfig.doorWidth <= 1050) sum = 56.991;
+        if (doorConfig.doorHeight > 2050 && doorConfig.doorHeight <= 2130 && doorConfig.doorWidth <= 1050) sum = 56.991;
+        if (doorConfig.doorHeight > 2130) sum = 58.875;
         sum *= 84;
+        console.log('E4', sum)
+
         //E5
         sum += (doorConfig.doorWidth >= 2120 ? 6.91 : 4.8) * 84;
+        console.log('E5', (doorConfig.doorWidth >= 2120 ? 6.91 : 4.8) * 84)
+        //E39
+        sum += (doorConfig.doorHeight >= 2120 ? 140 : 123)
+        console.log('E39', (doorConfig.doorHeight >= 2120 ? 140 : 123))
         //E40
-        sum +=
-            ((((doorConfig.doorHeight - 127) / 1000) *
-                (doorConfig.doorWidth - 128)) /
-                1000) *
-            0.05 *
-            2300;
-        //E41
-        sum +=
-            ((((doorConfig.doorHeight - 127) / 1000) *
-                (doorConfig.doorWidth - 128)) /
-                1000) *
-            0.03 *
-            3250;
-        //E44
-        sum += (doorConfig.furniture.hasNightLatchTurner ? 1 : 0) * 64;
-        //E60
+        sum += 123
+        console.log('E40', 123)
+        //E42
+        sum += ((((doorConfig.doorHeight - 127) / 1000) * (doorConfig.doorWidth - 128)) / 1000) * 0.05 * 3800;
+        console.log('E42', ((((doorConfig.doorHeight - 127) / 1000) * (doorConfig.doorWidth - 128)) / 1000) * 0.05 * 3800)
+        //E43
+        sum += ((((doorConfig.doorHeight - 127) / 1000) * (doorConfig.doorWidth - 128)) / 1000) * 0.03 * 3250;
+        console.log('E43', ((((doorConfig.doorHeight - 127) / 1000) * (doorConfig.doorWidth - 128)) / 1000) * 0.03 * 3250)
+        //E47
+        sum += (doorConfig.furniture.hasNightLatchTurner ? 1 : 0) * 64
+        console.log('E47', (doorConfig.furniture.hasNightLatchTurner ? 1 : 0) * 64)
+        //E63
         sum +=
             (doorConfig.doorHeight <= 2050
                 ? 4
                 : doorConfig.doorHeight <= 2100
                   ? 6
                   : 9) * 50;
+        console.log('E63', (doorConfig.doorHeight <= 2050
+                ? 4
+                : doorConfig.doorHeight <= 2100
+                  ? 6
+                  : 9) * 50)
         return sum;
     };
 
@@ -553,7 +540,7 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
         return sum
     }
 
-    const closedBoxPriceValue = (doorConfig: DoorConfig) => doorConfig.doorBoxDesign === 'Closed' ? 7.56 * 84 + 0.035 * 2300 : 0; // E75+E76
+    const closedBoxPriceValue = (doorConfig: DoorConfig) => doorConfig.doorBoxDesign === 'Closed' ? 9.067 * 84 + 0.035 * 3800 : 0
 
     const additionalElementsOfDecorationPriceValue = (doorConfig: DoorConfig, doorCalcStore: ReturnType<typeof useDoorCalc>) => {
         let sum = 0;
@@ -603,13 +590,13 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
 
         const isStandard = doorConfig.doorHeight <= 2110 && doorConfig.doorWidth <= 1010 ? true : false
         
-        sum += (isMetallicDoor(doorConfig) ? 1995 : 2203)
+        sum += (isMetallicDoor(doorConfig) ? 2076 : 2435)
         //console.log('--Базовая ФЗП дверной системы', sum)
         sum += (doorConfig.metalPainting.undercoat ? 1 : 0) * (230 + 500)
         //console.log('--Цинкогрунтование', (doorConfig.metalPainting.undercoat ? 1 : 0) * (230 + 500))
         sum += (doorConfig.stainlessSteelDoorsill ? 1 : 0) * (114 + 500)
         //console.log('--Порог из нержавейки', (doorConfig.stainlessSteelDoorsill ? 1 : 0) * (114 + 500))
-        sum += (doorConfig.doorBoxDesign === 'Closed' ? 1 : 0) * 122
+        sum += (doorConfig.doorBoxDesign === 'Closed' ? 1 : 0) * 141
         //console.log('--Закрыть короб', (doorConfig.doorBoxDesign === 'Closed' ? 1 : 0) * 122)
         const panelModelPrices: Record<number, number> = {
             37: 505,  // Verso

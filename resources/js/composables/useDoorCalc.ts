@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import { ref, watch, computed } from "vue";
 import { useComfortConstructive } from "./door-constructives/useComfortConstructive";
 import { isDoorStandard } from "@/lib/utils";
+import { useAbsolutConstructive } from "./door-constructives/useAbsolutConstructive";
 
 export const useDoorCalc = defineStore('doorCalc', () => {
     //static vars
@@ -24,6 +25,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         doorHandleSide: 'Left',
         doorBoxDesign: 'Opened',
         peepholePosition: 'Center',
+        stainlessSteelDoorsill: false,
         interior: {
             panelModel: 2, //Ф-11
             primaryTexture: -1,
@@ -108,13 +110,17 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     })
     
     watch(doorConfig, () => {
-        if (doorConfig.value.doorConstructive === 'Comfort') {
-            total_price.value = useComfortConstructive().getTotalPrice(isStandard.value, doorConfig.value)
-        } 
-        //other constructives
-        else {
-            total_price.value = 0
+        switch (doorConfig.value.doorConstructive) {
+            case 'Comfort':
+                total_price.value = useComfortConstructive().getTotalPrice(doorConfig.value)
+                break;
+            case 'Absolut':
+                total_price.value = useAbsolutConstructive().getTotalPrice(doorConfig.value)
+                break
+            default:
+                total_price.value = 0
         }
+        total_price.value *= (1.3 * 1.055)
     }, { deep: true, immediate: true })
 
     //if primary texture changed, then apply primary texture value to casing texture

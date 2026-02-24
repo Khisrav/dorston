@@ -25,13 +25,16 @@ class NomenclaturesSeeder extends Seeder
     public function run(): void
     {
         //clear all nomenclatures
-        // DB::table('nomenclatures')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('nomenclatures')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         //import csv
         $csvFilesList = [
             // 'database/data/nomenclatures/2_poroshkovaya_pokraska.csv',
             // 'database/data/nomenclatures/nomenclatures_1.csv',
-            'database/data/nomenclatures/dlya_raschetov_mdf_paneley.csv',
+            // 'database/data/nomenclatures/dlya_raschetov_mdf_paneley.csv',
+            'database/data/nomenclatures/all_nomenclatures.csv',
         ];
 
         foreach ($csvFilesList as $csvFile) {
@@ -41,8 +44,8 @@ class NomenclaturesSeeder extends Seeder
                 if (! $firstLine) {
                     Nomenclature::create([
                         'name' => \strval($data[0]),
-                        'base_price' => \floatval(str_replace(',', '.', $data[1])),
-                        'unit' => $this->unitMap[\strval($data[2])] ?? \strval($data[2]),
+                        'base_price' => \floatval(str_replace(',', '.', $data[2])),
+                        'unit' => $this->unitMap[\strval($data[2])] ?? \strval($data[1]),
                         'nomenclature_category_id' => \intval($data[3]),
                     ]);
                 }

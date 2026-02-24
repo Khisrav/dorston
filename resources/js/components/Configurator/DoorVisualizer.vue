@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch, nextTick } from 'vue';
 import { useDoorVisual } from '@/composables/useDoorVisual';
 import { useDoorCalc } from '@/composables/useDoorCalc';
 import { useImage } from 'vue-konva';
@@ -8,6 +8,8 @@ import { getImageUrl } from '@/lib/utils';
 const doorCalcStore = useDoorCalc()
 const doorVisualStore = useDoorVisual();
 const visualizerContainerRef = ref<HTMLDivElement | null>(null);
+const doorsillMaskedGroupRef = ref<any>(null);
+const interiorDoorsillMaskedGroupRef = ref<any>(null);
 
 onMounted(() => {
     if (visualizerContainerRef.value) {
@@ -22,6 +24,48 @@ onMounted(() => {
         doorVisualStore.setStageDimensions((width - gap) / 2, height);
     }
 });
+
+// Cache the doorsill masked group for performance
+watch(
+    () => [
+        doorVisualStore.layersImages.exterior.background,
+        doorVisualStore.layersImages.exterior.doorsill,
+        doorCalcStore.doorConfig.stainlessSteelDoorsill,
+    ],
+    async ([background, doorsill, isStainlessSteel]) => {
+        if (!isStainlessSteel && background && doorsill && doorsillMaskedGroupRef.value) {
+            await nextTick();
+            await nextTick();
+
+            const group = doorsillMaskedGroupRef.value.getNode();
+            if (group) {
+                group.cache();
+                group.getLayer()?.batchDraw();
+            }
+        }
+    }
+);
+
+// Cache the interior doorsill masked group for performance
+watch(
+    () => [
+        doorVisualStore.layersImages.interior.background,
+        doorVisualStore.layersImages.exterior.doorsill,
+        doorCalcStore.doorConfig.stainlessSteelDoorsill,
+    ],
+    async ([background, doorsill, isStainlessSteel]) => {
+        if (!isStainlessSteel && background && doorsill && interiorDoorsillMaskedGroupRef.value) {
+            await nextTick();
+            await nextTick();
+
+            const group = interiorDoorsillMaskedGroupRef.value.getNode();
+            if (group) {
+                group.cache();
+                group.getLayer()?.batchDraw();
+            }
+        }
+    }
+);
 </script>
 
 <template>
@@ -80,7 +124,19 @@ onMounted(() => {
                         </v-layer>
                         <!-- Зазоры между наличником и дверью -->
                         <v-layer>
-                            <v-image :config="{
+                            <v-group :ref="doorsillMaskedGroupRef" v-if="!doorCalcStore.doorConfig.stainlessSteelDoorsill && doorVisualStore.layersImages.exterior.doorsill && doorVisualStore.layersImages.exterior.background">
+                                <v-image :config="{
+                                    ...doorVisualStore.layersPositioning.exterior.doorsill,
+                                    image: doorVisualStore.layersImages.exterior.background,
+                                }" />
+                                
+                                <v-image :config="{
+                                    ...doorVisualStore.layersPositioning.exterior.doorsill,
+                                    image: doorVisualStore.layersImages.exterior.doorsill,
+                                    globalCompositeOperation: 'destination-in',
+                                }" />
+                            </v-group>
+                            <v-image v-else-if="doorCalcStore.doorConfig.stainlessSteelDoorsill" :config="{
                                 ...doorVisualStore.layersPositioning.exterior.doorsill,
                                 image: doorVisualStore.layersImages.exterior.doorsill,
                             }" />
@@ -160,7 +216,19 @@ onMounted(() => {
                         </v-layer>
                         <!-- Зазоры между наличником и дверью -->
                         <v-layer>
-                            <v-image :config="{
+                            <v-group :ref="interiorDoorsillMaskedGroupRef" v-if="!doorCalcStore.doorConfig.stainlessSteelDoorsill && doorVisualStore.layersImages.exterior.doorsill && doorVisualStore.layersImages.interior.background">
+                                <v-image :config="{
+                                    ...doorVisualStore.layersPositioning.interior.doorsill,
+                                    image: doorVisualStore.layersImages.interior.background,
+                                }" />
+                                
+                                <v-image :config="{
+                                    ...doorVisualStore.layersPositioning.interior.doorsill,
+                                    image: doorVisualStore.layersImages.exterior.doorsill,
+                                    globalCompositeOperation: 'destination-in',
+                                }" />
+                            </v-group>
+                            <v-image v-else-if="doorCalcStore.doorConfig.stainlessSteelDoorsill" :config="{
                                 ...doorVisualStore.layersPositioning.interior.doorsill,
                                 image: doorVisualStore.layersImages.exterior.doorsill,
                             }" />
