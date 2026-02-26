@@ -12,7 +12,17 @@ class ConfiguratorController extends Controller
 {
     public function index()
     {
-        return Inertia::render('configurator/Index', [
+        return Inertia::render('configurator/Index');
+    }
+
+    public function termo()
+    {
+        return Inertia::render('configurator/Termo');
+    }
+
+    public function apartment()
+    {
+        return Inertia::render('configurator/Apartment', [
             'paints' => Nomenclature::where('nomenclature_category_id', 2)
                 ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id')
                 ->get(),
