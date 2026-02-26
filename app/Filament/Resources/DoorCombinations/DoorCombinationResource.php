@@ -24,7 +24,7 @@ class DoorCombinationResource extends Resource
     protected static ?string $recordTitleAttribute = 'Комбинация двери';
     protected static ?string $navigationLabel = 'Комбинации дверей';
     protected static ?string $pluralNavigationLabel = 'Комбинации дверей';
-    protected static ?string $pluralModelLabel = 'Комбинация двери';
+    protected static ?string $pluralModelLabel = 'Комбинации дверей';
     protected static ?string $modelLabel = 'Комбинация двери';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;

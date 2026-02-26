@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\DoorCombinations\Schemas;
 
+use App\Models\DoorModel;
 use App\Models\Nomenclature;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class DoorCombinationForm
@@ -18,13 +20,22 @@ class DoorCombinationForm
                     ->native(false)
                     ->searchable()
                     ->relationship('doorModel', 'name')
+                    ->live()
                     ->required(),
                 Select::make('film_color_id')
                     ->label('Цвет пленки')
                     ->native(false)
                     ->searchable()
                     ->options(fn () => Nomenclature::where('nomenclature_category_id', 13)->pluck('name', 'id'))
-                    ->required(),
+                    ->visible(fn (Get $get) => DoorModel::find($get('door_model_id'))?->type !== 'interior')
+                    ->required(fn (Get $get) => DoorModel::find($get('door_model_id'))?->type !== 'interior'),
+                Select::make('paint_id')
+                    ->label('Цвет краски')
+                    ->native(false)
+                    ->searchable()
+                    ->options(fn () => Nomenclature::where('nomenclature_category_id', 2)->pluck('name', 'id'))
+                    ->visible(fn (Get $get) => DoorModel::find($get('door_model_id'))?->type === 'interior')
+                    ->required(fn (Get $get) => DoorModel::find($get('door_model_id'))?->type === 'interior'),
                 Select::make('img_purpose')
                     ->label('Назначение')
                     ->native(false)

@@ -13,12 +13,14 @@ class DoorCombinationInfolist
         return $schema
             ->components([
                 TextEntry::make('doorModel.name')
-                    ->label('Door model'),
+                    ->label('Модель двери'),
                 TextEntry::make('filmColor.name')
-                    ->label('Film color'),
+                    ->label('Цвет плёнки/краски'),
                 TextEntry::make('img_purpose')
+                    ->label('Назначение')
                     ->badge(),
-                ImageEntry::make('image'),
+                ImageEntry::make('image')
+                    ->label('Изображение'),
                 TextEntry::make('created_at')
                     ->dateTime()
                     ->placeholder('-'),

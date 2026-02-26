@@ -9,6 +9,7 @@ class DoorCombination extends Model
 {
     protected $fillable = [
         'door_model_id',
+        //film_color_id can also mean paint_id. ids are unique so it shouldnt be a problem in future
         'film_color_id',
         'img_purpose',
         'image',
