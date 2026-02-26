@@ -66,13 +66,17 @@ class AdminPanelProvider extends PanelProvider
             //         'gray' => Color::Slate,
             //     ]) 
             ->navigationGroups([
-                NavigationGroup::make('Безопасность')
-                    ->icon(Heroicon::OutlinedLockClosed)
-                    ->collapsed(true)
-                    ->collapsible(true),
                 NavigationGroup::make('Номенклатуры')
                     ->icon(Heroicon::OutlinedRectangleStack)
                     ->collapsed(true)
+                    ->collapsible(true),
+                NavigationGroup::make('Предустановки')
+                    ->icon(Heroicon::OutlinedRectangleStack)
+                    ->collapsed(true)
+                    ->collapsible(true),
+                NavigationGroup::make('Безопасность')
+                    ->icon(Heroicon::OutlinedLockClosed)
+                    ->collapsed(false)
                     ->collapsible(true),
             ])
             ->navigationItems([

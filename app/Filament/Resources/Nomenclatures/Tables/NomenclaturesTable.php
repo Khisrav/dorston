@@ -44,10 +44,17 @@ class NomenclaturesTable
                 TextColumn::make('unit')
                     ->label('Ед. изм.')
                     ->badge(),
-                TextInputColumn::make('tag')
+                SelectColumn::make('tag')
                     ->label('Метка')
+                    ->options([
+                        'primary-lock' => 'Основной замок',
+                        'secondary-lock' => 'Дополнительный замок',
+                        'primary-cylinder' => 'Основной цилиндр',
+                        'secondary-cylinder' => 'Дополнительный цилиндр',
+                    ])
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->label('Создан')
                     ->dateTime()

@@ -20,7 +20,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     const doorConfig = ref<DoorConfig>({
         doorType: 'Apartment',
         doorConstructive: 'Comfort',
-        doorWidth: 960,
+        doorWidth: 860,
         doorHeight: 2050,
         doorHandleSide: 'Left',
         doorBoxDesign: 'Opened',

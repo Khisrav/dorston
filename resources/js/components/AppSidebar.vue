@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { LockIcon, ScrollTextIcon, WrenchIcon } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 import ThemeSwitcher from './ThemeSwitcher.vue';
@@ -31,13 +31,16 @@ const mainNavItems: NavItem[] = [
     }
 ];
 
-const footerNavItems: NavItem[] = [
-    {
+const footerNavItems: NavItem[] = [];
+
+//if signed in then show admin link
+if (usePage().props.auth.user) {
+    footerNavItems.push({
         title: 'Админ панель',
         href: '/admin',
         icon: LockIcon,
-    },
-];
+    });
+}
 </script>
 
 <template>

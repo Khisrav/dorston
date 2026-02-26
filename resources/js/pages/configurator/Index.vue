@@ -72,12 +72,12 @@ const isLoggedIn = computed(() => {
 });
 
 // Accordion state for door parameters
-const isParametersExpanded = ref(false);
+const isParametersExpanded = ref(true);
 
 // Door type options
 const doorTypeOptions = [
     { label: 'Квартирная', value: 'Apartment' },
-    { label: 'Уличная', value: 'Street' }
+    { label: 'Для дома', value: 'Street' }
 ];
 
 const doorConstructiveOptions = [
