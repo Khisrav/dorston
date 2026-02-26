@@ -20,5 +20,7 @@ Route::get('dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('configurator', [ConfiguratorController::class, 'index'])->name('configurator');
+Route::get('configurator/apartment', [ConfiguratorController::class, 'apartment'])->name('configurator.apartment');
+Route::get('configurator/termo', [ConfiguratorController::class, 'termo'])->name('configurator.termo');
 
 require __DIR__.'/settings.php';
