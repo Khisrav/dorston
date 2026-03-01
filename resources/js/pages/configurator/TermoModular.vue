@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import type { TermoDoorConfig, doorHandleSide, peepholePosition } from '@/types/configurator';
+import type { ModularTermoDoorConfig, doorHandleSide, peepholePosition } from '@/types/configurator';
 import { SelectButton, InputNumber, ToggleSwitch, Button, Drawer } from 'primevue';
 import { reactive, ref, computed } from 'vue';
 
@@ -15,21 +15,36 @@ const breadcrumbs: BreadcrumbItem[] = [
         title: 'Для дома',
         href: '/configurator/termo',
     },
+    {
+        title: 'Модульная',
+        href: '/configurator/termo/modular',
+    },
 ]
 
-const config = reactive<TermoDoorConfig>({
-    width: 960,
-    height: 2050,
-    handleSide: 'Right',
-    peepholePosition: 'Side',
-    interior: { panelModel: 0 },
-    exterior: { panelModel: 0, primaryTexture: 0, secondaryTexture: 0 },
-    metalPainting: { undercoat: false, primaryColor: 0, innerCasingColor: 0 },
-    glassColor: { exterior: 0, interior: 0 },
-    furniture: {
-        hasSecondaryLock: false,
-        hasPeephole: true,
-        hasNightLatchTurner: false,
+const config = reactive<ModularTermoDoorConfig>({
+    hasTopModule: false,
+    hasLeftModule: false,
+    hasRightModule: false,
+    topSize: 400,
+    leftSize: 300,
+    rightSize: 300,
+    topWithGlass: true,
+    leftWithGlass: true,
+    rightWithGlass: true,
+    config: {
+        width: 960,
+        height: 2050,
+        handleSide: 'Right',
+        peepholePosition: 'Side',
+        interior: { panelModel: 0 },
+        exterior: { panelModel: 0, primaryTexture: 0, secondaryTexture: 0 },
+        metalPainting: { undercoat: false, primaryColor: 0, innerCasingColor: 0 },
+        glassColor: { exterior: 0, interior: 0 },
+        furniture: {
+            hasSecondaryLock: false,
+            hasPeephole: true,
+            hasNightLatchTurner: false,
+        },
     },
 })
 
@@ -58,15 +73,19 @@ const peepholePositionOptions = [
     { label: 'По центру', value: 'Center' as peepholePosition },
 ]
 
+const activeModuleCount = computed(() =>
+    [config.hasTopModule, config.hasLeftModule, config.hasRightModule].filter(Boolean).length
+)
+
 const parametersSummary = computed(() => [
-    `${config.width}×${config.height} мм`,
-    config.handleSide === 'Left' ? 'Ручка слева' : 'Ручка справа',
-    config.peepholePosition === 'None' ? 'Без глазка' : config.peepholePosition === 'Side' ? 'Глазок сбоку' : 'Глазок по центру',
+    `${config.config.width}×${config.config.height} мм`,
+    config.config.handleSide === 'Left' ? 'Ручка слева' : 'Ручка справа',
+    `${activeModuleCount.value} модул${activeModuleCount.value === 1 ? 'ь' : activeModuleCount.value < 5 ? 'я' : 'ей'}`,
 ])
 </script>
 
 <template>
-    <Head title="Для дома — Конфигуратор" />
+    <Head title="Для дома Модульная — Конфигуратор" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-neutral-900">
 
@@ -80,7 +99,7 @@ const parametersSummary = computed(() => [
                         <!-- Visualization placeholder -->
                         <div class="border-2 border-dashed border-black/10 dark:border-white/10 flex items-center justify-center min-h-72 bg-neutral-50 dark:bg-neutral-800/50">
                             <div class="text-center">
-                                <p class="font-serif text-xs uppercase tracking-widest text-black/30 dark:text-white/30 mb-3">Termo</p>
+                                <p class="font-serif text-xs uppercase tracking-widest text-black/30 dark:text-white/30 mb-3">Termo — Модульная</p>
                                 <p class="font-serif text-lg text-black/40 dark:text-white/40">Визуализатор</p>
                                 <p class="text-xs text-black/25 dark:text-white/25 font-sans mt-1">В разработке</p>
                             </div>
@@ -113,7 +132,7 @@ const parametersSummary = computed(() => [
                                 <!-- Width -->
                                 <div>
                                     <label class="block font-serif text-sm text-black dark:text-white mb-2">Ширина (мм)</label>
-                                    <InputNumber v-model="config.width" :min="800" :max="1200" :step="10"
+                                    <InputNumber v-model="config.config.width" :min="800" :max="1200" :step="10"
                                         showButtons buttonLayout="horizontal"
                                         decrementButtonClass="p-button-text" incrementButtonClass="p-button-text"
                                         incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
@@ -123,7 +142,7 @@ const parametersSummary = computed(() => [
                                 <!-- Height -->
                                 <div>
                                     <label class="block font-serif text-sm text-black dark:text-white mb-2">Высота (мм)</label>
-                                    <InputNumber v-model="config.height" :min="1900" :max="2400" :step="10"
+                                    <InputNumber v-model="config.config.height" :min="1900" :max="2400" :step="10"
                                         showButtons buttonLayout="horizontal"
                                         decrementButtonClass="p-button-text" incrementButtonClass="p-button-text"
                                         incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
@@ -133,14 +152,14 @@ const parametersSummary = computed(() => [
                                 <!-- Handle Side -->
                                 <div>
                                     <label class="block font-serif text-sm text-black dark:text-white mb-2">Сторона ручки</label>
-                                    <SelectButton :options="handleSideOptions" v-model="config.handleSide"
+                                    <SelectButton :options="handleSideOptions" v-model="config.config.handleSide"
                                         optionLabel="label" optionValue="value" size="small" fluid />
                                 </div>
 
                                 <!-- Peephole Position -->
                                 <div>
                                     <label class="block font-serif text-sm text-black dark:text-white mb-2">Глазок</label>
-                                    <SelectButton :options="peepholePositionOptions" v-model="config.peepholePosition"
+                                    <SelectButton :options="peepholePositionOptions" v-model="config.config.peepholePosition"
                                         optionLabel="label" optionValue="value" size="small" fluid />
                                 </div>
                             </div>
@@ -182,6 +201,96 @@ const parametersSummary = computed(() => [
                         </div>
                     </div>
 
+                    <!-- 0. Modules -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
+                            <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">Модули</h2>
+                            <span class="text-xs font-serif text-neutral-400 italic">
+                                {{ activeModuleCount > 0 ? `${activeModuleCount} активн${activeModuleCount === 1 ? 'ый' : 'ых'}` : 'Не выбраны' }}
+                            </span>
+                        </div>
+
+                        <div class="space-y-3">
+                            <!-- Top module -->
+                            <div class="border-2 border-black/5 dark:border-white/5 p-3 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Верхний модуль</span>
+                                    <ToggleSwitch v-model="config.hasTopModule" />
+                                </div>
+                                <Transition name="slide">
+                                    <div v-if="config.hasTopModule" class="grid grid-cols-2 gap-3 pt-1">
+                                        <div>
+                                            <label class="block font-serif text-xs text-black/60 dark:text-white/60 mb-1">Высота (мм)</label>
+                                            <InputNumber v-model="config.topSize" :min="200" :max="700" :step="10"
+                                                showButtons buttonLayout="horizontal"
+                                                decrementButtonClass="p-button-text" incrementButtonClass="p-button-text"
+                                                incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                                                fluid />
+                                        </div>
+                                        <div class="flex items-end pb-1">
+                                            <div class="flex items-center justify-between w-full">
+                                                <span class="font-serif text-xs text-neutral-700 dark:text-neutral-300">Со стеклом</span>
+                                                <ToggleSwitch v-model="config.topWithGlass" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Transition>
+                            </div>
+
+                            <!-- Left module -->
+                            <div class="border-2 border-black/5 dark:border-white/5 p-3 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Левый модуль</span>
+                                    <ToggleSwitch v-model="config.hasLeftModule" />
+                                </div>
+                                <Transition name="slide">
+                                    <div v-if="config.hasLeftModule" class="grid grid-cols-2 gap-3 pt-1">
+                                        <div>
+                                            <label class="block font-serif text-xs text-black/60 dark:text-white/60 mb-1">Ширина (мм)</label>
+                                            <InputNumber v-model="config.leftSize" :min="100" :max="500" :step="10"
+                                                showButtons buttonLayout="horizontal"
+                                                decrementButtonClass="p-button-text" incrementButtonClass="p-button-text"
+                                                incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                                                fluid />
+                                        </div>
+                                        <div class="flex items-end pb-1">
+                                            <div class="flex items-center justify-between w-full">
+                                                <span class="font-serif text-xs text-neutral-700 dark:text-neutral-300">Со стеклом</span>
+                                                <ToggleSwitch v-model="config.leftWithGlass" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Transition>
+                            </div>
+
+                            <!-- Right module -->
+                            <div class="border-2 border-black/5 dark:border-white/5 p-3 space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Правый модуль</span>
+                                    <ToggleSwitch v-model="config.hasRightModule" />
+                                </div>
+                                <Transition name="slide">
+                                    <div v-if="config.hasRightModule" class="grid grid-cols-2 gap-3 pt-1">
+                                        <div>
+                                            <label class="block font-serif text-xs text-black/60 dark:text-white/60 mb-1">Ширина (мм)</label>
+                                            <InputNumber v-model="config.rightSize" :min="100" :max="500" :step="10"
+                                                showButtons buttonLayout="horizontal"
+                                                decrementButtonClass="p-button-text" incrementButtonClass="p-button-text"
+                                                incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                                                fluid />
+                                        </div>
+                                        <div class="flex items-end pb-1">
+                                            <div class="flex items-center justify-between w-full">
+                                                <span class="font-serif text-xs text-neutral-700 dark:text-neutral-300">Со стеклом</span>
+                                                <ToggleSwitch v-model="config.rightWithGlass" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Transition>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- I. Panel Design -->
                     <div class="space-y-4">
                         <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
@@ -211,7 +320,6 @@ const parametersSummary = computed(() => [
                             <span class="text-xs font-serif text-neutral-400 italic">Снаружи</span>
                         </div>
                         <div class="grid grid-cols-1 gap-3">
-                            <!-- Primary texture -->
                             <div @click="showExteriorFilmPrimaryDrawer = true"
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
@@ -223,7 +331,6 @@ const parametersSummary = computed(() => [
                                 </div>
                                 <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                             </div>
-                            <!-- Secondary texture -->
                             <div @click="showExteriorFilmSecondaryDrawer = true"
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
@@ -243,15 +350,11 @@ const parametersSummary = computed(() => [
                         <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
                             <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">Покраска металла</h2>
                         </div>
-
-                        <!-- Undercoat -->
                         <div class="flex items-center justify-between px-1">
                             <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Цинкогрунтование</span>
-                            <ToggleSwitch v-model="config.metalPainting.undercoat" />
+                            <ToggleSwitch v-model="config.config.metalPainting.undercoat" />
                         </div>
-
                         <div class="grid grid-cols-1 gap-3">
-                            <!-- Primary color -->
                             <div @click="showMetalPrimaryDrawer = true"
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
@@ -263,7 +366,6 @@ const parametersSummary = computed(() => [
                                 </div>
                                 <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                             </div>
-                            <!-- Secondary color (Nova only) -->
                             <div @click="showMetalSecondaryDrawer = true"
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
@@ -277,7 +379,6 @@ const parametersSummary = computed(() => [
                                 </div>
                                 <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                             </div>
-                            <!-- Inner casing color -->
                             <div @click="showInnerCasingColorDrawer = true"
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
@@ -329,7 +430,6 @@ const parametersSummary = computed(() => [
                             <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">Замки</h2>
                         </div>
                         <div class="grid grid-cols-1 gap-3">
-                            <!-- Primary lock placeholder -->
                             <div class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
                                     <i class="pi pi-lock text-3xl text-neutral-400"></i>
@@ -340,13 +440,11 @@ const parametersSummary = computed(() => [
                                 </div>
                                 <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                             </div>
-                            <!-- Secondary lock toggle -->
                             <div class="flex items-center justify-between px-1">
                                 <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Дополнительный замок</span>
-                                <ToggleSwitch v-model="config.furniture.hasSecondaryLock" />
+                                <ToggleSwitch v-model="config.config.furniture.hasSecondaryLock" />
                             </div>
-                            <!-- Secondary lock placeholder -->
-                            <div v-if="config.furniture.hasSecondaryLock"
+                            <div v-if="config.config.furniture.hasSecondaryLock"
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
                                     <i class="pi pi-lock text-3xl text-neutral-400"></i>
@@ -366,7 +464,6 @@ const parametersSummary = computed(() => [
                             <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">Фурнитура</h2>
                         </div>
                         <div class="grid grid-cols-1 gap-3">
-                            <!-- Furniture set placeholder -->
                             <div class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
                                     <i class="pi pi-palette text-3xl text-neutral-400"></i>
@@ -377,15 +474,13 @@ const parametersSummary = computed(() => [
                                 </div>
                                 <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                             </div>
-                            <!-- Peephole toggle -->
                             <div class="flex items-center justify-between px-1">
                                 <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Глазок</span>
-                                <ToggleSwitch v-model="config.furniture.hasPeephole" />
+                                <ToggleSwitch v-model="config.config.furniture.hasPeephole" />
                             </div>
-                            <!-- Night latch turner toggle -->
                             <div class="flex items-center justify-between px-1">
                                 <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Ночная задвижка + поворотник</span>
-                                <ToggleSwitch v-model="config.furniture.hasNightLatchTurner" />
+                                <ToggleSwitch v-model="config.config.furniture.hasNightLatchTurner" />
                             </div>
                         </div>
                     </div>
@@ -395,7 +490,7 @@ const parametersSummary = computed(() => [
         </div>
     </AppLayout>
 
-    <!-- Placeholder drawers — will be populated when data is wired up -->
+    <!-- Placeholder drawers -->
     <Drawer v-model:visible="showExteriorDesignDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px]">
         <template #header>
             <h2 class="text-base sm:text-lg text-black dark:text-white tracking-tight font-serif">Дизайн наружной отделки</h2>
@@ -491,5 +586,17 @@ h1, h2, h3, button {
 :deep(.p-inputnumber-button .p-icon) {
     width: 1rem;
     height: 1rem;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+    transition: opacity 0.2s ease, max-height 0.25s ease;
+    max-height: 200px;
+    overflow: hidden;
+}
+.slide-enter-from,
+.slide-leave-to {
+    opacity: 0;
+    max-height: 0;
 }
 </style>

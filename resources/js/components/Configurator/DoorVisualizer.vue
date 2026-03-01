@@ -54,7 +54,10 @@ onMounted(() => {
                     <v-stage :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
                         <!-- Layer 0: Black background -->
                         <v-layer>
-                            <v-rect :config="{ ...doorVisualStore.layersConfig.interior.background }" />
+                            <v-image :config="{ ...doorVisualStore.layersConfig.interior.background, image: doorVisualStore.interiorDoorImage }" />
+                        </v-layer>
+                        <v-layer>
+                            <v-image :config="{ ...doorVisualStore.layersConfig.interior.background, image: doorVisualStore.interiorCasingImage }" />
                         </v-layer>
                     </v-stage>
                 </div>

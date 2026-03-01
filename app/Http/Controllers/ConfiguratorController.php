@@ -20,6 +20,11 @@ class ConfiguratorController extends Controller
         return Inertia::render('configurator/Termo');
     }
 
+    public function termoModular()
+    {
+        return Inertia::render('configurator/TermoModular');
+    }
+
     public function apartment()
     {
         return Inertia::render('configurator/Apartment', [

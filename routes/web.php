@@ -22,5 +22,6 @@ Route::get('dashboard', function () {
 Route::get('configurator', [ConfiguratorController::class, 'index'])->name('configurator');
 Route::get('configurator/apartment', [ConfiguratorController::class, 'apartment'])->name('configurator.apartment');
 Route::get('configurator/termo', [ConfiguratorController::class, 'termo'])->name('configurator.termo');
+Route::get('configurator/termo/modular', [ConfiguratorController::class, 'termoModular'])->name('configurator.termo.modular');
 
 require __DIR__.'/settings.php';

@@ -24,7 +24,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const stageWidth = ref<number>(0);
     const stageHeight = ref<number>(0);
     const doorDimensions = {
-        width: 860,
+        width: 960,
         height: 2050,
     };
 
@@ -35,11 +35,15 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         console.log('stage size set to', stageWidth.value, stageHeight.value);
     }
 
-    // Temp test images
+    // Temp test images for exterior
     const [casingImage] = useImage('/assets/temp/Наличник.png');
     const [doorImage] = useImage('/assets/temp/Полотно.png');
     const [additionalCasingElementImage] = useImage('/assets/temp/Доп элемент наличника.png');
     const [additionalDoorElementImage] = useImage('/assets/temp/Доп элемент полотна.png');
+
+    //for interior
+    const [interiorCasingImage] = useImage('/assets/temp/interior/casing.png')
+    const [interiorDoorImage] = useImage('/assets/temp/interior/panel-f-37.png')
 
     const fullStageRect = computed(() => ({
         x: 0,
@@ -70,7 +74,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 y: (stageHeight.value - stageHeight.value * 0.99) / 2,
                 width: stageWidth.value * 0.9,
                 height: stageHeight.value * 0.99,
-                fill: 'black',
+                // fill: 'black',
             },
         },
     }));
@@ -83,6 +87,8 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         doorImage,
         additionalCasingElementImage,
         additionalDoorElementImage,
+        interiorCasingImage,
+        interiorDoorImage,
         fullStageRect,
         layersConfig,
     }
