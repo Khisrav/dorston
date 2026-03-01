@@ -167,7 +167,7 @@ const parametersSummary = computed(() => [
 
                         <!-- Action buttons -->
                         <div class="mt-4 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
-                            <Button label="Запросить цену" size="large" class="w-full sm:w-auto" disabled />
+                            <Button label="Сохранить" size="large" class="w-full sm:w-auto" disabled />
                         </div>
                     </div>
                 </div>
