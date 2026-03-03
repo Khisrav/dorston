@@ -158,3 +158,11 @@ export interface Furniture {
     created_at?: any;
     updated_at?: any;
 }
+
+export interface DoorCombinationImage {
+    id: number;
+    image: string;
+    purpose: 'Наличник' | 'Полотно' | 'Вставка наличника' | 'Вставка полотна';
+    door_model_id: number;
+    film_color_id: number;
+}

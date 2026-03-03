@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import DoorVisualizer from '@/components/Configurator/DoorVisualizer.vue';
 import { useDoorCalc } from '@/composables/useDoorCalc';
+import { useDoorVisual } from '@/composables/useDoorVisual';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { getDoorModelImage, getImageUrl, hasSecondaryMetalPaint, getFurnitureColorImage } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { DoorModel, Nomenclature, Furniture } from '@/types/configurator';
-import { usePage } from '@inertiajs/vue3';
+import { DoorModel, Nomenclature, Furniture, DoorCombinationImage } from '@/types/configurator';
+import { router, usePage } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
 import { PlusIcon } from 'lucide-vue-next';
 import { SelectButton, InputNumber, Dialog, Drawer, ToggleSwitch, Button, Timeline, Select } from 'primevue';
-import { computed, ref, watchEffect, onMounted, onUnmounted } from 'vue';
+import { computed, ref, watch, watchEffect, onMounted, onUnmounted } from 'vue';
 import { useImage } from 'vue-konva';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -50,6 +51,7 @@ const furnitures = ref(usePage().props.furnitures as Furniture[])
 const locks = ref(usePage().props.locks as { primary: Nomenclature[], secondary: Nomenclature[] })
 const cylinders = ref(usePage().props.cylinders as Nomenclature[])
 const handles = ref(usePage().props.handles as Nomenclature[])
+// const doorCombinationImages = ref(usePage().props.doorCombinationImages as DoorCombinationImage[])
 
 const doorCalcStore = useDoorCalc()
 doorCalcStore.paints = paints.value
@@ -156,12 +158,12 @@ const parametersSummary = computed(() => {
     let doorHeight = doorCalcStore.doorConfig.doorHeight
     let handleSide = 'Ручка ' + (doorCalcStore.doorConfig.doorHandleSide === 'Left' ? 'слева' : 'справа')
     let boxDesign = (doorCalcStore.doorConfig.doorBoxDesign === 'Opened' ? 'Открытый' : 'Закрытый') + ' короб'
-    let doorType = doorCalcStore.doorConfig.doorType === 'Apartment' ? 'Квартирная' : 'Уличная'
+    // let doorType = doorCalcStore.doorConfig.doorType === 'Apartment' ? 'Квартирная' : 'Уличная'
     let doorConstructive = doorCalcStore.doorConfig.doorConstructive
     
     return [
         `${doorWidth}x${doorHeight} мм`,
-        doorType,
+        // doorType,
         doorConstructive,
         handleSide,
         boxDesign,
@@ -204,6 +206,37 @@ const hasSecondaryFilmColor = computed(() => currentDoorModel.value?.has_seconda
 const hasCasingFilmColor = computed(() => currentDoorModel.value?.has_casing_film_color ?? false);
 const hasPrimaryPaint = computed(() => exteriorDoorModel.value?.has_primary_paint ?? false);
 const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_paint ?? false);
+
+const doorVisualStore = useDoorVisual();
+
+function fetchDoorCombinations(exteriorModelId: number | undefined, interiorModelId: number | undefined) {
+    const modelIds = [exteriorModelId, interiorModelId].filter((id): id is number => !!id);
+
+    if (modelIds.length === 0) return;
+
+    doorVisualStore.isCombinationsLoading = true;
+
+    router.reload({
+        data: { door_model_ids: modelIds },
+        only: ['doorCombinationImages'],
+        onSuccess: (page) => {
+            doorVisualStore.doorCombinationImages = (page.props.doorCombinationImages as DoorCombinationImage[]) ?? [];
+        },
+        onFinish: () => {
+            doorVisualStore.isCombinationsLoading = false;
+        },
+    });
+}
+
+watch(
+    [
+        () => doorCalcStore.doorConfig.exterior.panelModel,
+        () => doorCalcStore.doorConfig.interior.panelModel,
+    ],
+    ([exteriorModelId, interiorModelId]) => {
+        fetchDoorCombinations(exteriorModelId, interiorModelId);
+    },
+);
 </script>
 
 <template>
@@ -260,13 +293,13 @@ const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_
                                 class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-black/10 dark:border-white/10 p-4">
                                 
                                 <!-- Door Type -->
-                                <div>
+                                <!-- <div>
                                     <label class="block font-serif text-sm text-black dark:text-white mb-2">
                                         Тип двери
                                     </label>
                                     <SelectButton :options="doorTypeOptions" v-model="doorCalcStore.doorConfig.doorType"
                                         optionLabel="label" optionValue="value" size="small" fluid />
-                                </div>
+                                </div> -->
 
                                 <!-- Door Constructive -->
                                 <div>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useDoorVisual } from '@/composables/useDoorVisual';
+import { DoorCombinationImage } from '@/types/configurator';
+import { usePage } from '@inertiajs/vue3';
 
 const doorVisualStore = useDoorVisual();
 const visualizerContainerRef = ref<HTMLDivElement | null>(null);
@@ -45,6 +47,10 @@ onMounted(() => {
                         <v-layer>
                             <v-image :config="{ ...doorVisualStore.fullStageRect, image: doorVisualStore.additionalDoorElementImage }" />
                         </v-layer>
+                        <!-- Layer 4: Hinges -->
+                        <v-layer>
+                            <v-image :config="{ ...doorVisualStore.fullStageRect, image: doorVisualStore.hingeImage }" />
+                        </v-layer>
                     </v-stage>
                 </div>
 
@@ -57,7 +63,7 @@ onMounted(() => {
                             <v-image :config="{ ...doorVisualStore.layersConfig.interior.background, image: doorVisualStore.interiorDoorImage }" />
                         </v-layer>
                         <v-layer>
-                            <v-image :config="{ ...doorVisualStore.layersConfig.interior.background, image: doorVisualStore.interiorCasingImage }" />
+                            <v-image :config="{ ...doorVisualStore.layersConfig.interior.casing, image: doorVisualStore.interiorCasingImage }" />
                         </v-layer>
                     </v-stage>
                 </div>

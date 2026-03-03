@@ -17,6 +17,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from 'vue';
 import { useImage } from 'vue-konva';
 import { useDoorCalc } from "./useDoorCalc";
+import { DoorCombinationImage } from "@/types/configurator";
 
 export const useDoorVisual = defineStore('doorVisual', () => {
     const doorCalcStore = useDoorCalc();
@@ -26,7 +27,9 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const doorDimensions = {
         width: 960,
         height: 2050,
-    };
+    }
+    const doorCombinationImages = ref<DoorCombinationImage[]>([]);
+    const isCombinationsLoading = ref(false);
 
     const setStageDimensions = (width: number, height: number) => {
         stageWidth.value = width;
@@ -40,10 +43,25 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const [doorImage] = useImage('/assets/temp/Полотно.png');
     const [additionalCasingElementImage] = useImage('/assets/temp/Доп элемент наличника.png');
     const [additionalDoorElementImage] = useImage('/assets/temp/Доп элемент полотна.png');
+    const [hingeImage] = useImage('/assets/temp/Петли.png');
 
     //for interior
-    const [interiorCasingImage] = useImage('/assets/temp/interior/casing.png')
-    const [interiorDoorImage] = useImage('/assets/temp/interior/panel-f-37.png')
+    const [interiorCasingImage] = useImage('/assets/temp/Короб.png')
+
+    const interiorDoorUrl = computed<string>(() => {
+        const modelId = doorCalcStore.doorConfig.interior.panelModel;
+        const filmColorId = doorCalcStore.doorConfig.interior.primaryTexture;
+
+        const combo = doorCombinationImages.value.find(img =>
+            img.purpose === 'Полотно' &&
+            img.door_model_id === modelId &&
+            (!filmColorId || img.film_color_id === filmColorId)
+        );
+
+        return combo ? `/storage/${combo.image}` : '';
+    });
+
+    const [interiorDoorImage] = useImage(interiorDoorUrl);
 
     const fullStageRect = computed(() => ({
         x: 0,
@@ -76,6 +94,18 @@ export const useDoorVisual = defineStore('doorVisual', () => {
                 height: stageHeight.value * 0.99,
                 // fill: 'black',
             },
+            panel: {
+                x: 0,
+                y: 0,
+                width: stageWidth.value,
+                height: stageHeight.value,
+            },
+            casing: {
+                x: 0,
+                y: 0,
+                width: stageWidth.value,
+                height: stageHeight.value,
+            },
         },
     }));
 
@@ -89,7 +119,10 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         additionalDoorElementImage,
         interiorCasingImage,
         interiorDoorImage,
+        hingeImage,
         fullStageRect,
         layersConfig,
+        doorCombinationImages,
+        isCombinationsLoading,
     }
 });

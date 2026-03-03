@@ -9,11 +9,11 @@ import { initializeTheme } from './composables/useAppearance';
 import VueKonva from 'vue-konva';
 import PrimeVue from 'primevue/config';
 import { definePreset } from '@primeuix/themes';
-import Lara from '@primeuix/themes/lara';
+import Aura from '@primeuix/themes/aura';
 import { createPinia } from 'pinia';
 
 // Custom preset with muted neutral colors for better eye comfort
-const CustomPreset = definePreset(Lara, {
+const CustomPreset = definePreset(Aura, {
     semantic: {
         primary: {
             50: '{neutral.100}',
@@ -46,14 +46,14 @@ const CustomPreset = definePreset(Lara, {
                 }
             }
         },
-        borderRadius: {
-            none: '0',
-            xs: '0',
-            sm: '0',
-            md: '0',
-            lg: '0',
-            xl: '0'
-        },
+        // borderRadius: {
+        //     none: '0',
+        //     xs: '0',
+        //     sm: '0',
+        //     md: '0',
+        //     lg: '0',
+        //     xl: '0'
+        // },
     },
     components: {
         toggleswitch: {
