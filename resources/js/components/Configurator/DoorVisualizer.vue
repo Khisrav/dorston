@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useDoorVisual } from '@/composables/useDoorVisual';
+import { DoorCombinationImage } from '@/types/configurator';
+import { usePage } from '@inertiajs/vue3';
+import { Button } from 'primevue';
 
 const doorVisualStore = useDoorVisual();
 const visualizerContainerRef = ref<HTMLDivElement | null>(null);
@@ -15,15 +18,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <div
-        class="border-2 border-black/10 dark:border-white/10 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-800 dark:to-neutral-900 p-4 md:p-6 flex items-center justify-center relative overflow-hidden"
-    >
+    <div class="border-2 border-black/10 dark:border-white/10 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-800 dark:to-neutral-900 p-4 md:p-7 pr-2 md:pr-4 flex items-center justify-center relative overflow-hidden rounded-3xl">
         <div ref="visualizerContainerRef" class="w-full h-full">
-            <div class="flex justify-center items-start gap-4">
+            <div class="flex justify-center items-start gap-7 pb-4">
 
                 <!-- Exterior stage -->
-                <div>
-                    <p class="text-xs text-center text-neutral-400 mb-1">Снаружи</p>
+                <div class="relative">
                     <v-stage :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
                         <!-- Layer 0: Black background -->
                         <v-layer>
@@ -45,18 +45,30 @@ onMounted(() => {
                         <v-layer>
                             <v-image :config="{ ...doorVisualStore.fullStageRect, image: doorVisualStore.additionalDoorElementImage }" />
                         </v-layer>
+                        <!-- Layer 4: Hinges -->
+                        <v-layer>
+                            <v-image :config="{ ...doorVisualStore.fullStageRect, image: doorVisualStore.hingeImage }" />
+                        </v-layer>
                     </v-stage>
+                    <div class="absolute -bottom-6 right-0 left-0 text-center">
+                        <Button variant="outline" class="" size="small">Снаружи</Button>
+                    </div>
                 </div>
 
                 <!-- Interior stage (placeholder for now) -->
-                <div>
-                    <p class="text-xs text-center text-neutral-400 mb-1">Изнутри</p>
+                <div class="relative">
                     <v-stage :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
                         <!-- Layer 0: Black background -->
                         <v-layer>
-                            <v-rect :config="{ ...doorVisualStore.layersConfig.interior.background }" />
+                            <v-image :config="{ ...doorVisualStore.universalConfig, image: doorVisualStore.interiorDoorImage }" />
+                        </v-layer>
+                        <v-layer>
+                            <v-image :config="{ ...doorVisualStore.universalConfig, image: doorVisualStore.interiorCasingImage }" />
                         </v-layer>
                     </v-stage>
+                    <div class="absolute -bottom-6 right-0 left-0 text-center">
+                        <Button variant="outline" class="" size="small">Изнутри</Button>
+                    </div>
                 </div>
 
             </div>

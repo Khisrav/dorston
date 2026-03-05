@@ -22,30 +22,36 @@ class DoorCombinationForm
                     ->relationship('doorModel', 'name')
                     ->live()
                     ->required(),
-                Select::make('film_color_id')
-                    ->label('Цвет пленки')
+                // The code as written returns an array with callbacks (closures) in the `options()` method. 
+                // Filament's Select expects a flat array of options or a grouped array, but only with static arrays, not closures or callbacks.
+                // The callbacks will not be executed by Filament, so the Select box will not be populated as intended.
+
+                // The correct way is to set the grouped options in code, not via callbacks:
+
+                Select::make('film_color_id') // can also mean paint_id
+                    ->label('Цвет')
                     ->native(false)
                     ->searchable()
-                    ->options(fn () => Nomenclature::where('nomenclature_category_id', 13)->pluck('name', 'id'))
-                    ->visible(fn (Get $get) => DoorModel::find($get('door_model_id'))?->type !== 'interior')
-                    ->required(fn (Get $get) => DoorModel::find($get('door_model_id'))?->type !== 'interior'),
-                Select::make('paint_id')
-                    ->label('Цвет краски')
-                    ->native(false)
-                    ->searchable()
-                    ->options(fn () => Nomenclature::where('nomenclature_category_id', 2)->pluck('name', 'id'))
-                    ->visible(fn (Get $get) => DoorModel::find($get('door_model_id'))?->type === 'interior')
-                    ->required(fn (Get $get) => DoorModel::find($get('door_model_id'))?->type === 'interior'),
+                    ->options([
+                        'Пленка' => Nomenclature::where('nomenclature_category_id', 13)->pluck('name', 'id')->toArray(),
+                        'Краска' => Nomenclature::where('nomenclature_category_id', 2)->pluck('name', 'id')->toArray()
+                    ])
+                    ->required(),
                 Select::make('img_purpose')
                     ->label('Назначение')
                     ->native(false)
-                    ->options([ 'Наличник', 'Полотно', 'Вставка наличника', 'Вставка полотна' ])
+                    ->options([ 
+                        'Наличник' => 'Наличник',
+                        'Полотно' => 'Полотно',
+                        'Вставка наличника' => 'Вставка наличника',
+                        'Вставка полотна' => 'Вставка полотна'
+                    ])
                     ->required(),
                 FileUpload::make('image')
                     ->label('Изображение')
                     ->image()
                     ->acceptedFileTypes(['image/png', 'image/webp'])
-                    ->maxSize(200)
+                    ->maxSize(500)
                     ->directory('door-combinations')
                     ->disk('public')
                     ->required(),

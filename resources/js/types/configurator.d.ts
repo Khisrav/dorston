@@ -5,7 +5,7 @@ export type peepholePosition = 'None' | 'Side' | 'Center';
 export type doorBoxDesign = 'Closed' | 'Opened';
 
 export interface DoorConfig {
-    doorType: doorType,
+    // doorType: doorType,
     doorConstructive: doorConstructive,
     doorWidth: number;
     doorHeight: number;
@@ -42,6 +42,61 @@ export interface DoorConfig {
         secondaryLock?: number;
         secondaryCylindricalLockMechanism?: number;
     }
+}
+
+export interface TermoDoorConfig {
+    width: number;
+    height: number;
+    handleSide: doorHandleSide;
+    peepholePosition?: peepholePosition;
+    hasStainlessSteelDoorsill?: boolean;
+    // isModular: boolean;
+    interior: {
+        panelModel: number;
+    }
+    exterior: {
+        panelModel: number;
+        primaryTexture: number;
+        secondaryTexture: number;
+    }
+    metalPainting: {
+        undercoat: boolean;
+        primaryColor: number;
+        secondaryColor?: number; //only on Nova model
+        innerCasingColor: number;
+    }
+    glassColor: {
+        exterior: number; //exterior glass color id (maybe will change it to string, not sure yet)
+        interior: number; //interior glass color id (maybe will change it to string, not sure yet)
+    }
+    furniture: {
+        furnitureSetId?: number;
+        furnitureShape?: string;
+        furnitureColor?: string;
+        primaryLock?: number;
+        secondaryLock?: number;
+        primaryCylindricalLockMechanism?: number;
+        secondaryCylindricalLockMechanism?: number;
+        hasSecondaryLock?: boolean;
+        hasPeephole?: boolean;
+        hasNightLatchTurner?: boolean;
+    }
+}
+
+export interface ModularTermoDoorConfig {
+    hasTopModule: boolean;
+    hasLeftModule: boolean;
+    hasRightModule: boolean;
+    
+    topSize: number;
+    leftSize: number;
+    rightSize: number;
+    
+    topWithGlass: boolean;
+    leftWithGlass: boolean;
+    rightWithGlass: boolean;
+    
+    config: TermoDoorConfig;
 }
 
 export interface Nomenclature {
@@ -103,4 +158,12 @@ export interface Furniture {
     handle_price?: number | null;
     created_at?: any;
     updated_at?: any;
+}
+
+export interface DoorCombinationImage {
+    id: number;
+    image: string;
+    purpose: 'Наличник' | 'Полотно' | 'Вставка наличника' | 'Вставка полотна';
+    door_model_id: number;
+    film_color_id: number;
 }

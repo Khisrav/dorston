@@ -2,7 +2,7 @@ import { DoorConfig, doorConstructive, DoorModel, doorType, Nomenclature, Furnit
 import { defineStore } from "pinia";
 import { ref, watch, computed } from "vue";
 import { useComfortConstructive } from "./door-constructives/useComfortConstructive";
-import { isDoorStandard } from "@/lib/utils";
+import { isDoorStandard, roundUpTo100 } from "@/lib/utils";
 import { useAbsolutConstructive } from "./door-constructives/useAbsolutConstructive";
 
 export const useDoorCalc = defineStore('doorCalc', () => {
@@ -18,7 +18,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     const total_price = ref(0)
 
     const doorConfig = ref<DoorConfig>({
-        doorType: 'Apartment',
+        // doorType: 'Apartment',
         doorConstructive: 'Comfort',
         doorWidth: 860,
         doorHeight: 2050,
@@ -121,6 +121,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
                 total_price.value = 0
         }
         total_price.value *= (1.3 * 1.055)
+        total_price.value = roundUpTo100(total_price.value)
     }, { deep: true, immediate: true })
 
     //if primary texture changed, then apply primary texture value to casing texture

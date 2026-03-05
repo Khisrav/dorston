@@ -89,3 +89,5 @@ export const getFurnitureColorImage = (color: string) => {
     const mappedColor = colorMap[color] || color;
     return `/assets/furniture-colors/${mappedColor}.png`;
 }
+
+export const roundUpTo100 = (num: number) => Math.ceil(num / 100) * 100;
