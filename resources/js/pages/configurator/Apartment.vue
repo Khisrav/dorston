@@ -258,7 +258,7 @@ watch(
             <div class="grid gap-4 lg:grid-cols-12">
                 
                 <!-- Left Column: Preview & Parameters -->
-                <div class="lg:col-span-7">
+                <div class="lg:col-span-6">
                     <div class="sticky top-0 space-y-4">
                         <!-- Visualization Area -->
                         <div class="relative">
@@ -370,7 +370,7 @@ watch(
                 </div>
 
                 <!-- Right Column: Options Panel -->
-                <div class="lg:col-span-5 space-y-4">
+                <div class="lg:col-span-6 space-y-4">
                     <div class="space-y-4">   
                         <!-- View Mode Selector -->
                         <div class="sticky top-0 z-10 bg-white dark:bg-neutral-900">
@@ -1119,13 +1119,11 @@ watch(
 </template>
 <style scoped>
 /* Import elegant serif fonts */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
-
 h1,
 h2,
 h3,
 button {
-    font-family: 'Playfair Display', serif;
+    /* font-family: 'Playfair Display', serif; */
 }
 
 /* PrimeVue SelectButton customization */

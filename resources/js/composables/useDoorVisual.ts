@@ -109,6 +109,13 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         },
     }));
 
+    const universalConfig = computed(() => ({
+        x: 0,
+        y: 0,
+        width: stageWidth.value,
+        height: stageHeight.value,
+    }));
+
     return {
         stageWidth,
         stageHeight,
@@ -122,6 +129,7 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         hingeImage,
         fullStageRect,
         layersConfig,
+        universalConfig,
         doorCombinationImages,
         isCombinationsLoading,
     }

@@ -5,6 +5,7 @@ import { Head } from '@inertiajs/vue3';
 import type { TermoDoorConfig, doorHandleSide, peepholePosition } from '@/types/configurator';
 import { SelectButton, InputNumber, ToggleSwitch, Button, Drawer } from 'primevue';
 import { reactive, ref, computed } from 'vue';
+import { useTermoDoorCalc } from '@/composables/useTermoDoorCalc';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -17,21 +18,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-const config = reactive<TermoDoorConfig>({
-    width: 960,
-    height: 2050,
-    handleSide: 'Right',
-    peepholePosition: 'Side',
-    interior: { panelModel: 0 },
-    exterior: { panelModel: 0, primaryTexture: 0, secondaryTexture: 0 },
-    metalPainting: { undercoat: false, primaryColor: 0, innerCasingColor: 0 },
-    glassColor: { exterior: 0, interior: 0 },
-    furniture: {
-        hasSecondaryLock: false,
-        hasPeephole: true,
-        hasNightLatchTurner: false,
-    },
-})
+const termoDoorCalcStore = useTermoDoorCalc()
 
 const isParametersExpanded = ref(true)
 const viewMode = ref<'exterior' | 'interior'>('exterior')
@@ -59,9 +46,9 @@ const peepholePositionOptions = [
 ]
 
 const parametersSummary = computed(() => [
-    `${config.width}×${config.height} мм`,
-    config.handleSide === 'Left' ? 'Ручка слева' : 'Ручка справа',
-    config.peepholePosition === 'None' ? 'Без глазка' : config.peepholePosition === 'Side' ? 'Глазок сбоку' : 'Глазок по центру',
+    `${termoDoorCalcStore.doorConfig.width}×${termoDoorCalcStore.doorConfig.height} мм`,
+    termoDoorCalcStore.doorConfig.handleSide === 'Left' ? 'Ручка слева' : 'Ручка справа',
+    termoDoorCalcStore.doorConfig.peepholePosition === 'None' ? 'Без глазка' : termoDoorCalcStore.doorConfig.peepholePosition === 'Side' ? 'Глазок сбоку' : 'Глазок по центру',
 ])
 </script>
 
@@ -113,7 +100,7 @@ const parametersSummary = computed(() => [
                                 <!-- Width -->
                                 <div>
                                     <label class="block font-serif text-sm text-black dark:text-white mb-2">Ширина (мм)</label>
-                                    <InputNumber v-model="config.width" :min="800" :max="1200" :step="10"
+                                    <InputNumber v-model="termoDoorCalcStore.doorConfig.width" :min="800" :max="1200" :step="10"
                                         showButtons buttonLayout="horizontal"
                                         decrementButtonClass="p-button-text" incrementButtonClass="p-button-text"
                                         incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
@@ -123,7 +110,7 @@ const parametersSummary = computed(() => [
                                 <!-- Height -->
                                 <div>
                                     <label class="block font-serif text-sm text-black dark:text-white mb-2">Высота (мм)</label>
-                                    <InputNumber v-model="config.height" :min="1900" :max="2400" :step="10"
+                                    <InputNumber v-model="termoDoorCalcStore.doorConfig.height" :min="1900" :max="2400" :step="10"
                                         showButtons buttonLayout="horizontal"
                                         decrementButtonClass="p-button-text" incrementButtonClass="p-button-text"
                                         incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
@@ -133,14 +120,14 @@ const parametersSummary = computed(() => [
                                 <!-- Handle Side -->
                                 <div>
                                     <label class="block font-serif text-sm text-black dark:text-white mb-2">Сторона ручки</label>
-                                    <SelectButton :options="handleSideOptions" v-model="config.handleSide"
+                                    <SelectButton :options="handleSideOptions" v-model="termoDoorCalcStore.doorConfig.handleSide"
                                         optionLabel="label" optionValue="value" size="small" fluid />
                                 </div>
 
                                 <!-- Peephole Position -->
                                 <div>
                                     <label class="block font-serif text-sm text-black dark:text-white mb-2">Глазок</label>
-                                    <SelectButton :options="peepholePositionOptions" v-model="config.peepholePosition"
+                                    <SelectButton :options="peepholePositionOptions" v-model="termoDoorCalcStore.doorConfig.peepholePosition"
                                         optionLabel="label" optionValue="value" size="small" fluid />
                                 </div>
                             </div>
@@ -148,6 +135,7 @@ const parametersSummary = computed(() => [
 
                         <!-- Action buttons -->
                         <div class="mt-4 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
+                            <span>{{ termoDoorCalcStore.total_price }}</span>
                             <Button label="Сохранить" size="large" class="w-full sm:w-auto" disabled />
                         </div>
                     </div>
@@ -247,7 +235,7 @@ const parametersSummary = computed(() => [
                         <!-- Undercoat -->
                         <div class="flex items-center justify-between px-1">
                             <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Цинкогрунтование</span>
-                            <ToggleSwitch v-model="config.metalPainting.undercoat" />
+                            <ToggleSwitch v-model="termoDoorCalcStore.doorConfig.metalPainting.undercoat" />
                         </div>
 
                         <div class="grid grid-cols-1 gap-3">
@@ -343,10 +331,10 @@ const parametersSummary = computed(() => [
                             <!-- Secondary lock toggle -->
                             <div class="flex items-center justify-between px-1">
                                 <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Дополнительный замок</span>
-                                <ToggleSwitch v-model="config.furniture.hasSecondaryLock" />
+                                <ToggleSwitch v-model="termoDoorCalcStore.doorConfig.furniture.hasSecondaryLock" />
                             </div>
                             <!-- Secondary lock placeholder -->
-                            <div v-if="config.furniture.hasSecondaryLock"
+                            <div v-if="termoDoorCalcStore.doorConfig.furniture.hasSecondaryLock"
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
                                     <i class="pi pi-lock text-3xl text-neutral-400"></i>
@@ -380,12 +368,12 @@ const parametersSummary = computed(() => [
                             <!-- Peephole toggle -->
                             <div class="flex items-center justify-between px-1">
                                 <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Глазок</span>
-                                <ToggleSwitch v-model="config.furniture.hasPeephole" />
+                                <ToggleSwitch v-model="termoDoorCalcStore.doorConfig.furniture.hasPeephole" />
                             </div>
                             <!-- Night latch turner toggle -->
                             <div class="flex items-center justify-between px-1">
                                 <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Ночная задвижка + поворотник</span>
-                                <ToggleSwitch v-model="config.furniture.hasNightLatchTurner" />
+                                <ToggleSwitch v-model="termoDoorCalcStore.doorConfig.furniture.hasNightLatchTurner" />
                             </div>
                         </div>
                     </div>

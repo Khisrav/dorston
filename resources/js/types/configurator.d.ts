@@ -48,7 +48,8 @@ export interface TermoDoorConfig {
     width: number;
     height: number;
     handleSide: doorHandleSide;
-    peepholePosition: peepholePosition;
+    peepholePosition?: peepholePosition;
+    hasStainlessSteelDoorsill?: boolean;
     // isModular: boolean;
     interior: {
         panelModel: number;
