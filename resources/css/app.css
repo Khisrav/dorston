@@ -12,6 +12,10 @@
         'Google Sans', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+    --font-serif:
+        'Google Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -79,15 +83,6 @@
     }
 }
 
-@layer utilities {
-    body,
-    html {
-        --font-sans:
-            'Google Sans', ui-sans-serif, system-ui, sans-serif,
-            'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-            'Noto Color Emoji';
-    }
-}
 
 :root {
     --background: hsl(0 0% 100%);
@@ -172,17 +167,3 @@
 }
 
 
-
-body {
-    font-family: 'Google Sans', sans-serif;
-    /* font-family: 'Playfair Display', serif; */
-}
-
-.playfair-display {
-    font-family: 'Google Sans', sans-serif;
-    /* font-family: 'Playfair Display', serif; */
-}
-
-.instrument-sans {
-    font-family: 'Google Sans', sans-serif;
-}

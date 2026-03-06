@@ -56,11 +56,7 @@ const isSignedIn = computed(() => !!user);
 </template>
 
 <style scoped>
-/* Import elegant serif fonts */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
-
 :deep(.elegant-user-button) {
-    font-family: 'Playfair Display', serif;
     transition: all 0.3s ease;
     border-radius: 0;
     /* background: white; */
@@ -70,12 +66,7 @@ const isSignedIn = computed(() => !!user);
     background: rgb(10 10 10);
 }
 
-:deep(.elegant-user-info) {
-    font-family: 'Playfair Display', serif;
-}
-
 :deep(.elegant-dropdown) {
-    font-family: 'Playfair Display', serif;
     background: white;
 }
 

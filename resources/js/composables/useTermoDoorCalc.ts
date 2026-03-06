@@ -1,9 +1,7 @@
 import { DoorModel, Nomenclature, Furniture, TermoDoorConfig } from "@/types/configurator";
 import { defineStore } from "pinia";
 import { ref, watch, computed } from "vue";
-import { useComfortConstructive } from "./door-constructives/useComfortConstructive";
 import { isDoorStandard } from "@/lib/utils";
-import { useAbsolutConstructive } from "./door-constructives/useAbsolutConstructive";
 import { useTermoConstructive } from "./door-constructives/useTermoConstructive";
 
 export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
@@ -19,7 +17,7 @@ export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
     const total_price = ref(0)
 
     const doorConfig = ref<TermoDoorConfig>({
-        width: 860,
+        width: 820,
         height: 2050,
         handleSide: 'Left',
         peepholePosition: 'None',
@@ -28,7 +26,7 @@ export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
             panelModel: 2, //Ф-11
         },
         exterior: {
-            panelModel: 59, //ВС-6
+            panelModel: 83, //Imperato
             primaryTexture: -1,
             secondaryTexture: -1,
         },
@@ -68,11 +66,8 @@ export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
     }
 
     const initializeDefaultConfig = () => {
-        const defaultExteriorModel = getDoorModelInfo(59)
+        const defaultExteriorModel = getDoorModelInfo(83)
         const defaultInteriorModel = getDoorModelInfo(2)
-
-        applyDoorModelConfig(defaultExteriorModel?.id ?? 59, 'exterior')
-        applyDoorModelConfig(defaultInteriorModel?.id ?? 2, 'interior')
 
         // Auto-select furniture if only one available
         if (furnitures.value.length === 1) {
@@ -85,7 +80,7 @@ export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
     const applyDoorModelConfig = (modelId: number, type: 'exterior' | 'interior') => {
         const model = getDoorModelInfo(modelId)
         if (type === 'exterior') {
-            doorConfig.value.exterior.panelModel = model?.id ?? 59
+            doorConfig.value.exterior.panelModel = model?.id ?? 83
             doorConfig.value.exterior.primaryTexture = model?.default_primary_film_color_id ?? -1
             doorConfig.value.exterior.secondaryTexture = model?.default_secondary_film_color_id ?? -1
             // doorConfig.value.exterior.casingTexture = model?.default_casing_film_color_id ?? -1
@@ -110,7 +105,8 @@ export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
     
     watch(doorConfig, () => {
         total_price.value = useTermoConstructive().getTotalPrice(doorConfig.value)
-        total_price.value *= (1.3 * 1.055)
+        // total_price.value *= (1.3 * 1.055)
+        console.log('total_price', total_price.value);
     }, { deep: true, immediate: true })
 
     //if primary texture changed, then apply primary texture value to casing texture

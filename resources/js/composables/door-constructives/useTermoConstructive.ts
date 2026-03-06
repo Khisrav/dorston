@@ -2,18 +2,23 @@ import { isDoorPanelStandard, isDoorStandard, isMetallicDoor } from '@/lib/utils
 import { TermoDoorConfig } from '@/types/configurator';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { useDoorCalc } from '../useDoorCalc';
+import { useTermoDoorCalc } from '../useTermoDoorCalc';
+import { getRate } from '@/lib/termoPowderCoating';
 
 export const useTermoConstructive = defineStore('termoConstructive', () => {
     const total_price = ref(0);
 
     const getTotalPrice = (doorConfig: TermoDoorConfig) => {
-        const doorCalcStore = useDoorCalc();
+        const doorCalcStore = useTermoDoorCalc();
 
         total_price.value = 0;
         
         total_price.value += nonChangeablePricesValue(doorConfig);
-        console.log('Стандартное [Неменяемое]:', total_price.value);
+        console.log('Стандартное [Неменяемое]:', nonChangeablePricesValue(doorConfig));
+        total_price.value += changeablePricesValue(doorConfig);
+        console.log('Уникальное [Изменяемое]:', changeablePricesValue(doorConfig));
+        total_price.value += powderPriceValue(doorConfig, doorCalcStore);
+        console.log('Порошковая покраска:', powderPriceValue(doorConfig, doorCalcStore));
 
         return total_price.value;
     };
@@ -40,14 +45,14 @@ export const useTermoConstructive = defineStore('termoConstructive', () => {
         //E61:E64, E66:E78
         sum += 67.09 + 194.06 + 3929.11
 
-        return 0
+        return sum;
     }
 
     const changeablePricesValue = (doorConfig: TermoDoorConfig) => {
         let sum = 0, subH = doorConfig.height - 60, subW = doorConfig.width - 60
 
         //E40, E41, E43, E45
-        sum += 1*(doorConfig.height>2209?140:105) + 123 + (subH/1000*subW/1000*0.5)*3800 + (subH/1000*subW/1000*0.5)*3500
+        sum += 1*(doorConfig.height>2209?140:105) + 123 + (subH/1000*subW/1000*0.05)*3800 + (subH/1000*subW/1000*0.05)*3500
         //E65
         const condition = (h: number) => {
             if (h <= 2050) return 4
@@ -56,8 +61,17 @@ export const useTermoConstructive = defineStore('termoConstructive', () => {
         }
 
         sum += condition(doorConfig.height) * 50
+        return sum;
+    }
 
-        return 0;
+    const powderPriceValue = (doorConfig: TermoDoorConfig, doorCalcStore: ReturnType<typeof useTermoDoorCalc>) => {
+        let sum = 0
+       
+        // const paintPrice = doorCalcStore.getPaintColor(doorConfig.metalPainting.primaryColor)?.base_price ?? 0;
+
+        // sum = getRate(doorConfig.metalPainting.primaryColor, doorConfig.exterior.panelModel, isDoorStandard(doorConfig.width, doorConfig.height)) * paintPrice;
+        
+        return sum
     }
 
     return {

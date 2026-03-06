@@ -1,4 +1,4 @@
-import { DoorConfig, doorType } from '@/types/configurator'
+import { DoorConfig, doorType, TermoDoorConfig } from '@/types/configurator'
 import { InertiaLinkProps } from '@inertiajs/vue3'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
@@ -35,7 +35,7 @@ export const isDoorPanelStandard = (width: number, height: number, isExterior: b
     }
 }
 
-export const isMetallicDoor = (doorConfig: DoorConfig) => {
+export const isMetallicDoor = (doorConfig: DoorConfig | TermoDoorConfig) => {
     /*
      * 35 - Kombi
      * 36 - Verso

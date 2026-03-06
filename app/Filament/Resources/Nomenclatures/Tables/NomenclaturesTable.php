@@ -22,28 +22,34 @@ class NomenclaturesTable
                 ImageColumn::make('image')
                     ->disk('public')
                     ->height(64)
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->label(''),
                 TextColumn::make('id')
                     ->label('ID')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextInputColumn::make('name')
                     ->label('Название')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('nomenclature_category_id')
                     ->label('Категория')
                     // ->badge()
                     ->formatStateUsing(fn (int $state) => NomenclatureCategory::find($state)?->name)
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextInputColumn::make('base_price')
                     ->label('Базовая цена')
                     ->type('number')
                     ->suffix('₽')
                     // ->money('RUB')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('unit')
                     ->label('Ед. изм.')
-                    ->badge(),
+                    ->badge()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 SelectColumn::make('tag')
                     ->label('Метка')
                     ->options([
