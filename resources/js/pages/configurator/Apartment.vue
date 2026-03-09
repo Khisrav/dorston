@@ -1123,7 +1123,7 @@ h1,
 h2,
 h3,
 button {
-    /* font-family: 'Playfair Display', serif; */
+    font-family: 'Google Sans', sans-serif;
 }
 
 /* PrimeVue SelectButton customization */
@@ -1134,7 +1134,6 @@ button {
 
 :deep(.p-selectbutton .p-button) {
     flex: 1;
-    font-family: 'Playfair Display', serif;
     font-size: 0.875rem;
 }
 
@@ -1145,7 +1144,6 @@ button {
 }
 
 :deep(.p-inputnumber-input) {
-    font-family: 'Playfair Display', serif;
     font-size: 0.875rem;
 }
 

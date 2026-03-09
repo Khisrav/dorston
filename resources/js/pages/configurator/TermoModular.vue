@@ -556,10 +556,8 @@ const parametersSummary = computed(() => [
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
-
 h1, h2, h3, button {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Google Sans', sans-serif;
 }
 
 :deep(.p-selectbutton) {
@@ -569,7 +567,7 @@ h1, h2, h3, button {
 
 :deep(.p-selectbutton .p-button) {
     flex: 1;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 0.875rem;
 }
 
@@ -579,7 +577,7 @@ h1, h2, h3, button {
 }
 
 :deep(.p-inputnumber-input) {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Google Sans', sans-serif;
     font-size: 0.875rem;
 }
 

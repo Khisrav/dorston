@@ -50,9 +50,11 @@ export interface TermoDoorConfig {
     handleSide: doorHandleSide;
     peepholePosition?: peepholePosition;
     hasStainlessSteelDoorsill?: boolean;
-    // isModular: boolean;
+    hasThermalCable: boolean;
+    isModular: boolean;
     interior: {
         panelModel: number;
+        primaryTexture: number;
     }
     exterior: {
         panelModel: number;
