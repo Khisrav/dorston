@@ -3,16 +3,13 @@ import DoorVisualizer from '@/components/Configurator/DoorVisualizer.vue';
 import { useDoorCalc } from '@/composables/useDoorCalc';
 import { useDoorVisual } from '@/composables/useDoorVisual';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { getDoorModelImage, getImageUrl, hasSecondaryMetalPaint, getFurnitureColorImage } from '@/lib/utils';
-import { dashboard } from '@/routes';
+import { getDoorModelImage, getImageUrl, getFurnitureColorImage } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { DoorModel, Nomenclature, Furniture, DoorCombinationImage } from '@/types/configurator';
 import { router, usePage } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
-import { PlusIcon } from 'lucide-vue-next';
-import { SelectButton, InputNumber, Dialog, Drawer, ToggleSwitch, Button, Timeline, Select } from 'primevue';
-import { computed, ref, watch, watchEffect, onMounted, onUnmounted } from 'vue';
-import { useImage } from 'vue-konva';
+import { SelectButton, InputNumber, Drawer, ToggleSwitch, Button, Select } from 'primevue';
+import { computed, ref, watch } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -25,25 +22,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ]
 
-const steps = ref([
-    {
-        label: 'Дизайн',
-        icon: 'pi pi-palette',
-    },
-    {
-        label: 'Цвет плёнки',
-        icon: 'pi pi-palette',
-    },
-    {
-        label: 'Цвет металла',
-        icon: 'pi pi-palette',
-    },
-    {
-        label: 'Цвет металла',
-        icon: 'pi pi-palette',
-    },
-])
-
 const paints = ref(usePage().props.paints as Nomenclature[])
 const doorModels = ref(usePage().props.doorModels as DoorModel[])
 const filmColors = ref(usePage().props.filmColors as Nomenclature[])
@@ -51,7 +29,6 @@ const furnitures = ref(usePage().props.furnitures as Furniture[])
 const locks = ref(usePage().props.locks as { primary: Nomenclature[], secondary: Nomenclature[] })
 const cylinders = ref(usePage().props.cylinders as Nomenclature[])
 const handles = ref(usePage().props.handles as Nomenclature[])
-// const doorCombinationImages = ref(usePage().props.doorCombinationImages as DoorCombinationImage[])
 
 const doorCalcStore = useDoorCalc()
 doorCalcStore.paints = paints.value
@@ -79,12 +56,6 @@ const isLoggedIn = computed(() => {
 
 // Accordion state for door parameters
 const isParametersExpanded = ref(true);
-
-// Door type options
-const doorTypeOptions = [
-    { label: 'Квартирная', value: 'Apartment' },
-    { label: 'Для дома', value: 'Street' }
-];
 
 const doorConstructiveOptions = [
     { label: 'Comfort', value: 'Comfort' },
@@ -241,16 +212,14 @@ watch(
 
 <template>
     <Head title="Конфигуратор" />
-    <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-neutral-900">
+    <!-- <AppLayout :breadcrumbs="breadcrumbs"> -->
+        <div class="flex h-full max-w-7xl mx-auto flex-1 flex-col gap-4 p-4 sm:p-6 lg:p-8 bg-white dark:bg-neutral-900">
             
             <!-- Header Section -->
-            <div v-if="!isLoggedIn" class="text-center border-b border-black/10 dark:border-white/10 pb-4 sm:pb-6 lg:pb-8">
-                <h1 class="font-serif text-2xl sm:text-3xl lg:text-4xl tracking-tight text-black dark:text-white mb-2 sm:mb-3">
-                    Конфигуратор <span class="italic">дверей</span>
-                </h1>
-                <p class="font-serif text-base sm:text-lg text-black/60 dark:text-white/60">
-                    Создайте идеальную дверь по вашему вкусу
+            <div class="text-center pb-4 sm:pb-6 lg:pb-8">
+                <h1 class="font-serif text-2xl sm:text-3xl lg:text-4xl tracking-tight text-black mb-2 sm:mb-3 font-bold">Конфигуратор дверей</h1>
+                <p class="font-serif text-base sm:text-lg text-black/60">
+                    Создайте идеальную дверь в квартиру по вашему вкусу
                 </p>
             </div>
 
@@ -258,18 +227,17 @@ watch(
             <div class="grid gap-4 lg:grid-cols-12">
                 
                 <!-- Left Column: Preview & Parameters -->
-                <div class="lg:col-span-6">
-                    <div class="sticky top-0 space-y-4">
+                <div class="lg:col-span-6 lg:sticky lg:top-6 lg:self-start space-y-4">
+                    <div class=" space-y-4">
                         <!-- Visualization Area -->
                         <div class="relative">
-                            <div class="sticky top-0">
+                            <div class="">
                                 <DoorVisualizer />
                             </div>
                         </div>
 
                         <!-- Door Parameters Accordion -->
-                        <div class="border-2 border-black/10 dark:border-white/10 bg-white dark:bg-neutral-800">
-                            <!-- Accordion Header -->
+                        <!-- <div class="border-2 border-black/10 dark:border-white/10 bg-white dark:bg-neutral-800">
                             <button @click="isParametersExpanded = !isParametersExpanded"
                                 class="w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between text-left transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-700">
                                 <div class="flex-1">
@@ -288,20 +256,8 @@ watch(
                                 </svg>
                             </button>
                             
-                            <!-- Accordion Content -->
                             <div v-show="isParametersExpanded"
                                 class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-black/10 dark:border-white/10 p-4">
-                                
-                                <!-- Door Type -->
-                                <!-- <div>
-                                    <label class="block font-serif text-sm text-black dark:text-white mb-2">
-                                        Тип двери
-                                    </label>
-                                    <SelectButton :options="doorTypeOptions" v-model="doorCalcStore.doorConfig.doorType"
-                                        optionLabel="label" optionValue="value" size="small" fluid />
-                                </div> -->
-
-                                <!-- Door Constructive -->
                                 <div>
                                     <label class="block font-serif text-sm text-black dark:text-white mb-2">
                                         Конструктив
@@ -311,7 +267,6 @@ watch(
                                         optionValue="value" size="small" fluid />
                                 </div>
 
-                                <!-- Dimensions -->
                                 <div>
                                     <div>
                                         <label class="block font-serif text-sm text-black dark:text-white mb-2">
@@ -337,7 +292,6 @@ watch(
                                     </div>
                                 </div>
 
-                                <!-- Handle Side -->
                                 <div>
                                     <label class="block font-serif text-sm text-black dark:text-white mb-2">
                                         Сторона ручки
@@ -347,7 +301,6 @@ watch(
                                         optionValue="value" size="small" fluid />
                                 </div>
 
-                                <!-- Box Design -->
                                 <div>
                                     <label class="block font-serif text-sm text-black dark:text-white mb-2">
                                         Дизайн короба
@@ -357,14 +310,23 @@ watch(
                                         optionValue="value" size="small" fluid />
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
-                        <!-- Action buttons -->
-                        <div class="mt-4 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
+                        <!-- <div class="mt-4 flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
                             <div>
                                 <span class="font-medium font-sans text-xl">{{ doorCalcStore.total_price.toFixed(2) }} ₽</span>
                             </div>
                             <Button label="Сохранить конфигурацию" size="large" class="w-full sm:w-auto" />
+                        </div> -->
+
+                        <div class="border border-sky-900/10 rounded-3xl p-4">
+                            <div class="border-b border-sky-900/10 pb-2">
+                                <p class="font-bold text-xl"><span class="font-bold text-sky-900">Итого: </span> <span>{{ doorCalcStore.total_price.toFixed(2) }} ₽</span></p>
+                            </div>
+                            <div class="flex gap-4 mt-4">
+                                <Button label="Оформить заказ" variant="" size="small" />
+                                <Button label="Скачать PDF" variant="outlined" size="small" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -774,7 +736,7 @@ watch(
                 </div> -->
             </div>
         </div>
-    </AppLayout>
+    <!-- </AppLayout> -->
 
     <!-- DRAWER: Outer Design -->
     <Drawer v-model:visible="showOuterDesignDialog" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
