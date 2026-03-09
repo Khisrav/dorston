@@ -130,7 +130,7 @@ const selectedFurnitureSet = computed(() => {
 
 <template>
     <Head title="Для дома — Конфигуратор" />
-    <AppLayout :breadcrumbs="breadcrumbs">
+    <!-- <AppLayout :breadcrumbs="breadcrumbs"> -->
         <div class="flex h-full flex-1 flex-col gap-4 p-4 sm:p-6 lg:p-8 bg-white dark:bg-neutral-900">
 
             <!-- Main Grid -->
@@ -283,7 +283,6 @@ const selectedFurnitureSet = computed(() => {
                             <span class="text-xs font-serif text-neutral-400 italic">Снаружи</span>
                         </div>
                         <div class="grid grid-cols-1 gap-3">
-                            <!-- Primary texture -->
                             <div @click="showExteriorFilmPrimaryDrawer = true"
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
@@ -302,7 +301,7 @@ const selectedFurnitureSet = computed(() => {
                                 </div>
                                 <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
                             </div>
-                            <!-- Secondary texture -->
+
                             <div @click="showExteriorFilmSecondaryDrawer = true"
                                 class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
                                 <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
@@ -625,7 +624,7 @@ const selectedFurnitureSet = computed(() => {
                 </div>
             </div>
         </div>
-    </AppLayout>
+    <!-- </AppLayout> -->
 
     <!-- DRAWER: Exterior Design -->
     <Drawer v-model:visible="showExteriorDesignDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">

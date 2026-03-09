@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\DoorModels;
 
+use App\Filament\Resources\DoorModels\Pages\CreateDoorModel;
 use App\Filament\Resources\DoorModels\Pages\EditDoorModel;
 use App\Filament\Resources\DoorModels\Pages\ListDoorModels;
 use App\Filament\Resources\DoorModels\Pages\ViewDoorModel;
@@ -54,7 +55,7 @@ class DoorModelResource extends Resource
     {
         return [
             'index' => ListDoorModels::route('/'),
-            // 'create' => CreateDoorModel::route('/create'),
+            'create' => CreateDoorModel::route('/create'),
             'view' => ViewDoorModel::route('/{record}'),
             'edit' => EditDoorModel::route('/{record}/edit'),
         ];

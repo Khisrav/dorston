@@ -1,7 +1,7 @@
 import { DoorModel, Nomenclature, Furniture, TermoDoorConfig } from "@/types/configurator";
 import { defineStore } from "pinia";
 import { ref, watch, computed } from "vue";
-import { isDoorStandard } from "@/lib/utils";
+import { isDoorStandard, roundUpTo100 } from "@/lib/utils";
 import { useTermoConstructive } from "./door-constructives/useTermoConstructive";
 
 export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
@@ -22,8 +22,11 @@ export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
         handleSide: 'Left',
         peepholePosition: 'None',
         hasStainlessSteelDoorsill: false,
+        hasThermalCable: false,
+        isModular: false,
         interior: {
             panelModel: 2, //Ф-11
+            primaryTexture: -1,
         },
         exterior: {
             panelModel: 83, //Imperato
@@ -106,6 +109,7 @@ export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
     watch(doorConfig, () => {
         total_price.value = useTermoConstructive().getTotalPrice(doorConfig.value)
         // total_price.value *= (1.3 * 1.055)
+        total_price.value = roundUpTo100(total_price.value)
         console.log('total_price', total_price.value);
     }, { deep: true, immediate: true })
 
