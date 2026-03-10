@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import DoorVisualizer from '@/components/Configurator/DoorVisualizer.vue';
+import ConstructiveCard from '@/components/Configurator/Card/ConstructiveCard.vue';
 import { useDoorCalc } from '@/composables/useDoorCalc';
 import { useDoorVisual } from '@/composables/useDoorVisual';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -333,33 +334,8 @@ watch(
 
                 <!-- Right Column: Options Panel -->
                 <div class="lg:col-span-6 space-y-4">
-                    <div class="space-y-4">   
-                        <!-- View Mode Selector -->
-                        <div class="sticky top-0 z-10 bg-white dark:bg-neutral-900">
-                            <div class="flex items-center justify-center w-full gap-1 border border-black/10 dark:border-white/10 p-1 rounded-none">
-                                <button
-                                    @click="viewMode = 'exterior'"
-                                    :class="[
-                                        'p-2 sm:p-3 rounded-none bg-none dark:bg-none hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-300 w-full flex items-center justify-center font-serif text-sm sm:text-base tracking-wide',
-                                        viewMode === 'exterior' 
-                                            ? 'bg-black/5 dark:bg-white/5 text-black dark:text-white' 
-                                            : 'text-black/70 dark:text-white/70 hover:bg-black/5 hover:text-black dark:hover:text-white'
-                                    ]">
-                                    Снаружи
-                                </button>
-                                <button
-                                    @click="viewMode = 'interior'"
-                                    :class="[
-                                        'p-2 sm:p-3 rounded-none bg-none dark:bg-none hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-300 w-full flex items-center justify-center font-serif text-sm sm:text-base tracking-wide',
-                                        viewMode === 'interior' 
-                                            ? 'bg-black/5 dark:bg-white/5 text-black dark:text-white' 
-                                            : 'text-black/70 dark:text-white/70 hover:bg-black/5 hover:text-black dark:hover:text-white'
-                                    ]">
-                                    Изнутри
-                                </button>
-                            </div>
-                        </div>
-                        
+                    <ConstructiveCard />
+                    <div class="space-y-4">
                         <!-- I. Design Selection -->
                         <div class="space-y-4">
                             <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight border-b pb-2 border-black/10 dark:border-white/10">
