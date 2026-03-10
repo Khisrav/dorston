@@ -18,9 +18,9 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="border-2 border-black/10 dark:border-white/10 bg-gradient-to-b from-white to-gray-50 dark:from-neutral-800 dark:to-neutral-900 p-4 md:p-7 pr-2 md:pr-4 flex items-center justify-center relative overflow-hidden rounded-3xl">
+    <div class="border border-sky-900/10 bg-gradient-to-b from-white to-sky-900/5 dark:from-neutral-800 dark:to-neutral-900 p-4 md:p-7 pr-2 md:pr-4 flex items-center justify-center relative overflow-hidden rounded-3xl">
         <div ref="visualizerContainerRef" class="w-full h-full">
-            <div class="flex justify-center items-start gap-7 pb-4">
+            <div class="flex justify-center items-start gap-4 md:gap-7 pb-4">
 
                 <!-- Exterior stage -->
                 <div class="relative">
