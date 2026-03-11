@@ -74,7 +74,7 @@ export const hasSecondaryMetalPaint = (modelId: number) => {
     return [36, 37, 38].includes(modelId) ? true : false
 }
 
-export const getDoorModelImage = (link: string) => link.startsWith('http') ? link : `/storage/${link}`
+export const getDoorModelImage = (link: string | null) => link !== null && link.startsWith('http') ? link : `/storage/${link}`
 export const getImageUrl = (image: string | null) => image ? image.startsWith('http') ? image : `/storage/${image}` : '/assets/placeholder.png'
 export const getFurnitureColorImage = (color: string) => {
     // Map database color values to actual image filenames
