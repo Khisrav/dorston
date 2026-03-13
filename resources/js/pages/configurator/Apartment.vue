@@ -7,7 +7,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { getDoorModelImage, getImageUrl, getFurnitureColorImage } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { DoorModel, Nomenclature, Furniture, DoorCombinationImage } from '@/types/configurator';
-import { router, usePage } from '@inertiajs/vue3';
+import { Link, router, usePage } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
 import { SelectButton, InputNumber, Drawer, ToggleSwitch, Button, Select } from 'primevue';
 import { computed, ref, watch } from 'vue';
@@ -223,6 +223,14 @@ watch(
                 <p class="font-serif text-base sm:text-lg text-black/60">
                     Создайте идеальную дверь в квартиру по вашему вкусу
                 </p>
+                <div class="flex gap-2 flex-col sm:flex-row items-center justify-center mt-4">
+                    <Link href="/configurator/apartment">
+                        <Button label="Для квартиры" variant="contrast" size="small" />
+                    </Link>
+                    <Link href="/configurator/termo">
+                        <Button label="Для дома" variant="outlined" size="small" />
+                    </Link>
+                </div>
             </div>
 
             <!-- Main Grid -->
