@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
 import { Button } from 'primevue';
@@ -31,7 +31,7 @@ const options = [
 
 <template>
     <Head title="Конфигуратор" />
-    <AppLayout :breadcrumbs="breadcrumbs">
+    <PublicLayout>
         <div class="flex h-full flex-1 flex-col items-center justify-center gap-8 p-4 sm:p-8 lg:p-12 bg-white dark:bg-neutral-900">
             <div class="flex flex-col items-center gap-8 w-full">
                 <div class="text-center">
@@ -76,7 +76,7 @@ const options = [
                 </div>
             </div>
         </div>
-    </AppLayout>
+    </PublicLayout>
 </template>
 
 <style scoped>

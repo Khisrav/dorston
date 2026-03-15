@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import PublicLayout from '@/layouts/PublicLayout.vue';
+import { Head, Link } from '@inertiajs/vue3';
 import { BoxIcon, CogIcon, EyeIcon, PointerIcon } from 'lucide-vue-next';
 
 
@@ -45,9 +46,11 @@ const howItWorks = [
 </script>
 
 <template>
+	<Head title="Dorston" />
+	<PublicLayout>
 	<div>
 		<section>
-			<div class="flex h-full flex-1 flex-col items-center justify-center gap-8 p-4 sm:p-8 lg:p-12">
+			<div class="flex h-full flex-1 flex-col items-center justify-center gap-8 p-4 py-12 md:py-32 sm:px-8 lg:px-12">
 				<div class="flex flex-col items-center gap-8 w-full">
 					<div class="text-center">
 						<h1 class="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl tracking-tight text-black mb-3">
@@ -164,6 +167,7 @@ const howItWorks = [
 			</div>
 		</section>
 	</div>
+	</PublicLayout>
 </template>
 
 <style scoped>

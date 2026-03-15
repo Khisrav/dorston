@@ -1,285 +1,354 @@
 <script setup lang="ts">
-import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
-import Breadcrumbs from '@/components/Breadcrumbs.vue';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
     NavigationMenu,
+    NavigationMenuContent,
     NavigationMenuItem,
     NavigationMenuList,
+    NavigationMenuTrigger,
     navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import {
     Sheet,
     SheetContent,
-    SheetHeader,
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
-import UserMenuContent from '@/components/UserMenuContent.vue';
-import { getInitials } from '@/composables/useInitials';
-import { toUrl, urlIsActive } from '@/lib/utils';
-import { dashboard } from '@/routes';
-import type { BreadcrumbItem, NavItem } from '@/types';
-import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { ChevronDown, ChevronRight, ExternalLink, Menu } from 'lucide-vue-next';
+import { ref } from 'vue';
 
-interface Props {
-    breadcrumbs?: BreadcrumbItem[];
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface NavLink {
+    type: 'link';
+    title: string;
+    href: string;
+    /** If true, renders as <a target="_blank"> instead of an Inertia <Link> */
+    external?: boolean;
+    /** Override the URL prefix used for active-state matching */
+    activeMatch?: string;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-    breadcrumbs: () => [],
-});
+interface NavDropdown {
+    type: 'dropdown';
+    title: string;
+    children: {
+        title: string;
+        description?: string;
+        href: string;
+    }[];
+}
+
+type NavItem = NavLink | NavDropdown;
+
+// ─── Navigation definition ────────────────────────────────────────────────────
+// Edit this single array to update both desktop and mobile menus.
+
+const navItems: NavItem[] = [
+    {
+        type: 'link',
+        title: 'Главная',
+        href: 'https://dorston.ru/',
+    },
+    {
+        type: 'link',
+        title: 'Конфигуратор',
+        href: 'https://config.dorston.ru/',
+    },
+    {
+        type: 'dropdown',
+        title: 'Каталог',
+        children: [
+            {
+                title: 'COMFORT',
+                description: 'Входные квартирные двери',
+                href: 'https://dorston.ru/comfortmp',
+            },
+            {
+                title: 'COMFORT',
+                description: 'Входные квартирные двери с внешней панелью',
+                href: 'https://dorston.ru/comfortpp',
+            },
+            {
+                title: 'MONOLIT',
+                description: 'Квартирные двери с широким наличником',
+                href: 'https://dorston.ru/monolit',
+            },
+            {
+                title: 'MONOLIT LIGHT',
+                description: 'Квартирные двери',
+                href: 'https://dorston.ru/monolitlight',
+            },
+            {
+                title: 'ABSOLUT',
+                description: 'Входные квартирные двери',
+                href: 'https://dorston.ru/absolutmp',
+            },
+            {
+                title: 'ABSOLUT',
+                description: 'Входные квартирные двери с панелью',
+                href: 'https://dorston.ru/absolutpp',
+            },
+            {
+                title: 'ECOTERM',
+                description: 'Уличные двери с терморазрывом',
+                href: 'https://dorston.ru/ecoterm',
+            },
+            {
+                title: 'TERMO+',
+                description: 'Улучшенные двери для домов',
+                href: 'https://dorston.ru/termoplus',
+            },
+            {
+                title: 'TERMO PREMIUM',
+                description: 'Уличные двери для c наружной панелью',
+                href: 'https://dorston.ru/hpl',
+            },
+        ],
+    },
+    {
+        type: 'link',
+        title: 'Где купить',
+        href: 'https://dorston.ru/maps',
+    },
+    {
+        type: 'link',
+        title: 'Партнерам',
+        href: 'https://dorston.ru/cooperation',
+    },
+    {
+        type: 'link',
+        title: 'Объекты',
+        href: 'https://dorston.ru/works',
+    },
+    {
+        type: 'link',
+        title: 'Видеообзоры',
+        href: 'https://dorston.ru/video',
+    },
+    {
+        type: 'link',
+        title: 'Контакты',
+        href: 'https://dorston.ru/contacts',
+    },
+    // External links — add more objects here as needed:
+    // { type: 'link', title: 'Instagram', href: 'https://instagram.com/...', external: true },
+];
+
+// ─── Active state ─────────────────────────────────────────────────────────────
 
 const page = usePage();
-const auth = computed(() => page.props.auth);
+const mobileMenuOpen = ref(false);
+const openDropdowns = ref<Set<string>>(new Set());
 
-const isCurrentRoute = computed(
-    () => (url: NonNullable<InertiaLinkProps['href']>) =>
-        urlIsActive(url, page.url),
-);
+const toggleDropdown = (title: string) => {
+    if (openDropdowns.value.has(title)) {
+        openDropdowns.value.delete(title);
+    } else {
+        openDropdowns.value.add(title);
+    }
+};
 
-const activeItemStyles = computed(
-    () => (url: NonNullable<InertiaLinkProps['href']>) =>
-        isCurrentRoute.value(toUrl(url))
-            ? 'text-black dark:text-white bg-black/5 dark:bg-white/5'
-            : 'text-black/70 dark:text-white/70',
-);
+const isActive = (href: string) =>
+    page.url === href || page.url.startsWith(href + '/');
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-];
+const isDropdownActive = (item: NavDropdown) =>
+    item.children.some((child) => isActive(child.href));
 
-const rightNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
+const linkActiveClass = (href: string) =>
+    isActive(href)
+        ? 'text-black bg-black/5'
+        : 'text-black/60 hover:text-black hover:bg-black/5';
 </script>
 
 <template>
-    <div class="elegant-header-wrapper">
-        <div class="border-b border-black/10 bg-white dark:bg-neutral-950 dark:border-white/10">
-            <div class="mx-auto flex h-16 items-center px-4 md:max-w-7xl">
-                <!-- Mobile Menu -->
-                <div class="lg:hidden">
-                    <Sheet>
-                        <SheetTrigger :as-child="true">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                class="mr-2 h-9 w-9"
-                            >
-                                <Menu class="h-5 w-5" />
-                            </Button>
-                        </SheetTrigger>
-                        <SheetContent side="left" class="w-[300px] p-6">
-                            <SheetTitle class="sr-only"
-                                >Navigation Menu</SheetTitle
-                            >
-                            <SheetHeader class="flex justify-start text-left">
-                                <AppLogoIcon
-                                    class="size-6 fill-current text-black dark:text-white"
-                                />
-                            </SheetHeader>
-                            <div
-                                class="flex h-full flex-1 flex-col justify-between space-y-4 py-6"
-                            >
-                                <nav class="-mx-3 space-y-1">
-                                <Link
-                                    v-for="item in mainNavItems"
-                                    :key="item.title"
-                                    :href="item.href"
-                                    class="flex items-center gap-x-3 px-3 py-2 text-sm font-serif tracking-wide hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
-                                    :class="activeItemStyles(item.href)"
-                                >
-                                    <component
-                                        v-if="item.icon"
-                                        :is="item.icon"
-                                        class="h-5 w-5"
-                                    />
-                                    {{ item.title }}
-                                </Link>
-                                </nav>
-                                <div class="flex flex-col space-y-4">
-                                    <a
-                                        v-for="item in rightNavItems"
-                                        :key="item.title"
-                                        :href="toUrl(item.href)"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="flex items-center space-x-2 text-sm font-serif tracking-wide text-black/70 dark:text-white/70 hover:text-black dark:hover:text-white transition-colors"
-                                    >
-                                        <component
-                                            v-if="item.icon"
-                                            :is="item.icon"
-                                            class="h-5 w-5"
-                                        />
-                                        <span>{{ item.title }}</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </SheetContent>
-                    </Sheet>
+    <header class="sticky md:static top-0 z-50 border-b border-black/5 bg-white">
+        <div class="mx-auto flex h-16 max-w-7xl items-center px-4 lg:px-6">
+
+            <!-- Logo -->
+            <Link href="/" class="mr-8 flex shrink-0 items-center gap-2.5">
+                <div class="flex size-8 items-center rounded-sm justify-center border border-black/20 bg-white">
+                    <AppLogoIcon class="size-5" />
                 </div>
+                <span class="font-serif text-sm font-medium tracking-widest text-black">
+                    DORSTON
+                </span>
+            </Link>
 
-                <Link href="/" class="flex items-center gap-x-2">
-                    <AppLogo />
-                </Link>
+            <!-- ── Desktop Navigation ────────────────────────────────────── -->
+            <nav class="hidden flex-1 items-center lg:flex">
+                <NavigationMenu>
+                    <NavigationMenuList class="gap-1">
+                        <template v-for="item in navItems" :key="item.title">
 
-                <!-- Desktop Menu -->
-                <div class="hidden h-full lg:flex lg:flex-1">
-                    <NavigationMenu class="ml-10 flex h-full items-stretch">
-                        <NavigationMenuList
-                            class="flex h-full items-stretch space-x-2"
-                        >
-                            <NavigationMenuItem
-                                v-for="(item, index) in mainNavItems"
-                                :key="index"
-                                class="relative flex h-full items-center"
-                            >
-                                <Link
+                            <!-- Simple link -->
+                            <NavigationMenuItem v-if="item.type === 'link'">
+                                <a
+                                    v-if="item.external"
+                                    :href="item.href"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     :class="[
                                         navigationMenuTriggerStyle(),
-                                        activeItemStyles(item.href),
-                                        'h-9 cursor-pointer px-3 font-serif tracking-wide hover:bg-black/5 dark:hover:bg-white/5',
+                                        'font-serif tracking-wide text-sm transition-colors',
+                                        'text-black/60 hover:text-black hover:bg-black/5',
                                     ]"
-                                    :href="item.href"
                                 >
-                                    <component
-                                        v-if="item.icon"
-                                        :is="item.icon"
-                                        class="mr-2 h-4 w-4"
-                                    />
                                     {{ item.title }}
-                                </Link>
-                                <div
-                                    v-if="isCurrentRoute(item.href)"
-                                    class="absolute bottom-0 left-0 h-px w-full translate-y-px bg-black dark:bg-white"
-                                ></div>
-                            </NavigationMenuItem>
-                        </NavigationMenuList>
-                    </NavigationMenu>
-                </div>
-
-                <div class="ml-auto flex items-center space-x-2">
-                    <div class="relative flex items-center space-x-1">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            class="group h-9 w-9 cursor-pointer"
-                        >
-                            <Search
-                                class="size-5 opacity-80 group-hover:opacity-100"
-                            />
-                        </Button>
-
-                        <div class="hidden space-x-1 lg:flex">
-                            <template
-                                v-for="item in rightNavItems"
-                                :key="item.title"
-                            >
-                                <TooltipProvider :delay-duration="0">
-                                    <Tooltip>
-                                        <TooltipTrigger>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                as-child
-                                                class="group h-9 w-9 cursor-pointer"
-                                            >
-                                                <a
-                                                    :href="toUrl(item.href)"
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    <span class="sr-only">{{
-                                                        item.title
-                                                    }}</span>
-                                                    <component
-                                                        :is="item.icon"
-                                                        class="size-5 opacity-80 group-hover:opacity-100"
-                                                    />
-                                                </a>
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>{{ item.title }}</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </template>
-                        </div>
-                    </div>
-
-                    <DropdownMenu>
-                        <DropdownMenuTrigger :as-child="true">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                class="relative size-10 w-auto rounded-full p-1 focus-within:ring-2 focus-within:ring-primary"
-                            >
-                                <Avatar
-                                    class="size-8 overflow-hidden rounded-full"
+                                    <ExternalLink class="ml-1.5 size-3 opacity-60" />
+                                </a>
+                                <a
+                                    v-else
+                                    :href="item.href"
+                                    :class="[
+                                        navigationMenuTriggerStyle(),
+                                        'font-serif tracking-wide text-sm transition-colors',
+                                        linkActiveClass(item.activeMatch ?? item.href),
+                                    ]"
                                 >
-                                    <AvatarImage
-                                        v-if="auth.user.avatar"
-                                        :src="auth.user.avatar"
-                                        :alt="auth.user.name"
-                                    />
-                                    <AvatarFallback
-                                        class="rounded-lg bg-neutral-200 font-semibold text-black dark:bg-neutral-700 dark:text-white"
+                                    {{ item.title }}
+                                </a>
+                            </NavigationMenuItem>
+
+                            <!-- Dropdown -->
+                            <NavigationMenuItem v-else-if="item.type === 'dropdown'">
+                                <NavigationMenuTrigger
+                                    :class="[
+                                        'font-serif tracking-wide text-sm transition-colors',
+                                        isDropdownActive(item)
+                                            ? 'text-black bg-black/5'
+                                            : 'text-black/60 hover:text-black',
+                                    ]"
+                                >
+                                    {{ item.title }}
+                                </NavigationMenuTrigger>
+                                <NavigationMenuContent>
+                                    <ul class=" w-[600px] grid grid-cols-2 gap-2">
+                                        <li v-for="child in item.children" :key="child.href">
+                                            <a
+                                                :href="child.href"
+                                                :class="[
+                                                    'group flex flex-col gap-0.5 rounded-md px-3 py-2.5 text-sm transition-colors',
+                                                    isActive(child.href)
+                                                        ? 'bg-black/5'
+                                                        : 'hover:bg-black/5',
+                                                ]"
+                                            >
+                                                <span class="flex items-center justify-between font-serif font-medium text-black">
+                                                    {{ child.title }}
+                                                    <ChevronRight class="size-3.5 opacity-0 transition-opacity group-hover:opacity-60" />
+                                                </span>
+                                                <span v-if="child.description" class="text-xs leading-snug text-black/50">
+                                                    {{ child.description }}
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </NavigationMenuContent>
+                            </NavigationMenuItem>
+
+                        </template>
+                    </NavigationMenuList>
+                </NavigationMenu>
+            </nav>
+
+            <!-- Right side (desktop) — add actions here if needed -->
+            <div class="ml-auto hidden items-center gap-2 lg:flex"></div>
+
+            <!-- ── Mobile hamburger ──────────────────────────────────────── -->
+            <div class="ml-auto lg:hidden">
+                    <Sheet v-model:open="mobileMenuOpen" @update:open="(v) => { if (!v) openDropdowns.clear() }">
+                    <SheetTrigger as-child>
+                        <Button variant="ghost" size="icon" class="h-9 w-9">
+                            <Menu class="size-5" />
+                            <span class="sr-only">Открыть меню</span>
+                        </Button>
+                    </SheetTrigger>
+
+                    <SheetContent side="left" class="flex w-72 flex-col p-0">
+                        <SheetTitle class="sr-only">Навигация</SheetTitle>
+
+                        <!-- Mobile logo — stays fixed at top -->
+                        <div class="flex shrink-0 items-center gap-2.5 border-b border-black/10 px-5 py-4">
+                            <div class="flex size-8 items-center justify-center border border-black/20 dark:border-white/20">
+                                <AppLogoIcon class="size-5" />
+                            </div>
+                            <span class="font-serif text-sm font-medium tracking-widest text-black">
+                                DORSTON
+                            </span>
+                        </div>
+
+                        <nav class="flex flex-col gap-1 overflow-y-auto px-3 py-4">
+                            <template v-for="item in navItems" :key="item.title">
+
+                                <!-- Simple link -->
+                                <template v-if="item.type === 'link'">
+                                    <a
+                                        v-if="item.external"
+                                        :href="item.href"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-serif tracking-wide text-black/60 transition-colors hover:bg-black/5 hover:text-black"
+                                        @click="mobileMenuOpen = false"
                                     >
-                                        {{ getInitials(auth.user?.name) }}
-                                    </AvatarFallback>
-                                </Avatar>
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" class="w-56">
-                            <UserMenuContent :user="auth.user" />
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </div>
-        </div>
+                                        {{ item.title }}
+                                        <ExternalLink class="size-3.5 opacity-60" />
+                                    </a>
+                                    <a
+                                        v-else
+                                        :href="item.href"
+                                        class="flex items-center rounded-md px-3 py-2.5 text-sm font-serif tracking-wide transition-colors"
+                                        :class="linkActiveClass(item.activeMatch ?? item.href)"
+                                        @click="mobileMenuOpen = false"
+                                    >
+                                        {{ item.title }}
+                                    </a>
+                                </template>
 
-        <div
-            v-if="props.breadcrumbs.length > 1"
-            class="flex w-full border-b border-black/10 dark:border-white/10 bg-white dark:bg-neutral-950"
-        >
-            <div
-                class="mx-auto flex h-12 w-full items-center justify-start px-4 text-black/50 dark:text-white/50 md:max-w-7xl"
-            >
-                <Breadcrumbs :breadcrumbs="breadcrumbs" />
+                                <!-- Dropdown — collapsible sub-list -->
+                                <div v-else-if="item.type === 'dropdown'" class="mt-1">
+                                    <button
+                                        type="button"
+                                        class="flex w-full items-center justify-between rounded-md px-3 py-2.5 text-sm font-serif tracking-wide transition-colors"
+                                        :class="
+                                            isDropdownActive(item)
+                                                ? 'text-black'
+                                                : 'text-black/60 hover:text-black hover:bg-black/5'
+                                        "
+                                        @click="toggleDropdown(item.title)"
+                                    >
+                                        {{ item.title }}
+                                        <ChevronDown
+                                            class="size-3.5 opacity-50 transition-transform duration-200"
+                                            :class="openDropdowns.has(item.title) ? 'rotate-180' : ''"
+                                        />
+                                    </button>
+                                    <div
+                                        v-show="openDropdowns.has(item.title)"
+                                        class="mt-0.5 flex flex-col gap-0.5 pl-3"
+                                    >
+                                        <a
+                                            v-for="child in item.children"
+                                            :key="child.href"
+                                            :href="child.href"
+                                            class="flex items-center justify-between rounded-md px-3 py-2 text-sm font-serif tracking-wide transition-colors"
+                                            :class="linkActiveClass(child.href)"
+                                            @click="mobileMenuOpen = false"
+                                        >
+                                            {{ child.title }}
+                                            <ChevronRight class="size-3.5 opacity-40" />
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </template>
+                        </nav>
+                    </SheetContent>
+                </Sheet>
             </div>
+
         </div>
-    </div>
+    </header>
 </template>
-
-<style scoped>
-</style>
