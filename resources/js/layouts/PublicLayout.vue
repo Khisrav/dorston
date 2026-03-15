@@ -1,0 +1,12 @@
+<script setup lang="ts">
+import AppHeader from '@/components/AppHeader.vue';
+</script>
+
+<template>
+    <div class="flex min-h-screen flex-col bg-white dark:bg-neutral-950">
+        <AppHeader />
+        <main class="flex flex-1 flex-col">
+            <slot />
+        </main>
+    </div>
+</template>

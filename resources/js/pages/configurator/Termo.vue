@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/vue3';
 import type { DoorModel, Furniture, Nomenclature, TermoDoorConfig, doorHandleSide, peepholePosition } from '@/types/configurator';
@@ -130,7 +130,7 @@ const selectedFurnitureSet = computed(() => {
 
 <template>
     <Head title="Для дома — Конфигуратор" />
-    <!-- <AppLayout :breadcrumbs="breadcrumbs"> -->
+    <PublicLayout>
         <div class="flex h-full flex-1 flex-col gap-4 p-4 sm:p-6 lg:p-8 bg-white dark:bg-neutral-900">
 
             <!-- Main Grid -->
@@ -624,7 +624,7 @@ const selectedFurnitureSet = computed(() => {
                 </div>
             </div>
         </div>
-    <!-- </AppLayout> -->
+    </PublicLayout>
 
     <!-- DRAWER: Exterior Design -->
     <Drawer v-model:visible="showExteriorDesignDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">

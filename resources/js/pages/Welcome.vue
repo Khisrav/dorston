@@ -1,6 +1,15 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { BoxIcon, CogIcon, EyeIcon, PointerIcon } from 'lucide-vue-next';
+import PublicLayout from '@/layouts/PublicLayout.vue';
+import { Head, Link } from '@inertiajs/vue3';
+import { BoxIcon, CogIcon, EyeIcon, MailIcon, PhoneIcon, PointerIcon, UserIcon } from 'lucide-vue-next';
+import { Button, IconField, InputIcon, InputMask, InputText } from 'primevue';
+import { ref } from 'vue';
+
+const form = ref({
+    name: '',
+    phone: '',
+    email: '',
+});
 
 
 const options = [
@@ -45,9 +54,11 @@ const howItWorks = [
 </script>
 
 <template>
+	<Head title="Dorston" />
+	<PublicLayout>
 	<div>
 		<section>
-			<div class="flex h-full flex-1 flex-col items-center justify-center gap-8 p-4 sm:p-8 lg:p-12">
+			<div class="flex h-full flex-1 flex-col items-center justify-center gap-8 p-4 py-12 md:py-32 sm:px-8 lg:px-12">
 				<div class="flex flex-col items-center gap-8 w-full">
 					<div class="text-center">
 						<h1 class="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl tracking-tight text-black mb-3">
@@ -163,7 +174,105 @@ const howItWorks = [
 				</div>
 			</div>
 		</section>
+
+		<!-- contact form -->
+		<section class="bg-gradient-to-br from-sky-900 via-sky-700 to-sky-800">
+			<div class="max-w-6xl mx-auto py-16 px-4 sm:px-8 lg:px-12">
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+					<!-- Left: copy -->
+					<div class="space-y-6 text-white">
+						<h2 class="font-serif font-bold text-2xl sm:text-3xl lg:text-4xl tracking-tight">Остались вопросы?</h2>
+						<p class="text-sky-200 text-lg leading-relaxed">
+							Заполните форму — менеджер свяжется с вами и ответит на любые вопросы по конфигурации и стоимости.
+						</p>
+						<ul class="space-y-3 text-sky-100">
+							<li class="flex items-center gap-3">
+								<PhoneIcon class="size-4 shrink-0 text-sky-400" />
+								<span>Бесплатная консультация</span>
+							</li>
+							<li class="flex items-center gap-3">
+								<MailIcon class="size-4 shrink-0 text-sky-400" />
+								<span>Отвечаем на e-mail в течение дня</span>
+							</li>
+						</ul>
+					</div>
+
+					<!-- Right: form card -->
+					<div class="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl">
+						<h3 class="font-serif text-xl font-bold text-black mb-6">Свяжитесь с нами</h3>
+
+						<form class="flex flex-col gap-4" @submit.prevent>
+
+							<!-- Name -->
+							<div class="flex flex-col gap-1.5">
+								<label for="contact-name" class="text-sm font-medium text-black/70">Ваше имя</label>
+								<IconField>
+									<InputIcon>
+										<UserIcon class="size-4" />
+									</InputIcon>
+									<InputText
+										id="contact-name"
+										v-model="form.name"
+										placeholder="Иван Иванов"
+										autocomplete="name"
+										class="w-full"
+									/>
+								</IconField>
+							</div>
+
+							<!-- Phone -->
+							<div class="flex flex-col gap-1.5">
+								<label for="contact-phone" class="text-sm font-medium text-black/70">Телефон</label>
+								<IconField>
+									<InputIcon>
+										<PhoneIcon class="size-4" />
+									</InputIcon>
+									<InputMask
+										id="contact-phone"
+										v-model="form.phone"
+										mask="+7 (999) 999-99-99"
+										placeholder="+7 (___) ___-__-__"
+										autocomplete="tel"
+										class="w-full"
+									/>
+								</IconField>
+							</div>
+
+							<!-- Email -->
+							<div class="flex flex-col gap-1.5">
+								<label for="contact-email" class="text-sm font-medium text-black/70">E-mail</label>
+								<IconField>
+									<InputIcon>
+										<MailIcon class="size-4" />
+									</InputIcon>
+									<InputText
+										id="contact-email"
+										v-model="form.email"
+										type="email"
+										placeholder="ivan@example.com"
+										autocomplete="email"
+										class="w-full"
+									/>
+								</IconField>
+							</div>
+
+							<Button
+								type="submit"
+								label="Отправить заявку"
+								class="mt-2 w-full"
+							/>
+
+							<p class="text-center text-xs text-black/40">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</p>
+
+						</form>
+					</div>
+
+				</div>
+			</div>
+		</section>
 	</div>
+	</PublicLayout>
 </template>
 
 <style scoped>

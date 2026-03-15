@@ -3,7 +3,7 @@ import DoorVisualizer from '@/components/Configurator/DoorVisualizer.vue';
 import ConstructiveCard from '@/components/Configurator/Card/ConstructiveCard.vue';
 import { useDoorCalc } from '@/composables/useDoorCalc';
 import { useDoorVisual } from '@/composables/useDoorVisual';
-import AppLayout from '@/layouts/AppLayout.vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
 import { getDoorModelImage, getImageUrl, getFurnitureColorImage } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { DoorModel, Nomenclature, Furniture, DoorCombinationImage } from '@/types/configurator';
@@ -12,6 +12,7 @@ import { Head } from '@inertiajs/vue3';
 import { SelectButton, InputNumber, Drawer, ToggleSwitch, Button, Select } from 'primevue';
 import { computed, ref, watch } from 'vue';
 import ExteriorCard from '@/components/Configurator/Card/ExteriorCard.vue';
+import InteriorCard from '@/components/Configurator/Card/InteriorCard.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -214,7 +215,7 @@ watch(
 
 <template>
     <Head title="Конфигуратор" />
-    <!-- <AppLayout :breadcrumbs="breadcrumbs"> -->
+    <PublicLayout>
         <div class="flex h-full max-w-7xl mx-auto flex-1 flex-col gap-4 p-4 sm:p-6 lg:p-8 bg-white dark:bg-neutral-900">
             
             <!-- Header Section -->
@@ -346,58 +347,7 @@ watch(
                     <div class="space-y-4">
                         <ConstructiveCard />
                         <ExteriorCard />
-
-                        <!-- III. Metal Painting Selection -->
-                        <div v-if="viewMode === 'exterior' && (hasPrimaryPaint || hasSecondaryPaint)" class="space-y-4">
-                            <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
-                                <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
-                                    Покраска металла
-                                </h2>
-                            </div>
-                            
-                            <!-- Undercoat Toggle -->
-                            <div v-if="hasPrimaryPaint || hasSecondaryPaint" class="flex items-center justify-between py-2">
-                                <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Цинкогрунтование</span>
-                                <ToggleSwitch v-model="doorCalcStore.doorConfig.metalPainting!.undercoat" />
-                            </div>
-
-                            <div class="grid grid-cols-1 gap-3">
-                                <!-- Primary Metal Color Card -->
-                                <div v-if="hasPrimaryPaint" @click="showMetalPrimaryDrawer = true" 
-                                    class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
-                                        <img v-if="doorCalcStore.doorConfig.metalPainting?.primaryColor" 
-                                                :src="getImageUrl(doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.primaryColor)?.image ?? '')" 
-                                                class="w-full h-full object-cover" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-neutral-500 uppercase tracking-wider mb-0.5">Основной цвет</p>
-                                        <p class="font-medium truncate text-black dark:text-white">
-                                            {{ doorCalcStore.doorConfig.metalPainting?.primaryColor ? doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.primaryColor)?.name : 'Не выбрано' }}
-                                        </p>
-                                    </div>
-                                    <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
-                                </div>
-
-                                <!-- Secondary Metal Color Card -->
-                                <div v-if="hasSecondaryPaint"
-                                    @click="showMetalSecondaryDrawer = true" 
-                                    class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10">
-                                        <img v-if="doorCalcStore.doorConfig.metalPainting?.secondaryColor" 
-                                                :src="getImageUrl(doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.secondaryColor)?.image ?? '')" 
-                                                class="w-full h-full object-cover" />
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-neutral-500 uppercase tracking-wider mb-0.5">Дополнительный цвет</p>
-                                        <p class="font-medium truncate text-black dark:text-white">
-                                            {{ doorCalcStore.doorConfig.metalPainting?.secondaryColor ? doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.secondaryColor)?.name : 'Не выбрано' }}
-                                        </p>
-                                    </div>
-                                    <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
-                                </div>
-                            </div>
-                        </div>
+                        <InteriorCard />
 
                         <!-- IV. Locks Selection -->
                         <div class="space-y-4">
@@ -628,7 +578,7 @@ watch(
                 </div> -->
             </div>
         </div>
-    <!-- </AppLayout> -->
+    </PublicLayout>
 
     <!-- DRAWER: Outer Design -->
     <Drawer v-model:visible="showOuterDesignDialog" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">

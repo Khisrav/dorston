@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import type { ModularTermoDoorConfig, doorHandleSide, peepholePosition } from '@/types/configurator';
@@ -86,7 +86,7 @@ const parametersSummary = computed(() => [
 
 <template>
     <Head title="Для дома Модульная — Конфигуратор" />
-    <AppLayout :breadcrumbs="breadcrumbs">
+    <PublicLayout>
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto p-4 sm:p-6 lg:p-8 bg-white dark:bg-neutral-900">
 
             <!-- Main Grid -->
@@ -488,7 +488,7 @@ const parametersSummary = computed(() => [
                 </div>
             </div>
         </div>
-    </AppLayout>
+    </PublicLayout>
 
     <!-- Placeholder drawers -->
     <Drawer v-model:visible="showExteriorDesignDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px]">
