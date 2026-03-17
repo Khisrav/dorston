@@ -4,15 +4,17 @@ import ConstructiveCard from '@/components/Configurator/Card/ConstructiveCard.vu
 import { useDoorCalc } from '@/composables/useDoorCalc';
 import { useDoorVisual } from '@/composables/useDoorVisual';
 import PublicLayout from '@/layouts/PublicLayout.vue';
-import { getDoorModelImage, getImageUrl, getFurnitureColorImage } from '@/lib/utils';
+import { getDoorModelImage, getImageUrl } from '@/lib/utils';
 import { type BreadcrumbItem } from '@/types';
 import { DoorModel, Nomenclature, Furniture, DoorCombinationImage } from '@/types/configurator';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
-import { SelectButton, InputNumber, Drawer, ToggleSwitch, Button, Select } from 'primevue';
+import { SelectButton, InputNumber, Drawer, ToggleSwitch, Button } from 'primevue';
 import { computed, ref, watch } from 'vue';
 import ExteriorCard from '@/components/Configurator/Card/ExteriorCard.vue';
 import InteriorCard from '@/components/Configurator/Card/InteriorCard.vue';
+import FurnitureCard from '@/components/Configurator/Card/FurnitureCard.vue';
+import LockerCard from '@/components/Configurator/Card/LockerCard.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -76,56 +78,6 @@ const boxDesignOptions = [
     { label: 'Закрытый', value: 'Closed' }
 ];
 
-const peepholePositionOptions = [
-    { label: 'Нет', value: 'None' },
-    { label: 'С боку', value: 'Side' },
-    { label: 'По центру', value: 'Center' }
-];
-
-const primaryLocks = computed(() => doorCalcStore.locks.primary);
-const secondaryLocks = computed(() => doorCalcStore.locks.secondary);
-
-// Cylinders computed properties
-const availableCylinders = computed(() => {
-    return cylinders.value.map(cylinder => ({
-        label: cylinder.name,
-        value: cylinder.id
-    }));
-});
-
-const selectedPrimaryCylinder = computed(() => {
-    if (!doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism || doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism === -1) return null;
-    return cylinders.value.find(c => c.id === doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism) ?? null;
-});
-
-const selectedSecondaryCylinder = computed(() => {
-    if (!doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism || doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism === -1) return null;
-    return cylinders.value.find(c => c.id === doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism) ?? null;
-});
-
-// Furniture computed properties
-const availableFurnitureColors = computed(() => {
-    const colors = [...new Set(furnitures.value.map(f => f.color))];
-    return colors.map(color => ({
-        label: color === 'gold' ? 'Золото' : 
-               color === 'chrome' ? 'Хром' : 
-               color === 'bronze' ? 'Бронза' : 
-               color === 'black' ? 'Чёрный' : 
-               color === 'matte-black' ? 'Матовый чёрный' :
-               color === 'matte-chrome' ? 'Матовый хром' : color,
-        value: color
-    }));
-});
-
-const filteredFurnitures = computed(() => {
-    if (!doorCalcStore.doorConfig.furniture.furnitureColor) return [];
-    return furnitures.value.filter(f => f.color === doorCalcStore.doorConfig.furniture.furnitureColor);
-});
-
-const selectedFurnitureSet = computed(() => {
-    if (!doorCalcStore.doorConfig.furniture.furnitureSetId) return null;
-    return furnitures.value.find(f => f.id === doorCalcStore.doorConfig.furniture.furnitureSetId) ?? null;
-});
 
 const parametersSummary = computed(() => {
     let doorWidth = doorCalcStore.doorConfig.doorWidth
@@ -155,9 +107,6 @@ const showFilmSecondaryDrawer = ref(false);
 const showFilmCasingDrawer = ref(false);
 const showMetalPrimaryDrawer = ref(false);
 const showMetalSecondaryDrawer = ref(false);
-const showPrimaryLockDrawer = ref(false);
-const showSecondaryLockDrawer = ref(false);
-const showFurnitureDrawer = ref(false);
 
 // Computed properties for current side configuration
 const currentSideConfig = computed(() => {
@@ -335,8 +284,8 @@ watch(
                                 <p class="font-bold text-xl"><span class="font-bold text-sky-900">Итого: </span> <span>{{ doorCalcStore.total_price.toFixed(2) }} ₽</span></p>
                             </div>
                             <div class="flex gap-4 mt-4">
-                                <Button label="Оформить заказ" variant="" size="small" />
-                                <Button label="Скачать PDF" variant="outlined" size="small" />
+                                <Button label="Оформить заказ" variant="" icon="pi pi-shopping-cart" size="small" />
+                                <Button label="Скачать PDF" variant="outlined" icon="pi pi-file-pdf" size="small" />
                             </div>
                         </div>
                     </div>
@@ -349,205 +298,8 @@ watch(
                         <ExteriorCard />
                         <InteriorCard />
 
-                        <!-- IV. Locks Selection -->
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
-                                <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
-                                    Замки
-                                </h2>
-                            </div>
-
-                            <div class="grid grid-cols-1 gap-3">
-                                <!-- Primary Lock Card -->
-                                <div @click="showPrimaryLockDrawer = true" 
-                                    class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
-                                        <img v-if="doorCalcStore.doorConfig.furniture.primaryLock && doorCalcStore.doorConfig.furniture.primaryLock !== -1" 
-                                                :src="getImageUrl(primaryLocks.find(l => l.id === doorCalcStore.doorConfig.furniture.primaryLock)?.image ?? '')" 
-                                                class="w-full h-full object-contain p-1" />
-                                        <i v-else class="pi pi-lock text-3xl text-neutral-400"></i>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-neutral-500 uppercase tracking-wider mb-0.5">Основной замок</p>
-                                        <p 
-                                            v-if="doorCalcStore.doorConfig.furniture.primaryLock && doorCalcStore.doorConfig.furniture.primaryLock !== -1"
-                                            class="font-medium truncate text-black dark:text-white">
-                                            {{ primaryLocks.find(l => l.id === doorCalcStore.doorConfig.furniture.primaryLock)?.name }}
-                                        </p>
-                                    </div>
-                                    <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
-                                </div>
-
-                                <!-- Secondary Lock Toggle -->
-                                <div class="flex items-center justify-between px-1">
-                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Дополнительный замок</span>
-                                    <ToggleSwitch v-model="doorCalcStore.doorConfig.furniture.hasSecondaryLock" />
-                                </div>
-
-                                <!-- Secondary Lock Card -->
-                                <div v-if="doorCalcStore.doorConfig.furniture.hasSecondaryLock" 
-                                    @click="showSecondaryLockDrawer = true" 
-                                    class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
-                                        <img v-if="doorCalcStore.doorConfig.furniture.secondaryLock && doorCalcStore.doorConfig.furniture.secondaryLock !== -1" 
-                                                :src="getImageUrl(secondaryLocks.find(l => l.id === doorCalcStore.doorConfig.furniture.secondaryLock)?.image ?? '')" 
-                                                class="w-full h-full object-contain p-1" />
-                                        <i v-else class="pi pi-lock text-3xl text-neutral-400"></i>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-neutral-500 uppercase tracking-wider mb-0.5">Дополнительный замок</p>
-                                        <p class="font-medium truncate text-black dark:text-white">
-                                            {{ doorCalcStore.doorConfig.furniture.secondaryLock && doorCalcStore.doorConfig.furniture.secondaryLock !== -1 ? secondaryLocks.find(l => l.id === doorCalcStore.doorConfig.furniture.secondaryLock)?.name : 'Не выбрано' }}
-                                        </p>
-                                    </div>
-                                    <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
-                                </div>
-
-                                <!-- Primary Cylinder Selection -->
-                                <div>
-                                    <label class="block font-serif text-sm text-black dark:text-white mb-2">
-                                        Основной цилиндр
-                                    </label>
-                                    <Select 
-                                        v-model="doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism" 
-                                        :options="availableCylinders" 
-                                        optionLabel="label" 
-                                        optionValue="value"
-                                        placeholder="Выберите цилиндр"
-                                        size="small"
-                                        showClear
-                                        class="w-full"
-                                    />
-                                    <p v-if="selectedPrimaryCylinder" class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                                        {{ selectedPrimaryCylinder.base_price.toLocaleString('ru-RU') }} ₽
-                                    </p>
-                                </div>
-
-                                <!-- Secondary Cylinder Selection (только если выбран дополнительный замок) -->
-                                <div v-if="doorCalcStore.doorConfig.furniture.hasSecondaryLock">
-                                    <label class="block font-serif text-sm text-black dark:text-white mb-2">
-                                        Дополнительный цилиндр <span class="text-red-500">*</span>
-                                    </label>
-                                    <Select 
-                                        v-model="doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism" 
-                                        :options="availableCylinders" 
-                                        optionLabel="label" 
-                                        optionValue="value"
-                                        placeholder="Выберите цилиндр"
-                                        size="small"
-                                        showClear
-                                        class="w-full"
-                                        :class="{'border-red-500': doorCalcStore.doorConfig.furniture.hasSecondaryLock && (!doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism || doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism === -1)}"
-                                    />
-                                    <p v-if="selectedSecondaryCylinder" class="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                                        {{ selectedSecondaryCylinder.base_price.toLocaleString('ru-RU') }} ₽
-                                    </p>
-                                    <p v-if="doorCalcStore.doorConfig.furniture.hasSecondaryLock && (!doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism || doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism === -1)" 
-                                        class="text-xs text-red-500 mt-1">
-                                        Обязательное поле при выборе дополнительного замка
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- V. Furniture Selection -->
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
-                                <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
-                                    Фурнитура
-                                </h2>
-                            </div>
-
-                            <div class="grid grid-cols-1 gap-3">
-                                <!-- Furniture Color Selection -->
-                                <div>
-                                    <label class="block font-serif text-sm text-black dark:text-white mb-3">
-                                        Цвет фурнитуры
-                                    </label>
-                                    <div class="grid grid-cols-6 sm:grid-cols-4 md:grid-cols-5 gap-3">
-                                        <div 
-                                            v-for="colorOption in availableFurnitureColors" 
-                                            :key="colorOption.value"
-                                            @click="doorCalcStore.doorConfig.furniture.furnitureColor = colorOption.value"
-                                            :class="[
-                                                'flex flex-col items-center cursor-pointer group transition-all duration-300',
-                                                doorCalcStore.doorConfig.furniture.furnitureColor === colorOption.value ? 'opacity-100' : 'opacity-60 hover:opacity-100'
-                                            ]">
-                                            <div 
-                                                :class="[
-                                                    'relative p-0.5 rounded-full transition-all duration-300 mb-2',
-                                                    doorCalcStore.doorConfig.furniture.furnitureColor === colorOption.value 
-                                                        ? 'ring-2 ring-black dark:ring-white' 
-                                                        : ''
-                                                ]">
-                                                <div 
-                                                    :class="[
-                                                        'rounded-full overflow-hidden border transition-all duration-300',
-                                                        doorCalcStore.doorConfig.furniture.furnitureColor === colorOption.value 
-                                                            ? 'border-transparent' 
-                                                            : 'border-black/10 dark:border-white/10 group-hover:border-black/40 dark:group-hover:border-white/40'
-                                                    ]">
-                                                    <img 
-                                                        :src="getFurnitureColorImage(colorOption.value)" 
-                                                        :alt="colorOption.label"
-                                                        class="w-full h-full object-cover" />
-                                                </div>
-                                            </div>
-                                            <p 
-                                                :class="[
-                                                    'text-xs text-center font-serif transition-colors duration-300',
-                                                    doorCalcStore.doorConfig.furniture.furnitureColor === colorOption.value 
-                                                        ? 'text-black dark:text-white font-semibold' 
-                                                        : 'text-neutral-500 dark:text-neutral-400'
-                                                ]">
-                                                {{ colorOption.label }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Selected Furniture Set Card -->
-                                <div v-if="doorCalcStore.doorConfig.furniture.furnitureColor && filteredFurnitures.length > 0"
-                                    @click="showFurnitureDrawer = true"
-                                    class="group flex items-center gap-4 p-3 border-2 border-black/5 dark:border-white/5 hover:border-black dark:hover:border-white bg-white dark:bg-white/5 transition-all duration-300 cursor-pointer">
-                                    <div class="h-16 w-16 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
-                                        <i class="pi pi-palette text-3xl text-neutral-400"></i>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <p class="font-serif text-xs text-neutral-500 uppercase tracking-wider mb-0.5">Набор фурнитуры</p>
-                                        <p class="font-medium truncate text-black dark:text-white">
-                                            <template v-if="selectedFurnitureSet">
-                                                {{ selectedFurnitureSet.shape === 'rectangular' ? 'Прямоугольная' : 
-                                                   selectedFurnitureSet.shape === 'oval' ? 'Овальная' : 'Другая' }} - 
-                                                {{ selectedFurnitureSet.color === 'gold' ? 'Золото' : 
-                                                   selectedFurnitureSet.color === 'chrome' ? 'Хром' : 
-                                                   selectedFurnitureSet.color === 'bronze' ? 'Бронза' : 
-                                                   selectedFurnitureSet.color === 'black' ? 'Матовый чёрный' : 
-                                                   selectedFurnitureSet.color === 'matte-chrome' ? 'Матовый хром' : selectedFurnitureSet.color }}
-                                            </template>
-                                            <template v-else>Выберите набор</template>
-                                        </p>
-                                    </div>
-                                    <i class="pi pi-chevron-right text-neutral-300 group-hover:text-black dark:group-hover:text-white transition-colors"></i>
-                                </div>
-
-                                <!-- Peephole Position Selection -->
-                                <div>
-                                    <label class="block font-serif text-sm text-black dark:text-white mb-2">
-                                        Глазок
-                                    </label>
-                                    <SelectButton :options="peepholePositionOptions"
-                                        v-model="doorCalcStore.doorConfig.peepholePosition" optionLabel="label"
-                                        optionValue="value" size="small" fluid />
-                                </div>
-
-                                <!-- Night Latch Turner Toggle -->
-                                <div class="flex items-center justify-between px-1">
-                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Ночная задвижка + поворотник</span>
-                                    <ToggleSwitch v-model="doorCalcStore.doorConfig.furniture.hasNightLatchTurner" />
-                                </div>
-                            </div>
-                        </div>
+                        <FurnitureCard />
+                        <LockerCard />
 
                         <!-- VI. Additional Options -->
                         <div class="space-y-4">
@@ -755,171 +507,6 @@ watch(
         </div>
     </Drawer>
 
-    <!-- DRAWER: Primary Lock -->
-    <Drawer v-model:visible="showPrimaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
-        <template #header>
-            <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight font-serif">
-                Выбор основного замка
-            </h2>
-        </template>
-        <div class="space-y-3 p-1">
-            <div v-for="lock in primaryLocks" :key="lock.id" 
-                @click="() => { doorCalcStore.doorConfig.furniture.primaryLock = lock.id; showPrimaryLockDrawer = false; }"
-                :class="[
-                    'group flex items-center gap-4 p-4 border-2 cursor-pointer transition-all duration-300',
-                    doorCalcStore.doorConfig.furniture.primaryLock === lock.id
-                        ? 'border-black dark:border-white bg-black/5 dark:bg-white/5'
-                        : 'border-black/10 dark:border-white/10 hover:border-black dark:hover:border-white'
-                ]">
-                <div class="h-20 w-20 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
-                    <img v-if="lock.image" 
-                            :src="getImageUrl(lock.image)" 
-                            :alt="lock.name"
-                            class="w-full h-full object-contain p-2" />
-                    <i v-else class="pi pi-lock text-4xl text-neutral-400"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-medium text-base text-black dark:text-white mb-1">
-                        {{ lock.name }}
-                    </p>
-                    <p class="text-sm text-neutral-500 dark:text-neutral-400">
-                        {{ lock.base_price.toLocaleString('ru-RU') }} ₽
-                    </p>
-                </div>
-                <i v-if="doorCalcStore.doorConfig.furniture.primaryLock === lock.id" 
-                    class="pi pi-check-circle text-2xl text-black dark:text-white"></i>
-            </div>
-        </div>
-    </Drawer>
-
-    <!-- DRAWER: Secondary Lock -->
-    <Drawer v-model:visible="showSecondaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
-        <template #header>
-            <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight font-serif">
-                Выбор дополнительного замка
-            </h2>
-        </template>
-        <div class="space-y-3 p-1">
-            <div v-for="lock in secondaryLocks" :key="lock.id" 
-                @click="() => { doorCalcStore.doorConfig.furniture.secondaryLock = lock.id; showSecondaryLockDrawer = false; }"
-                :class="[
-                    'group flex items-center gap-4 p-4 border-2 cursor-pointer transition-all duration-300',
-                    doorCalcStore.doorConfig.furniture.secondaryLock === lock.id
-                        ? 'border-black dark:border-white bg-black/5 dark:bg-white/5'
-                        : 'border-black/10 dark:border-white/10 hover:border-black dark:hover:border-white'
-                ]">
-                <div class="h-20 w-20 bg-neutral-100 dark:bg-neutral-800 flex-shrink-0 overflow-hidden border border-black/10 flex items-center justify-center">
-                    <img v-if="lock.image" 
-                            :src="getImageUrl(lock.image)" 
-                            :alt="lock.name"
-                            class="w-full h-full object-contain p-2" />
-                    <i v-else class="pi pi-lock text-4xl text-neutral-400"></i>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-medium text-base text-black dark:text-white mb-1">
-                        {{ lock.name }}
-                    </p>
-                    <p class="text-sm text-neutral-500 dark:text-neutral-400">
-                        {{ lock.base_price.toLocaleString('ru-RU') }} ₽
-                    </p>
-                </div>
-                <i v-if="doorCalcStore.doorConfig.furniture.secondaryLock === lock.id" 
-                    class="pi pi-check-circle text-2xl text-black dark:text-white"></i>
-            </div>
-        </div>
-    </Drawer>
-
-    <!-- DRAWER: Furniture Set Selection -->
-    <Drawer v-model:visible="showFurnitureDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
-        <template #header>
-            <h2 class="text-base sm:text-lg md:text-xl text-black dark:text-white tracking-tight font-serif">
-                Выбор набора фурнитуры
-            </h2>
-        </template>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-1">
-            <div v-for="furniture in filteredFurnitures" :key="furniture.id" 
-                @click="() => { 
-                    doorCalcStore.doorConfig.furniture.furnitureSetId = furniture.id; 
-                    doorCalcStore.doorConfig.furniture.furnitureShape = furniture.shape;
-                    showFurnitureDrawer = false; 
-                }"
-                :class="[
-                    'group relative p-3 border-2 cursor-pointer transition-all duration-300',
-                    doorCalcStore.doorConfig.furniture.furnitureSetId === furniture.id
-                        ? 'border-black dark:border-white bg-black/5 dark:bg-white/5'
-                        : 'border-black/10 dark:border-white/10 hover:border-black/40 dark:hover:border-white/40'
-                ]">
-                <!-- Selected Check Icon -->
-                <div v-if="doorCalcStore.doorConfig.furniture.furnitureSetId === furniture.id" 
-                    class="absolute top-2 right-2 z-10">
-                    <i class="pi pi-check-circle text-xl text-black dark:text-white"></i>
-                </div>
-
-                <!-- Shape Title -->
-                <p class="font-medium text-sm text-black dark:text-white mb-3 font-serif">
-                    {{ furniture.shape === 'rectangular' ? 'Прямоугольная' : furniture.shape === 'oval' ? 'Овальная' : 'Другая' }}
-                </p>
-                
-                <!-- Furniture Images Compact Grid -->
-                <div class="grid grid-cols-3 gap-1.5">
-                    <div v-if="furniture.handle_cover_image" class="flex flex-col items-center">
-                        <div class="w-full aspect-square bg-neutral-100 dark:bg-neutral-800 overflow-hidden border border-black/5 flex items-center justify-center p-1">
-                            <img :src="getImageUrl(furniture.handle_cover_image)" alt="Ручка" class="w-full h-full object-contain" />
-                        </div>
-                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-1 text-center leading-tight">Ручка</p>
-                        <p v-if="furniture.handle_price" class="text-[9px] text-neutral-400 dark:text-neutral-500 text-center">
-                            {{ furniture.handle_price.toLocaleString('ru-RU') }} ₽
-                        </p>
-                    </div>
-                    <div v-if="furniture.cylindrical_lock_cover_image" class="flex flex-col items-center">
-                        <div class="w-full aspect-square bg-neutral-100 dark:bg-neutral-800 overflow-hidden border border-black/5 flex items-center justify-center p-1">
-                            <img :src="getImageUrl(furniture.cylindrical_lock_cover_image)" alt="Замок" class="w-full h-full object-contain" />
-                        </div>
-                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-1 text-center leading-tight">Замок</p>
-                        <p v-if="furniture.cylindrical_lock_price" class="text-[9px] text-neutral-400 dark:text-neutral-500 text-center">
-                            {{ furniture.cylindrical_lock_price.toLocaleString('ru-RU') }} ₽
-                        </p>
-                    </div>
-                    <div v-if="furniture.peephole_cover_image" class="flex flex-col items-center">
-                        <div class="w-full aspect-square bg-neutral-100 dark:bg-neutral-800 overflow-hidden border border-black/5 flex items-center justify-center p-1">
-                            <img :src="getImageUrl(furniture.peephole_cover_image)" alt="Глазок" class="w-full h-full object-contain" />
-                        </div>
-                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-1 text-center leading-tight">Глазок</p>
-                        <p v-if="furniture.peephole_price" class="text-[9px] text-neutral-400 dark:text-neutral-500 text-center">
-                            {{ furniture.peephole_price.toLocaleString('ru-RU') }} ₽
-                        </p>
-                    </div>
-                    <div v-if="furniture.night_latch_turner_cover_image" class="flex flex-col items-center">
-                        <div class="w-full aspect-square bg-neutral-100 dark:bg-neutral-800 overflow-hidden border border-black/5 flex items-center justify-center p-1">
-                            <img :src="getImageUrl(furniture.night_latch_turner_cover_image)" alt="Задвижка" class="w-full h-full object-contain" />
-                        </div>
-                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-1 text-center leading-tight">Задвижка</p>
-                        <p v-if="furniture.night_latch_turner_price" class="text-[9px] text-neutral-400 dark:text-neutral-500 text-center">
-                            {{ furniture.night_latch_turner_price.toLocaleString('ru-RU') }} ₽
-                        </p>
-                    </div>
-                    <div v-if="furniture.cylinder_rod_cover_image" class="flex flex-col items-center">
-                        <div class="w-full aspect-square bg-neutral-100 dark:bg-neutral-800 overflow-hidden border border-black/5 flex items-center justify-center p-1">
-                            <img :src="getImageUrl(furniture.cylinder_rod_cover_image)" alt="Цилиндр" class="w-full h-full object-contain" />
-                        </div>
-                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-1 text-center leading-tight">Цилиндр</p>
-                        <p v-if="furniture.cylinder_rod_price" class="text-[9px] text-neutral-400 dark:text-neutral-500 text-center">
-                            {{ furniture.cylinder_rod_price.toLocaleString('ru-RU') }} ₽
-                        </p>
-                    </div>
-                    <div v-if="furniture.lever_lock_cover_image" class="flex flex-col items-center">
-                        <div class="w-full aspect-square bg-neutral-100 dark:bg-neutral-800 overflow-hidden border border-black/5 flex items-center justify-center p-1">
-                            <img :src="getImageUrl(furniture.lever_lock_cover_image)" alt="Сувальда" class="w-full h-full object-contain" />
-                        </div>
-                        <p class="text-[10px] text-neutral-500 dark:text-neutral-400 mt-1 text-center leading-tight">Сувальда</p>
-                        <p v-if="furniture.lever_lock_price" class="text-[9px] text-neutral-400 dark:text-neutral-500 text-center">
-                            {{ furniture.lever_lock_price.toLocaleString('ru-RU') }} ₽
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </Drawer>
 </template>
 <style scoped>
 /* Import elegant serif fonts */

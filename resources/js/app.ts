@@ -156,30 +156,30 @@ const CustomPreset = definePreset(Aura, {
         // on asymmetric minus/plus styling — that requires pt passthrough)
         inputnumber: {
             button: {
-                borderRadius: '{border.radius.md}', // 4px for ± buttons
+                borderRadius: '{border.radius.lg}', // 4px for ± buttons
             },
             colorScheme: {
                 light: {
                     button: {
-                        background:        'color-mix(in srgb, #105072 20%, transparent)',
-                        hoverBackground:   'color-mix(in srgb, #105072 35%, transparent)',
+                        background:        'color-mix(in srgb, #105072 5%, transparent)',
+                        hoverBackground:   'color-mix(in srgb, #105072 0%, transparent)',
                         activeBackground:  'color-mix(in srgb, #105072 50%, transparent)',
                         borderColor:       'color-mix(in srgb, #105072 25%, transparent)',
                         hoverBorderColor:  'color-mix(in srgb, #105072 40%, transparent)',
                         activeBorderColor: 'color-mix(in srgb, #105072 55%, transparent)',
-                        color:             '#105072',
-                        hoverColor:        '{dorston.600}',
-                        activeColor:       '{dorston.700}',
+                        color:             '{dorston.900',
+                        hoverColor:        '{dorston.400}',
+                        activeColor:       '{dorston.900}',
                     },
                 },
                 dark: {
                     button: {
-                        background:        'color-mix(in srgb, {dorston.300} 15%, transparent)',
+                        background:        'color-mix(in srgb, {dorston.300} 5%, transparent)',
                         hoverBackground:   'color-mix(in srgb, {dorston.300} 25%, transparent)',
                         activeBackground:  'color-mix(in srgb, {dorston.300} 40%, transparent)',
                         borderColor:       'color-mix(in srgb, {dorston.300} 30%, transparent)',
-                        color:             '{dorston.300}',
-                        hoverColor:        '{dorston.200}',
+                        color:             '{dorston.100}',
+                        hoverColor:        '{dorston.400}',
                         activeColor:       '{dorston.100}',
                     },
                 },
