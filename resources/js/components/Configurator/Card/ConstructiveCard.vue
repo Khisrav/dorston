@@ -4,7 +4,7 @@ import { type doorConstructive, type doorBoxDesign, type doorHandleSide } from '
 import ConfiguratorCard from './ConfiguratorCard.vue'
 import { InfoIcon, PanelLeftIcon, PanelRightIcon } from 'lucide-vue-next'
 import { InputNumber, Popover } from 'primevue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const doorCalcStore = useDoorCalc()
 
@@ -58,6 +58,15 @@ function toggleBoxDesignInfo(opt: typeof boxDesignOptions[0], event: MouseEvent)
     activeBoxDesignOpt.value = opt
     boxDesignPopover.value.toggle(event)
 }
+
+const exteriorSize = computed(() => {
+    let size = {
+        width: 0,
+        height: 0,
+    }
+    
+    return size
+})
 </script>
 
 <template>
@@ -167,14 +176,12 @@ function toggleBoxDesignInfo(opt: typeof boxDesignOptions[0], event: MouseEvent)
                 />
             </div>
         </div>
-        <p v-if="!doorCalcStore.isStandard" class="mt-2 text-xs text-amber-600 font-serif">
-            Нестандартный размер — цена рассчитывается индивидуально.
-        </p>
+        <p class="mt-2 text-xs text-sky-900/50 font-serif">Наружный размер двери с наличником: {{ exteriorSize.width }}x{{ exteriorSize.height }} мм</p>
 
         <div class="border-t border-sky-900/5 my-4 mb-2" />
 
         <!-- Door side -->
-        <p class="font-serif text-sm inline-block mb-3 text-sky-900/70">Сторона ручки</p>
+        <p class="font-serif text-sm inline-block mb-3 text-sky-900/70">Сторона открывания</p>
         <div class="grid grid-cols-2 gap-3">
             <button
                 v-for="opt in handleSideOptions"

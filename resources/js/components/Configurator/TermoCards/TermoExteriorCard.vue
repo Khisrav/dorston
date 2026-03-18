@@ -61,7 +61,7 @@ const secondaryFilmColor = computed(() =>
 
         <div class="border-t border-sky-900/5 my-4 mb-2" />
 
-        <label class="font-serif text-sm inline-block mb-3 text-sky-900/70">Цвет плёнки</label>
+        <label class="font-serif text-sm inline-block mb-3 text-sky-900/70">Цвет HPL панели</label>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <button
                 type="button"
@@ -80,28 +80,6 @@ const secondaryFilmColor = computed(() =>
                     <p class="font-serif text-sm text-sky-900/40 tracking-wider">Основной</p>
                     <p class="font-serif font-medium text-sky-900 truncate">
                         {{ primaryFilmColor?.name ?? 'Не выбрано' }}
-                    </p>
-                </div>
-                <i class="pi pi-chevron-right text-sky-900/30" />
-            </button>
-
-            <button
-                type="button"
-                @click="showSecondaryFilmDrawer = true"
-                class="w-full flex items-center gap-3 p-3 rounded-2xl border border-sky-900/10 hover:border-sky-900/30 text-left transition-all duration-200"
-            >
-                <div class="w-12 h-12 bg-neutral-100 rounded-md shrink-0 overflow-hidden">
-                    <img
-                        v-if="secondaryFilmColor"
-                        :src="getImageUrl(secondaryFilmColor.image ?? null)"
-                        :alt="secondaryFilmColor.name"
-                        class="w-full h-full object-cover rounded-md"
-                    />
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="font-serif text-sm text-sky-900/40 tracking-wider">Дополнительный</p>
-                    <p class="font-serif font-medium text-sky-900 truncate">
-                        {{ secondaryFilmColor?.name ?? 'Не выбрано' }}
                     </p>
                 </div>
                 <i class="pi pi-chevron-right text-sky-900/30" />

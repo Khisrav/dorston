@@ -12,7 +12,7 @@ const showInteriorDrawer = ref(false)
 </script>
 
 <template>
-    <ConfiguratorCard :step="5" title="Стекло">
+    <ConfiguratorCard :step="5" title="Выбор тонировки">
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <button
@@ -28,11 +28,11 @@ const showInteriorDrawer = ref(false)
                     />
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-serif text-sm text-sky-900/40 tracking-wider">Снаружи</p>
+                    <p class="font-serif text-sm text-sky-900/40 tracking-wider">Наружний</p>
                     <p class="font-serif font-medium text-sky-900 truncate">
                         {{ store.doorConfig.glassColor.exterior && store.doorConfig.glassColor.exterior !== -1
                             ? store.getFilmColor(store.doorConfig.glassColor.exterior)?.name
-                            : 'Не выбрано' }}
+                            : 'Без тонировки' }}
                     </p>
                 </div>
                 <i class="pi pi-chevron-right text-sky-900/30" />
@@ -51,11 +51,11 @@ const showInteriorDrawer = ref(false)
                     />
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-serif text-sm text-sky-900/40 tracking-wider">Изнутри</p>
+                    <p class="font-serif text-sm text-sky-900/40 tracking-wider">Внутренний</p>
                     <p class="font-serif font-medium text-sky-900 truncate">
                         {{ store.doorConfig.glassColor.interior && store.doorConfig.glassColor.interior !== -1
                             ? store.getFilmColor(store.doorConfig.glassColor.interior)?.name
-                            : 'Не выбрано' }}
+                            : 'Без тонировки' }}
                     </p>
                 </div>
                 <i class="pi pi-chevron-right text-sky-900/30" />
