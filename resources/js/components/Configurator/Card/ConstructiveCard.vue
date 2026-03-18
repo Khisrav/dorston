@@ -13,13 +13,13 @@ const constructiveOptions: { value: doorConstructive; label: string; image: stri
         value: 'Comfort',
         label: 'Comfort',
         image: '/assets/ui/comfort-constructive.jpg',
-        description: 'Стальной каркас с теплоизоляционным заполнением. Оптимальное соотношение цены и качества для городских квартир.',
+        description: 'Короб: 1,2 мм (открытый). Уплотнитель на полотне: 2 шт. (Шлегель). Уплотнитель на коробе: D-образный. Заполнитель двери: Нет (полая)',
     },
     {
         value: 'Absolut',
         label: 'Absolut',
         image: '/assets/ui/absolut-constructive.jpg',
-        description: 'Усиленный каркас повышенной жёсткости. Максимальная защита и шумоизоляция — рекомендуется для частных домов и первых этажей.',
+        description: 'Короб: 1,4 мм (открытый). Уплотнитель на полотне: 2 шт. (Шлегель). Уплотнитель на коробе: D-образный. Заполнитель двери: Минеральная вата 11кг/м3 + пенополистирол',
     },
 ]
 
@@ -28,13 +28,13 @@ const boxDesignOptions: { value: doorBoxDesign; label: string; image: string; de
         value: 'Closed',
         label: 'Закрытый',
         image: '/assets/ui/box-design-closed.jpg',
-        description: 'Короб полностью скрывает торец стены. Чистовая отделка откосов не требуется — удобно при ремонте.',
+        description: 'С утеплением',
     },
     {
         value: 'Opened',
         label: 'Открытый',
         image: '/assets/ui/box-design-opened.jpg',
-        description: 'Торец стены остаётся открытым. Подходит, если откосы уже отделаны или планируется отдельная обшивка.',
+        description: 'Без утепления',
     },
 ]
 
@@ -74,17 +74,17 @@ function toggleBoxDesignInfo(opt: typeof boxDesignOptions[0], event: MouseEvent)
                 :class="[
                     'flex items-center gap-3 rounded-2xl p-3 border text-left transition-all duration-200 cursor-pointer',
                     doorCalcStore.doorConfig.doorConstructive === opt.value
-                        ? 'border-sky-950 bg-sky-900 text-white'
+                        ? 'border-sky-900/60 border-2 bg-sky-900/5'
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <p class="font-serif font-semibold flex-1">{{ opt.label }}</p>
+                <p class="font-serif font-semibold flex-1 text-sky-900">{{ opt.label }}</p>
                 <button
                     type="button"
                     @click.stop="toggleConstructiveInfo(opt, $event)"
                     class="p-1 rounded-lg transition-colors cursor-pointer"
                     :class="doorCalcStore.doorConfig.doorConstructive === opt.value
-                        ? 'text-white/60 hover:text-white'
+                        ? 'text-sky-900/50 hover:text-sky-900'
                         : 'text-sky-900/30 hover:text-sky-900/60'"
                 >
                     <InfoIcon class="size-4" />
@@ -113,17 +113,17 @@ function toggleBoxDesignInfo(opt: typeof boxDesignOptions[0], event: MouseEvent)
                 :class="[
                     'flex items-center gap-3 rounded-2xl p-3 border text-left transition-all duration-200 cursor-pointer',
                     doorCalcStore.doorConfig.doorBoxDesign === opt.value
-                        ? 'border-sky-950 bg-sky-900 text-white'
+                        ? 'border-sky-900/60 border-2 bg-sky-900/5'
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <p class="font-serif font-semibold flex-1">{{ opt.label }}</p>
+                <p class="font-serif font-semibold flex-1 text-sky-900">{{ opt.label }}</p>
                 <button
                     type="button"
                     @click.stop="toggleBoxDesignInfo(opt, $event)"
                     class="p-1 rounded-lg transition-colors cursor-pointer"
                     :class="doorCalcStore.doorConfig.doorBoxDesign === opt.value
-                        ? 'text-white/60 hover:text-white'
+                        ? 'text-sky-900/50 hover:text-sky-900'
                         : 'text-sky-900/30 hover:text-sky-900/60'"
                 >
                     <InfoIcon class="size-4" />
@@ -182,9 +182,9 @@ function toggleBoxDesignInfo(opt: typeof boxDesignOptions[0], event: MouseEvent)
                 type="button"
                 @click="doorCalcStore.doorConfig.doorHandleSide = opt.value"
                 :class="[
-                    'flex items-center justify-center gap-2 rounded-2xl px-4 py-3 border transition-all duration-200 cursor-pointer font-serif font-semibold',
+                    'flex items-center justify-center gap-2 rounded-2xl px-4 py-3 border transition-all duration-200 cursor-pointer font-serif font-semibold text-sky-900',
                     doorCalcStore.doorConfig.doorHandleSide === opt.value
-                        ? 'border-sky-950 bg-sky-900 text-white'
+                        ? 'border-sky-900/60 border-2 bg-sky-900/5'
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >

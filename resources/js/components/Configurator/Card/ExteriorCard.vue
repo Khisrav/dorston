@@ -211,7 +211,7 @@ const secondaryPaintColor = computed(() =>
             <div class="col-span-2">
                 <div class="flex items-center justify-between gap-4 p-3 rounded-2xl border border-sky-900/10">
                     <div>
-                        <p class="font-serif text-sky-900">Предварительное грунтование</p>
+                        <p class="font-serif text-sky-900">Предварительное цинкогрунтование</p>
                     </div>
                     <ToggleSwitch v-model="doorCalcStore.doorConfig.metalPainting.undercoat" />
                 </div>

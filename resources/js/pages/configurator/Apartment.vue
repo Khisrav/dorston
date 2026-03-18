@@ -187,7 +187,7 @@ watch(
             <div class="grid gap-4 lg:grid-cols-12">
                 
                 <!-- Left Column: Preview & Parameters -->
-                <div class="lg:col-span-6 lg:sticky lg:top-6 lg:self-start space-y-4">
+                <div class="lg:col-span-6 lg:sticky lg:top-4 lg:self-start space-y-4">
                     <div class=" space-y-4">
                         <!-- Visualization Area -->
                         <div class="relative">

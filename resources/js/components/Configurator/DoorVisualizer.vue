@@ -20,7 +20,7 @@ onMounted(() => {
 <template>
     <div class="border border-sky-900/10 bg-gradient-to-b to-white from-sky-900/5 shadow-md shadow-sky-800/5 p-4 md:p-7 pr-2 md:pr-4 flex items-center justify-center relative overflow-hidden rounded-3xl">
         <div ref="visualizerContainerRef" class="w-full h-full">
-            <div class="flex justify-center items-start gap-4 md:gap-7 pb-4">
+            <div class="flex justify-center items-start gap-4 md:gap-7">
 
                 <!-- Exterior stage -->
                 <div class="relative">
@@ -50,9 +50,9 @@ onMounted(() => {
                             <v-image :config="{ ...doorVisualStore.fullStageRect, image: doorVisualStore.hingeImage }" />
                         </v-layer>
                     </v-stage>
-                    <div class="absolute -bottom-6 right-0 left-0 text-center">
+                    <!-- <div class="absolute -bottom-6 right-0 left-0 text-center">
                         <Button variant="outline" class="" size="small">Снаружи</Button>
-                    </div>
+                    </div> -->
                 </div>
 
                 <!-- Interior stage (placeholder for now) -->
@@ -66,9 +66,9 @@ onMounted(() => {
                             <v-image :config="{ ...doorVisualStore.universalConfig, image: doorVisualStore.interiorCasingImage }" />
                         </v-layer>
                     </v-stage>
-                    <div class="absolute -bottom-6 right-0 left-0 text-center">
+                    <!-- <div class="absolute -bottom-6 right-0 left-0 text-center">
                         <Button variant="outline" class="" size="small">Изнутри</Button>
-                    </div>
+                    </div> -->
                 </div>
 
             </div>
