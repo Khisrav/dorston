@@ -62,9 +62,9 @@ const selectedSecondaryCylinder = computed(() => {
             <i class="pi pi-chevron-right text-sky-900/30" />
         </button>
 
-        <div class="border-t border-sky-900/5 my-4 mb-2" />
+        <div class="border-t border-sky-900/5 my-4" />
 
-        <div class="flex items-center justify-between gap-4 p-3 rounded-2xl border border-sky-900/10 mb-3">
+        <div class="flex items-center justify-between gap-4 mb-4">
             <p class="font-serif text-sm text-sky-900/70">Дополнительный замок</p>
             <ToggleSwitch v-model="store.doorConfig.furniture.hasSecondaryLock" />
         </div>
@@ -95,10 +95,10 @@ const selectedSecondaryCylinder = computed(() => {
 
         <div class="border-t border-sky-900/5 my-4 mb-2" />
 
-        <p class="font-serif text-sm inline-block mb-3 text-sky-900/70">Цилиндры</p>
+        <p class="font-serif text-sm inline-block mb-2 text-sky-900/70">Цилиндры</p>
         <div class="grid grid-cols-1 gap-3">
             <div>
-                <label class="font-serif text-xs inline-block mb-1.5 text-sky-900/70">Основной цилиндр</label>
+                <label class="font-serif text-xs inline-block mb-1.5 text-sky-900/70">Цилиндр основного замка</label>
                 <Select
                     v-model="store.doorConfig.furniture.primaryCylindricalLockMechanism"
                     :options="availableCylinders"
@@ -114,7 +114,7 @@ const selectedSecondaryCylinder = computed(() => {
                 </p>
             </div>
             <div v-if="store.doorConfig.furniture.hasSecondaryLock">
-                <label class="font-serif text-xs inline-block mb-1.5 text-sky-900/70">Дополнительный цилиндр</label>
+                <label class="font-serif text-xs inline-block mb-1.5 text-sky-900/70">Цилиндр дополнительного замка</label>
                 <Select
                     v-model="store.doorConfig.furniture.secondaryCylindricalLockMechanism"
                     :options="availableCylinders"
