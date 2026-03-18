@@ -20,7 +20,7 @@ const peepholeOptions: { label: string; value: peepholePosition }[] = [
 </script>
 
 <template>
-    <ConfiguratorCard :step="1" title="Параметры">
+    <ConfiguratorCard :step="1" title="Конструктив">
 
         <p class="font-serif text-sm inline-block mb-3 text-sky-900/70">Размеры проёма</p>
         <div class="grid grid-cols-2 gap-3">
@@ -50,7 +50,7 @@ const peepholeOptions: { label: string; value: peepholePosition }[] = [
 
         <div class="border-t border-sky-900/5 my-4 mb-2" />
 
-        <p class="font-serif text-sm inline-block mb-3 text-sky-900/70">Сторона ручки</p>
+        <p class="font-serif text-sm inline-block mb-3 text-sky-900/70">Сторона открывания</p>
         <div class="grid grid-cols-2 gap-3">
             <button
                 v-for="opt in handleSideOptions"

@@ -14,12 +14,6 @@ const showInnerCasingDrawer = ref(false)
 
 <template>
     <ConfiguratorCard :step="4" title="Покраска металла">
-
-        <div class="flex items-center justify-between gap-4 p-3 rounded-2xl border border-sky-900/10 mb-4">
-            <p class="font-serif text-sm text-sky-900/70">Цинкогрунтование</p>
-            <ToggleSwitch v-model="store.doorConfig.metalPainting.undercoat" />
-        </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <button
                 type="button"
@@ -92,6 +86,12 @@ const showInnerCasingDrawer = ref(false)
             </button>
         </div>
 
+        <div class="border-t border-sky-900/5 my-4"></div>
+
+        <div class="flex items-center justify-between gap-4 p-3 rounded-2xl border border-sky-900/10">
+            <p class="font-serif text-sm text-sky-900/70">Цинкогрунтование</p>
+            <ToggleSwitch v-model="store.doorConfig.metalPainting.undercoat" />
+        </div>
     </ConfiguratorCard>
 
     <!-- DRAWER: Primary color -->

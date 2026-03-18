@@ -40,7 +40,7 @@ const casingFilmColor = computed(() =>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
             <div class="col-span-2">
-                <label for="interior-model" class="font-serif text-sm inline-block mb-3 text-sky-900/70">Вид изнутри</label>
+                <label for="interior-model" class="font-serif text-sm inline-block mb-3 text-sky-900/70">Внутренняя панель</label>
                 <div class="w-full flex flex-col md:flex-row items-center md:items-stretch justify-between gap-3 p-3 rounded-2xl border border-sky-900/10 hover:border-sky-900/30 text-left transition-all duration-200">
                     <div class="flex items-center gap-3 flex-1 w-full">
                         <div class="w-24 h-24 bg-neutral-100 rounded-sm overflow-hidden shrink-0 flex items-center justify-center">
@@ -52,7 +52,7 @@ const casingFilmColor = computed(() =>
                             />
                         </div>
                         <div class="min-w-0 flex flex-col">
-                            <p class="font-serif text-xs text-sky-900/40 uppercase tracking-wider mb-0.5">Вид изнутри</p>
+                            <p class="font-serif text-xs text-sky-900/40 uppercase tracking-wider mb-0.5">Модель</p>
                             <p class="font-serif font-semibold text-sky-900 truncate">
                                 {{ selectedModel?.name ?? 'Не выбрано' }}
                             </p>
