@@ -11,18 +11,18 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Normalizer;
 
-class InnerDoorCombinationsImageSeeder extends Seeder
+class OuterDoorCombinationsImageSeeder extends Seeder
 {
     private const FILM_COLOR_CATEGORY_IDS = [13, 2];
-    private const COMBINATIONS_BASE_PATH = 'database/data/door-models/apartment-interior/combinations';
-    private const VALID_PURPOSES = ['Наличник', 'Полотно', 'Вставка наличника', 'Вставка полотна'];
+    private const COMBINATIONS_BASE_PATH = 'database/data/door-models/apartment-exterior/combinations';
+    private const VALID_PURPOSES = ['Полотно', 'Вставка Полотно'];
 
     public function run(): void
     {
         $this->clearPrevious();
 
         $nomenclatures = Nomenclature::whereIn('nomenclature_category_id', self::FILM_COLOR_CATEGORY_IDS)->get();
-        $models = DoorModel::where('type', 'interior')->get();
+        $models = DoorModel::where('type', 'exterior')->where('is_thermally_resistant', false)->get();
 
         $imported = 0;
         $skippedParse = 0;
@@ -31,7 +31,13 @@ class InnerDoorCombinationsImageSeeder extends Seeder
         $failed = [];
 
         foreach ($models as $model) {
-            $folderPath = base_path(self::COMBINATIONS_BASE_PATH . '/' . $model->name);
+            $basePath = base_path(self::COMBINATIONS_BASE_PATH);
+
+            // Folders are named "{model} Рендер"; fall back to just "{model}" if that doesn't exist.
+            $folderPath = $basePath . '/' . $model->name . ' Рендер';
+            if (!is_dir($folderPath)) {
+                $folderPath = $basePath . '/' . $model->name;
+            }
 
             if (!is_dir($folderPath)) {
                 $this->command?->warn("Папка комбинаций не найдена для модели: {$model->name}");
@@ -91,7 +97,7 @@ class InnerDoorCombinationsImageSeeder extends Seeder
                     [
                         'door_model_id' => $model->id,
                         'film_color_id'  => $filmColor->id,
-                        'img_purpose'    => $purpose,
+                        'img_purpose'    => $purpose === 'Вставка Полотно' ? 'Вставка полотна' : $purpose,
                     ],
                     ['image' => $storagePath]
                 );
@@ -123,7 +129,7 @@ class InnerDoorCombinationsImageSeeder extends Seeder
                 array_map(fn($f) => array_values($f), $failed)
             );
 
-            $logPath = storage_path('logs/inner-door-combinations-failed.log');
+            $logPath = storage_path('logs/outer-door-combinations-failed.log');
             $lines = ['Комбинации, которые не удалось импортировать — ' . now()->toDateTimeString(), ''];
             $lines[] = implode(' | ', ['Модель', 'Цвет', 'Назначение', 'Файл', 'Причина']);
             $lines[] = str_repeat('-', 100);
@@ -141,7 +147,7 @@ class InnerDoorCombinationsImageSeeder extends Seeder
     {
         $combinations = DoorCombination::whereHas(
             'doorModel',
-            fn($q) => $q->where('type', 'interior')
+            fn($q) => $q->where('type', 'exterior')->where('is_thermally_resistant', false)
         )->get();
 
         foreach ($combinations as $combination) {
@@ -172,7 +178,7 @@ class InnerDoorCombinationsImageSeeder extends Seeder
 
         [, $colorName, $purpose] = $parts;
 
-        // Trim whitespace — handles leading-space errors from double underscores (e.g. "Ф-48_ Красная Бургундия_...")
+        // Trim whitespace — handles leading-space errors from double underscores
         $colorName = trim($colorName);
         $purpose = trim($purpose);
 
@@ -183,7 +189,7 @@ class InnerDoorCombinationsImageSeeder extends Seeder
             return null;
         }
 
-        // Capitalize first letter — handles lowercase-first errors (e.g. "бетон снежный 2" → "Бетон снежный 2")
+        // Capitalize first letter — handles lowercase-first errors
         $colorName = mb_strtoupper(mb_substr($colorName, 0, 1)) . mb_substr($colorName, 1);
 
         return compact('colorName', 'purpose', 'extension');
@@ -197,8 +203,6 @@ class InnerDoorCombinationsImageSeeder extends Seeder
             ->filter(function ($n) use ($normalizedColor) {
                 $normalizedName = $this->normalize($n->name);
                 // Check both directions so naming differences in either side don't break matching.
-                // E.g. filename "Шпон дуб натуральный 2" should match nomenclature "Шпон дуб натуральный",
-                // and filename "Санд айс" should match nomenclature "Санд Айс".
                 return mb_stripos($normalizedColor, $normalizedName, 0, 'UTF-8') !== false
                     || mb_stripos($normalizedName, $normalizedColor, 0, 'UTF-8') !== false;
             })
