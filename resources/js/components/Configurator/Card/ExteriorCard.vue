@@ -50,7 +50,7 @@ const secondaryPaintColor = computed(() =>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
             <div class="col-span-2">
-                <label for="exterior-model" class="font-serif text-sm inline-block mb-3">Вид снаружи</label>
+                <!-- <label for="exterior-model" class="font-serif text-sky-900/70 text-sm inline-block mb-3">Вид снаружи</label> -->
                 <!-- Model selector row -->
                 <div class="w-full flex flex-col md:flex-row items-center md:items-stretch justify-between gap-3 p-3 rounded-2xl border border-sky-900/10 hover:border-sky-900/30 text-left transition-all duration-200">
                     <div class="flex items-center gap-3 flex-1 w-full">
@@ -63,7 +63,7 @@ const secondaryPaintColor = computed(() =>
                             />
                         </div>
                         <div class="min-w-0 flex flex-col">
-                            <p class="font-serif text-xs text-sky-900/40 uppercase tracking-wider mb-0.5">Вид снаружи</p>
+                            <p class="font-serif text-xs text-sky-900/70 uppercase tracking-wider mb-0.5">Вид снаружи</p>
                             <p class="font-serif font-semibold text-sky-900 truncate">
                                 {{ selectedModel?.name ?? 'Не выбрано' }}
                             </p>
@@ -99,7 +99,7 @@ const secondaryPaintColor = computed(() =>
                             />
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-serif text-sm text-sky-900/40 tracking-wider">Основной</p>
+                            <p class="font-serif text-sm text-sky-900/70 tracking-wider">Основной</p>
                             <p class="font-serif font-medium text-sky-900 truncate">
                                 {{ primaryFilmColor?.name ?? 'Не выбрано' }}
                             </p>
@@ -122,7 +122,7 @@ const secondaryPaintColor = computed(() =>
                             />
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-serif text-sm text-sky-900/40 tracking-wider">Дополнительный</p>
+                            <p class="font-serif text-sm text-sky-900/70 tracking-wider">Дополнительный</p>
                             <p class="font-serif font-medium text-sky-900 truncate">
                                 {{ secondaryFilmColor?.name ?? 'Не выбрано' }}
                             </p>
@@ -145,7 +145,7 @@ const secondaryPaintColor = computed(() =>
                             />
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-serif text-sm text-sky-900/40 tracking-wider">Наличник</p>
+                            <p class="font-serif text-sm text-sky-900/70 tracking-wider">Наличник</p>
                             <p class="font-serif font-medium text-sky-900 truncate">
                                 {{ casingFilmColor?.name ?? 'Не выбрано' }}
                             </p>
@@ -174,7 +174,7 @@ const secondaryPaintColor = computed(() =>
                             />
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-serif text-sm text-sky-900/40 tracking-wider">Основной</p>
+                            <p class="font-serif text-sm text-sky-900/70 tracking-wider">Основной</p>
                             <p class="font-serif font-medium text-sky-900 truncate">
                                 {{ primaryPaintColor?.name ?? 'Не выбрано' }}
                             </p>
@@ -197,7 +197,7 @@ const secondaryPaintColor = computed(() =>
                             />
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-serif text-sm text-sky-900/40 tracking-wider">Дополнительный</p>
+                            <p class="font-serif text-sm text-sky-900/70 tracking-wider">Дополнительный</p>
                             <p class="font-serif font-medium text-sky-900 truncate">
                                 {{ secondaryPaintColor?.name ?? 'Не выбрано' }}
                             </p>
@@ -211,7 +211,7 @@ const secondaryPaintColor = computed(() =>
             <div class="col-span-2">
                 <div class="flex items-center justify-between gap-4 p-3 rounded-2xl border border-sky-900/10">
                     <div>
-                        <p class="font-serif text-sky-900">Предварительное грунтование</p>
+                        <p class="font-serif text-sky-900">Предварительное цинкогрунтование</p>
                     </div>
                     <ToggleSwitch v-model="doorCalcStore.doorConfig.metalPainting.undercoat" />
                 </div>
