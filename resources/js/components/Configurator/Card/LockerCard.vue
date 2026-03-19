@@ -41,13 +41,13 @@ const selectedSecondaryLock = computed(() =>
 const isPrimaryCylinricalLock = computed(() => {
     const properties = selectedPrimaryLock?.value?.nomenclature_properties
     if (!properties) return false
-    return properties.some(p => p.property_name === 'Механизм' && (p.property_value === 'Сувальдный' || p.property_value != 'Цилиндровый'))
+    return !properties.some(p => p.property_name === 'Механизм' && (p.property_value === 'Сувальдный' || p.property_value != 'Цилиндровый'))
 })
 
 const isSecondaryCylinricalLock = computed(() => {
     const properties = selectedSecondaryLock?.value?.nomenclature_properties
     if (!properties) return false
-    return properties.some(p => p.property_name === 'Механизм' && (p.property_value === 'Сувальдный' || p.property_value != 'Цилиндровый'))
+    return !properties.some(p => p.property_name === 'Механизм' && (p.property_value === 'Сувальдный' || p.property_value != 'Цилиндровый'))
 })
 
 watch(isPrimaryCylinricalLock, (newVal) => {
