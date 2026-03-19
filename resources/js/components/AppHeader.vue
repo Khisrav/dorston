@@ -2,6 +2,14 @@
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import { Button } from '@/components/ui/button';
 import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
     NavigationMenu,
     NavigationMenuContent,
     NavigationMenuItem,
@@ -15,9 +23,13 @@ import {
     SheetTitle,
     SheetTrigger,
 } from '@/components/ui/sheet';
-import { Link, usePage } from '@inertiajs/vue3';
-import { ChevronDown, ChevronRight, ExternalLink, Menu } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { logout } from '@/routes';
+import { edit as editProfile } from '@/routes/profile';
+import { Link, router, usePage } from '@inertiajs/vue3';
+import { ChevronDown, ChevronRight, ExternalLink, LogOutIcon, Menu, SettingsIcon, UserIcon } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+
+const settingsUrl = editProfile().url;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -44,7 +56,6 @@ interface NavDropdown {
 type NavItem = NavLink | NavDropdown;
 
 // ─── Navigation definition ────────────────────────────────────────────────────
-// Edit this single array to update both desktop and mobile menus.
 
 const navItems: NavItem[] = [
     {
@@ -133,13 +144,20 @@ const navItems: NavItem[] = [
         title: 'Контакты',
         href: 'https://dorston.ru/contacts',
     },
-    // External links — add more objects here as needed:
-    // { type: 'link', title: 'Instagram', href: 'https://instagram.com/...', external: true },
 ];
+
+// ─── Auth ─────────────────────────────────────────────────────────────────────
+
+const page = usePage();
+
+const user = computed(() => page.props.auth?.user ?? null);
+
+function signOut() {
+    router.post(logout().url);
+}
 
 // ─── Active state ─────────────────────────────────────────────────────────────
 
-const page = usePage();
 const mobileMenuOpen = ref(false);
 const openDropdowns = ref<Set<string>>(new Set());
 
@@ -254,12 +272,58 @@ const linkActiveClass = (href: string) =>
                 </NavigationMenu>
             </nav>
 
-            <!-- Right side (desktop) — add actions here if needed -->
-            <div class="ml-auto hidden items-center gap-2 lg:flex"></div>
+            <!-- ── Desktop right: user button ───────────────────────────── -->
+            <div class="ml-auto hidden items-center gap-2 lg:flex">
+                <!-- Logged in: dropdown with user info -->
+                <DropdownMenu v-if="user">
+                    <DropdownMenuTrigger as-child>
+                        <button
+                            class="flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1.5 text-sm font-serif text-black/70 transition-colors hover:border-black/20 hover:text-black"
+                        >
+                            <div class="flex size-6 items-center justify-center rounded-full bg-sky-900 text-white">
+                                <UserIcon class="size-3.5" />
+                            </div>
+                            <span class="max-w-[120px] truncate">{{ user.name }}</span>
+                            <ChevronDown class="size-3.5 opacity-50" />
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" class="w-56">
+                        <DropdownMenuLabel class="font-normal">
+                            <p class="font-serif font-medium text-black">{{ user.name }}</p>
+                            <p class="mt-0.5 truncate text-xs text-black/50 font-serif">{{ user.email }}</p>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem as-child>
+                            <Link :href="settingsUrl" class="flex cursor-pointer items-center gap-2 font-serif text-sm">
+                                <SettingsIcon class="size-4 opacity-60" />
+                                Настройки
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                            class="flex cursor-pointer items-center gap-2 font-serif text-sm text-red-600 focus:text-red-600"
+                            @click="signOut"
+                        >
+                            <LogOutIcon class="size-4 opacity-70" />
+                            Выйти
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+
+                <!-- Not logged in: login link -->
+                <Link
+                    v-else
+                    href="/login"
+                    class="flex items-center gap-1.5 rounded-full border border-sky-900/20 bg-sky-900 px-4 py-1.5 text-sm font-serif text-white transition-colors hover:bg-sky-800"
+                >
+                    <UserIcon class="size-3.5" />
+                    Войти
+                </Link>
+            </div>
 
             <!-- ── Mobile hamburger ──────────────────────────────────────── -->
             <div class="ml-auto lg:hidden">
-                    <Sheet v-model:open="mobileMenuOpen" @update:open="(v) => { if (!v) openDropdowns.clear() }">
+                <Sheet v-model:open="mobileMenuOpen" @update:open="(v) => { if (!v) openDropdowns.clear() }">
                     <SheetTrigger as-child>
                         <Button variant="ghost" size="icon" class="h-9 w-9">
                             <Menu class="size-5" />
@@ -270,7 +334,7 @@ const linkActiveClass = (href: string) =>
                     <SheetContent side="left" class="flex w-72 flex-col p-0">
                         <SheetTitle class="sr-only">Навигация</SheetTitle>
 
-                        <!-- Mobile logo — stays fixed at top -->
+                        <!-- Mobile logo -->
                         <div class="flex shrink-0 items-center gap-2.5 border-b border-black/10 px-5 py-4">
                             <div class="flex size-8 items-center justify-center border border-black/20 dark:border-white/20">
                                 <AppLogoIcon class="size-5" />
@@ -345,6 +409,51 @@ const linkActiveClass = (href: string) =>
 
                             </template>
                         </nav>
+
+                        <!-- ── Mobile: user section at bottom ──────────── -->
+                        <div class="mt-auto border-t border-black/10">
+                            <!-- Logged in -->
+                            <div v-if="user" class="px-3 py-4 space-y-1">
+                                <div class="flex items-center gap-3 px-3 py-2">
+                                    <div class="flex size-8 shrink-0 items-center justify-center rounded-full bg-sky-900 text-white">
+                                        <UserIcon class="size-4" />
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="truncate text-sm font-serif font-medium text-black">{{ user.name }}</p>
+                                        <p class="truncate text-xs font-serif text-black/50">{{ user.email }}</p>
+                                    </div>
+                                </div>
+                                <Link
+                                    :href="settingsUrl"
+                                    class="flex items-center gap-2 rounded-md px-3 py-2.5 text-sm font-serif tracking-wide text-black/60 transition-colors hover:bg-black/5 hover:text-black"
+                                    @click="mobileMenuOpen = false"
+                                >
+                                    <SettingsIcon class="size-4 opacity-60" />
+                                    Настройки
+                                </Link>
+                                <button
+                                    type="button"
+                                    class="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-serif tracking-wide text-red-600 transition-colors hover:bg-red-50"
+                                    @click="() => { mobileMenuOpen = false; signOut(); }"
+                                >
+                                    <LogOutIcon class="size-4 opacity-70" />
+                                    Выйти
+                                </button>
+                            </div>
+
+                            <!-- Not logged in -->
+                            <div v-else class="px-3 py-4">
+                                <Link
+                                    href="/login"
+                                    class="flex items-center justify-center gap-2 rounded-2xl bg-sky-900 px-4 py-2.5 text-sm font-serif text-white transition-colors hover:bg-sky-800"
+                                    @click="mobileMenuOpen = false"
+                                >
+                                    <UserIcon class="size-4" />
+                                    Войти в кабинет
+                                </Link>
+                            </div>
+                        </div>
+
                     </SheetContent>
                 </Sheet>
             </div>
