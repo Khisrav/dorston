@@ -107,17 +107,20 @@ class OuterDoorCombinationsImageSeeder extends Seeder
             }
         }
 
+        $backfilled = $this->backfillNalichnik($models);
+
         $skippedTotal = $skippedParse + $skippedNomenclature;
 
         $this->command?->newLine();
         $this->command?->table(
             ['Показатель', 'Кол-во'],
             [
-                ['Импортировано',                      $imported],
-                ['Пропущено (ошибка имени файла)',      $skippedParse],
-                ['Пропущено (цвет не найден)',          $skippedNomenclature],
-                ['Пропущено итого',                    $skippedTotal],
-                ['Модели без папки',                   $missingFolders],
+                ['Импортировано',                             $imported],
+                ['Наличник заимствован у ВС-6',               $backfilled],
+                ['Пропущено (ошибка имени файла)',             $skippedParse],
+                ['Пропущено (цвет не найден)',                 $skippedNomenclature],
+                ['Пропущено итого',                           $skippedTotal],
+                ['Модели без папки',                          $missingFolders],
             ]
         );
 
@@ -141,6 +144,74 @@ class OuterDoorCombinationsImageSeeder extends Seeder
             $this->command?->newLine();
             $this->command?->line("Список также сохранён в файл: {$logPath}");
         }
+    }
+
+    /**
+     * For every model that has no "Наличник" image for a given film colour,
+     * copy the corresponding "Наличник" image from "ВС-6" (the reference model).
+     */
+    private function backfillNalichnik(Collection $models): int
+    {
+        $vs6 = $models->firstWhere('name', 'ВС-6');
+
+        if (!$vs6) {
+            $this->command?->warn('Модель ВС-6 не найдена — пропуск заполнения Наличника.');
+            return 0;
+        }
+
+        $vs6Nalichniki = DoorCombination::where('door_model_id', $vs6->id)
+            ->where('img_purpose', 'Наличник')
+            ->get()
+            ->keyBy('film_color_id');
+
+        if ($vs6Nalichniki->isEmpty()) {
+            $this->command?->warn('У ВС-6 нет изображений с назначением «Наличник».');
+            return 0;
+        }
+
+        $backfilled = 0;
+
+        foreach ($models as $model) {
+            if ($model->id === $vs6->id) {
+                continue;
+            }
+
+            foreach ($vs6Nalichniki as $filmColorId => $vs6Combo) {
+                $exists = DoorCombination::where('door_model_id', $model->id)
+                    ->where('film_color_id', $filmColorId)
+                    ->where('img_purpose', 'Наличник')
+                    ->exists();
+
+                if ($exists) {
+                    continue;
+                }
+
+                if (!Storage::disk('public')->exists($vs6Combo->image)) {
+                    $this->command?->warn("Файл ВС-6 «Наличник» не найден в хранилище: {$vs6Combo->image}");
+                    continue;
+                }
+
+                $ext     = pathinfo($vs6Combo->image, PATHINFO_EXTENSION);
+                $newPath = 'door-combinations/' . (string) Str::ulid() . '.' . $ext;
+
+                Storage::disk('public')->put(
+                    $newPath,
+                    Storage::disk('public')->get($vs6Combo->image)
+                );
+
+                DoorCombination::create([
+                    'door_model_id' => $model->id,
+                    'film_color_id' => $filmColorId,
+                    'img_purpose'   => 'Наличник',
+                    'image'         => $newPath,
+                ]);
+
+                $this->command?->info("Наличник ← ВС-6 → {$model->name} (color_id={$filmColorId})");
+                $backfilled++;
+            }
+        }
+
+        return $backfilled;
     }
 
     private function clearPrevious(): void

@@ -10,16 +10,23 @@ class Furniture extends Model
     protected $table = 'furnitures';
     
     protected $fillable = [
+        'type',
+        'preview_image',
+        'title',
         'shape', 
         'color', 
-        'cylindrical_lock_cover_image', 
-        'lever_lock_cover_image', 
+        'primary_cylindrical_lock_cover_image', 
+        'primary_lever_lock_cover_image', 
+        'secondary_cylindrical_lock_cover_image', 
+        'secondary_lever_lock_cover_image', 
         'peephole_cover_image', 
         'night_latch_turner_cover_image', 
         'cylinder_rod_cover_image', 
         'handle_cover_image', 
-        'cylindrical_lock_id', 
-        'lever_lock_id', 
+        'primary_cylindrical_lock_id', 
+        'primary_lever_lock_id', 
+        'secondary_cylindrical_lock_id', 
+        'secondary_lever_lock_id', 
         'peephole_id', 
         'night_latch_turner_id', 
         'cylinder_rod_id', 
@@ -31,12 +38,22 @@ class Furniture extends Model
      */
     public function cylindricalLock(): BelongsTo
     {
-        return $this->belongsTo(Nomenclature::class, 'cylindrical_lock_id');
+        return $this->belongsTo(Nomenclature::class, 'primary_cylindrical_lock_id');
     }
 
     public function leverLock(): BelongsTo
     {
-        return $this->belongsTo(Nomenclature::class, 'lever_lock_id');
+        return $this->belongsTo(Nomenclature::class, 'primary_lever_lock_id');
+    }
+
+    public function secondaryCylindricalLock(): BelongsTo
+    {
+        return $this->belongsTo(Nomenclature::class, 'secondary_cylindrical_lock_id');
+    }
+
+    public function secondaryLeverLock(): BelongsTo
+    {
+        return $this->belongsTo(Nomenclature::class, 'secondary_lever_lock_id');
     }
 
     public function peephole(): BelongsTo

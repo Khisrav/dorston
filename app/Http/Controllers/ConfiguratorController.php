@@ -10,6 +10,42 @@ use Inertia\Inertia;
 
 class ConfiguratorController extends Controller
 {
+    private static function mapFurniture(Furniture $f): array
+    {
+        return [
+            'id'                                    => $f->id,
+            'title'                                 => $f->title,
+            'preview_image'                         => $f->preview_image,
+            'furniture_type'                        => $f->type,
+            'shape'                                 => $f->shape,
+            'color'                                 => $f->color,
+            'primary_cylindrical_lock_cover_image'  => $f->primary_cylindrical_lock_cover_image,
+            'primary_lever_lock_cover_image'        => $f->primary_lever_lock_cover_image,
+            'secondary_cylindrical_lock_cover_image'=> $f->secondary_cylindrical_lock_cover_image,
+            'secondary_lever_lock_cover_image'      => $f->secondary_lever_lock_cover_image,
+            'peephole_cover_image'                  => $f->peephole_cover_image,
+            'night_latch_turner_cover_image'        => $f->night_latch_turner_cover_image,
+            'cylinder_rod_cover_image'              => $f->cylinder_rod_cover_image,
+            'handle_cover_image'                    => $f->handle_cover_image,
+            'primary_cylindrical_lock_id'           => $f->primary_cylindrical_lock_id,
+            'primary_lever_lock_id'                 => $f->primary_lever_lock_id,
+            'secondary_cylindrical_lock_id'         => $f->secondary_cylindrical_lock_id,
+            'secondary_lever_lock_id'               => $f->secondary_lever_lock_id,
+            'peephole_id'                           => $f->peephole_id,
+            'night_latch_turner_id'                 => $f->night_latch_turner_id,
+            'cylinder_rod_id'                       => $f->cylinder_rod_id,
+            'handle_id'                             => $f->handle_id,
+            'primary_cylindrical_lock_price'        => $f->cylindricalLock?->base_price,
+            'primary_lever_lock_price'              => $f->leverLock?->base_price,
+            'secondary_cylindrical_lock_price'      => $f->secondaryCylindricalLock?->base_price,
+            'secondary_lever_lock_price'            => $f->secondaryLeverLock?->base_price,
+            'peephole_price'                        => $f->peephole?->base_price,
+            'night_latch_turner_price'              => $f->nightLatchTurner?->base_price,
+            'cylinder_rod_price'                    => $f->cylinderRod?->base_price,
+            'handle_price'                          => $f->handle?->base_price,
+        ];
+    }
+
     public function index()
     {
         return Inertia::render('configurator/Index');
@@ -33,37 +69,13 @@ class ConfiguratorController extends Controller
             'furnitures' => Furniture::with([
                 'cylindricalLock:id,base_price',
                 'leverLock:id,base_price',
+                'secondaryCylindricalLock:id,base_price',
+                'secondaryLeverLock:id,base_price',
                 'peephole:id,base_price',
                 'nightLatchTurner:id,base_price',
                 'cylinderRod:id,base_price',
                 'handle:id,base_price'
-            ])->get()->map(function ($furniture) {
-                return [
-                    'id' => $furniture->id,
-                    'shape' => $furniture->shape,
-                    'color' => $furniture->color,
-                    'cylindrical_lock_cover_image' => $furniture->cylindrical_lock_cover_image,
-                    'lever_lock_cover_image' => $furniture->lever_lock_cover_image,
-                    'peephole_cover_image' => $furniture->peephole_cover_image,
-                    'night_latch_turner_cover_image' => $furniture->night_latch_turner_cover_image,
-                    'cylinder_rod_cover_image' => $furniture->cylinder_rod_cover_image,
-                    'handle_cover_image' => $furniture->handle_cover_image,
-                    'cylindrical_lock_id' => $furniture->cylindrical_lock_id,
-                    'lever_lock_id' => $furniture->lever_lock_id,
-                    'peephole_id' => $furniture->peephole_id,
-                    'night_latch_turner_id' => $furniture->night_latch_turner_id,
-                    'cylinder_rod_id' => $furniture->cylinder_rod_id,
-                    'handle_id' => $furniture->handle_id,
-                    'cylindrical_lock_price' => $furniture->cylindricalLock?->base_price,
-                    'lever_lock_price' => $furniture->leverLock?->base_price,
-                    'peephole_price' => $furniture->peephole?->base_price,
-                    'night_latch_turner_price' => $furniture->nightLatchTurner?->base_price,
-                    'cylinder_rod_price' => $furniture->cylinderRod?->base_price,
-                    'handle_price' => $furniture->handle?->base_price,
-                    'created_at' => $furniture->created_at,
-                    'updated_at' => $furniture->updated_at,
-                ];
-            }),
+            ])->get()->map(fn ($f) => self::mapFurniture($f)),
             'locks' => [
                 'primary' => Nomenclature::where('tag', 'primary-lock')
                     ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id', 'properties')
@@ -101,43 +113,21 @@ class ConfiguratorController extends Controller
             'furnitures' => Furniture::with([
                 'cylindricalLock:id,base_price',
                 'leverLock:id,base_price',
+                'secondaryCylindricalLock:id,base_price',
+                'secondaryLeverLock:id,base_price',
                 'peephole:id,base_price',
                 'nightLatchTurner:id,base_price',
                 'cylinderRod:id,base_price',
                 'handle:id,base_price'
-            ])->get()->map(function ($furniture) {
-                return [
-                    'id' => $furniture->id,
-                    'shape' => $furniture->shape,
-                    'color' => $furniture->color,
-                    'cylindrical_lock_cover_image' => $furniture->cylindrical_lock_cover_image,
-                    'lever_lock_cover_image' => $furniture->lever_lock_cover_image,
-                    'peephole_cover_image' => $furniture->peephole_cover_image,
-                    'night_latch_turner_cover_image' => $furniture->night_latch_turner_cover_image,
-                    'cylinder_rod_cover_image' => $furniture->cylinder_rod_cover_image,
-                    'handle_cover_image' => $furniture->handle_cover_image,
-                    'cylindrical_lock_id' => $furniture->cylindrical_lock_id,
-                    'lever_lock_id' => $furniture->lever_lock_id,
-                    'peephole_id' => $furniture->peephole_id,
-                    'night_latch_turner_id' => $furniture->night_latch_turner_id,
-                    'cylinder_rod_id' => $furniture->cylinder_rod_id,
-                    'handle_id' => $furniture->handle_id,
-                    'cylindrical_lock_price' => $furniture->cylindricalLock?->base_price,
-                    'lever_lock_price' => $furniture->leverLock?->base_price,
-                    'peephole_price' => $furniture->peephole?->base_price,
-                    'night_latch_turner_price' => $furniture->nightLatchTurner?->base_price,
-                    'cylinder_rod_price' => $furniture->cylinderRod?->base_price,
-                    'handle_price' => $furniture->handle?->base_price,
-                    'created_at' => $furniture->created_at,
-                    'updated_at' => $furniture->updated_at,
-                ];
-            }),
+            ])->get()->map(fn ($f) => self::mapFurniture($f)),
             'locks' => [
                 'primary' => Nomenclature::where('tag', 'primary-lock')
                     ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id', 'properties')
+                    ->with('nomenclatureProperties')
                     ->get(),
                 'secondary' => Nomenclature::where('tag', 'secondary-lock')
                     ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id', 'properties')
+                    ->with('nomenclatureProperties')
                     ->get(),
             ],
             'cylinders' => Nomenclature::where('nomenclature_category_id', 5)

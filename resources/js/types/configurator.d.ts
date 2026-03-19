@@ -32,6 +32,7 @@ export interface DoorConfig {
     }
     furniture: {
         furnitureSetId?: number;
+        furnitureType?: 'push' | 'pull' | 'electronic';
         furnitureShape?: string;
         furnitureColor?: string;
         primaryLock?: number;
@@ -111,7 +112,7 @@ export interface Nomenclature {
     created_at?: any;
     updated_at?: any;
     tag?: string;
-    properties?: any;
+    nomenclature_properties?: NomenclatureProperty[];
 }
 
 export interface DoorModel {
@@ -136,10 +137,22 @@ export interface DoorModel {
     additional_element_mask_image?: string;
 }
 
+export interface NomenclatureProperty {
+    id: number;
+    nomenclature_id?: number;
+    property_name: string;
+    property_value: string;
+    created_at?: any;
+    updated_at?: any;
+}
+
 export interface Furniture {
     id: number;
+    title?: string | null; //title = модель ручки
+    preview_image?: string | null;
+    furniture_type: 'push' | 'pull' | 'electronic'; //push - нажимная, pull - бугельная, electronic - электронная
     shape: 'rectangular' | 'oval' | 'other';
-    color: 'black' | 'chrome' | 'gold' | 'bronze';
+    color: 'black' | 'chrome' | 'gold' | 'bronze' | 'matte-chrome';
     cylindrical_lock_cover_image?: string | null;
     lever_lock_cover_image?: string | null;
     peephole_cover_image?: string | null;

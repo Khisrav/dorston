@@ -9,12 +9,13 @@ import { type BreadcrumbItem } from '@/types';
 import { DoorModel, Nomenclature, Furniture, DoorCombinationImage } from '@/types/configurator';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
-import { SelectButton, InputNumber, Drawer, ToggleSwitch, Button } from 'primevue';
+import { SelectButton, InputNumber, Drawer, Button } from 'primevue';
 import { computed, ref, watch, onMounted } from 'vue';
 import ExteriorCard from '@/components/Configurator/Card/ExteriorCard.vue';
 import InteriorCard from '@/components/Configurator/Card/InteriorCard.vue';
 import FurnitureCard from '@/components/Configurator/Card/FurnitureCard.vue';
-import LockerCard from '@/components/Configurator/Card/LockerCard.vue';
+import LockerCard from '@/components/Configurator/Card/LockerCard.vue'
+import AdditionalsCard from '@/components/Configurator/Card/AdditionalsCard.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -43,7 +44,6 @@ doorCalcStore.furnitures = furnitures.value
 doorCalcStore.handles = handles.value
 doorCalcStore.locks = locks.value
 doorCalcStore.cylinders = cylinders.value
-doorCalcStore.initializeDefaultConfig()
 
 // Computed properties to filter door models
 const exteriorDoorModels = computed(() => {
@@ -153,6 +153,7 @@ function fetchDoorCombinations(exteriorModelId: number | undefined, interiorMode
 }
 
 onMounted(() => {
+    doorCalcStore.initializeDefaultConfig()
     fetchDoorCombinations(doorCalcStore.doorConfig.exterior.panelModel, doorCalcStore.doorConfig.interior.panelModel);
 });
 
@@ -222,23 +223,7 @@ watch(
 
                         <FurnitureCard />
                         <LockerCard />
-
-                        <!-- VI. Additional Options -->
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between border-b pb-2 border-black/10 dark:border-white/10">
-                                <h2 class="font-serif text-xl sm:text-2xl text-black dark:text-white tracking-tight">
-                                    Доп. опции
-                                </h2>
-                            </div>
-
-                            <div class="grid grid-cols-1 gap-3">
-                                <!-- Stainless Steel Doorsill Toggle -->
-                                <div class="flex items-center justify-between px-1">
-                                    <span class="font-serif text-sm text-neutral-700 dark:text-neutral-300">Порог из нержавейки</span>
-                                    <ToggleSwitch v-model="doorCalcStore.doorConfig.stainlessSteelDoorsill" />
-                                </div>
-                            </div>
-                        </div>
+                        <AdditionalsCard />
                     </div>
                 </div>
 

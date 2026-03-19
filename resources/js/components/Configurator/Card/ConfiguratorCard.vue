@@ -6,7 +6,7 @@ defineProps<{
 </script>
 
 <template>
-    <div class="border border-sky-700/10 rounded-3xl overflow-hidden shadow-md shadow-sky-700/5">
+    <div class="border border-sky-700/10 w-full rounded-3xl overflow-hidden shadow-md shadow-sky-700/5">
         <div class="px-4 md:px-6 pt-6 pb-3 flex items-center gap-3 font-bold">
             <span class="font-serif text-xl text-sky-900">Шаг {{ step }}.</span>
             <h2 class="font-serif text-xl tracking-tight text-black">{{ title }}</h2>

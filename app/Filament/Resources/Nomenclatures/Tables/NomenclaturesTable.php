@@ -50,17 +50,10 @@ class NomenclaturesTable
                     ->label('Ед. изм.')
                     ->badge()
                     ->toggleable(isToggledHiddenByDefault: false),
-                SelectColumn::make('tag')
+                TextInputColumn::make('tag')
                     ->label('Метка')
-                    ->options([
-                        'primary-lock' => 'Основной замок',
-                        'secondary-lock' => 'Дополнительный замок',
-                        'primary-cylinder' => 'Основной цилиндр',
-                        'secondary-cylinder' => 'Дополнительный цилиндр',
-                    ])
-                    ->sortable()
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('created_at')
                     ->label('Создан')
                     ->dateTime()

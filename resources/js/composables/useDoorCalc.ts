@@ -45,8 +45,9 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         },
         furniture: {
             furnitureSetId: -1,
-            furnitureShape: undefined,
-            furnitureColor: undefined,
+            furnitureType: 'push',
+            furnitureShape: 'rectangular',
+            furnitureColor: 'black',
             primaryLock: -1,
             primaryCylindricalLockMechanism: -1,
             hasSecondaryLock: false,
@@ -76,10 +77,11 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         applyDoorModelConfig(defaultInteriorModel?.id ?? 2, 'interior')
 
         // Auto-select furniture if only one available
-        if (furnitures.value.length === 1) {
+        if (furnitures.value.length != 0) {
             doorConfig.value.furniture.furnitureShape = furnitures.value[0].shape
             doorConfig.value.furniture.furnitureColor = furnitures.value[0].color
             doorConfig.value.furniture.furnitureSetId = furnitures.value[0].id
+            doorConfig.value.furniture.furnitureType = furnitures.value[0].furniture_type
         }
     }
 
@@ -110,6 +112,13 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     })
     
     watch(doorConfig, () => {
+        const primaryPaintName = getPaintColor(doorConfig.value.metalPainting.primaryColor ?? -1)?.name
+        const secondaryPaintName = getPaintColor(doorConfig.value.metalPainting.secondaryColor ?? -1)?.name
+        //if one of the names has "Муар" in it then
+        if (primaryPaintName?.includes('Муар') || secondaryPaintName?.includes('Муар')) {
+            doorConfig.value.metalPainting.undercoat = true
+        }
+
         switch (doorConfig.value.doorConstructive) {
             case 'Comfort':
                 total_price.value = useComfortConstructive().getTotalPrice(doorConfig.value)

@@ -11,17 +11,16 @@ Route::get('/test', function () {
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
+        // 'canRegister' => Features::enabled(Features::registration()),
+        'canRegister' => false,
     ]);
 })->name('home');
 
-Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('configurator', [ConfiguratorController::class, 'index'])->name('configurator');
-Route::get('configurator/apartment', [ConfiguratorController::class, 'apartment'])->name('configurator.apartment');
-Route::get('configurator/termo', [ConfiguratorController::class, 'termo'])->name('configurator.termo');
-Route::get('configurator/termo/modular', [ConfiguratorController::class, 'termoModular'])->name('configurator.termo.modular');
+Route::middleware('auth')->group(function () {
+    Route::get('configurator', [ConfiguratorController::class, 'index'])->name('configurator');
+    Route::get('configurator/apartment', [ConfiguratorController::class, 'apartment'])->name('configurator.apartment');
+    Route::get('configurator/termo', [ConfiguratorController::class, 'termo'])->name('configurator.termo');
+    Route::get('configurator/termo/modular', [ConfiguratorController::class, 'termoModular'])->name('configurator.termo.modular');
+});
 
 require __DIR__.'/settings.php';
