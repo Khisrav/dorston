@@ -112,6 +112,13 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     })
     
     watch(doorConfig, () => {
+        const primaryPaintName = getPaintColor(doorConfig.value.metalPainting.primaryColor ?? -1)?.name
+        const secondaryPaintName = getPaintColor(doorConfig.value.metalPainting.secondaryColor ?? -1)?.name
+        //if one of the names has "Муар" in it then
+        if (primaryPaintName?.includes('Муар') || secondaryPaintName?.includes('Муар')) {
+            doorConfig.value.metalPainting.undercoat = true
+        }
+
         switch (doorConfig.value.doorConstructive) {
             case 'Comfort':
                 total_price.value = useComfortConstructive().getTotalPrice(doorConfig.value)

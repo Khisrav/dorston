@@ -112,7 +112,7 @@ export interface Nomenclature {
     created_at?: any;
     updated_at?: any;
     tag?: string;
-    properties?: any;
+    nomenclature_properties?: NomenclatureProperty[];
 }
 
 export interface DoorModel {
@@ -135,6 +135,15 @@ export interface DoorModel {
     milling_overflows_to_casing: boolean;
     additional_element_decor_image?: string;
     additional_element_mask_image?: string;
+}
+
+export interface NomenclatureProperty {
+    id: number;
+    nomenclature_id?: number;
+    property_name: string;
+    property_value: string;
+    created_at?: any;
+    updated_at?: any;
 }
 
 export interface Furniture {

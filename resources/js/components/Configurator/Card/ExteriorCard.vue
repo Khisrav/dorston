@@ -28,6 +28,12 @@ const hasCasingFilm = computed(() => selectedModel.value?.has_casing_film_color 
 const hasPrimaryPaint = computed(() => selectedModel.value?.has_primary_paint ?? false)
 const hasSecondaryPaint = computed(() => selectedModel.value?.has_secondary_paint ?? false)
 
+const isUndercoatDisabled = computed(() => {
+    const primaryPaintName = doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.primaryColor ?? -1)?.name
+    const secondaryPaintName = doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.secondaryColor ?? -1)?.name
+    return primaryPaintName?.includes('Муар') || secondaryPaintName?.includes('Муар')
+})
+
 const primaryFilmColor = computed(() =>
     doorCalcStore.getFilmColor(doorCalcStore.doorConfig.exterior.primaryTexture ?? -1)
 )
@@ -213,7 +219,7 @@ const secondaryPaintColor = computed(() =>
                     <div>
                         <p class="font-serif text-sky-900">Предварительное цинкогрунтование</p>
                     </div>
-                    <ToggleSwitch v-model="doorCalcStore.doorConfig.metalPainting.undercoat" />
+                    <ToggleSwitch v-model="doorCalcStore.doorConfig.metalPainting.undercoat" :disabled="isUndercoatDisabled" />
                 </div>
             </div>
 
