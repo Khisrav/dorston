@@ -19,123 +19,138 @@ class FurnitureTable
                 TextColumn::make('id')
                     ->label('ID')
                     ->sortable()
-                    ->searchable(),
+                    ->width('60px'),
 
-                TextColumn::make('shape')
-                    ->label('Форма')
+                ImageColumn::make('preview_image')
+                    ->label('Превью')
+                    ->disk('public')
+                    ->defaultImageUrl(url('/images/placeholder.png'))
+                    ->imageSize(86),
+
+                TextColumn::make('title')
+                    ->label('Название')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('—')
+                    ->wrap()
+                    ->description(fn ($record): string => $record->shape
+                        ? match ($record->shape) {
+                            'rectangular' => 'Прямоугольная',
+                            'oval'        => 'Овальная',
+                            'other'       => 'Другая',
+                            default       => $record->shape,
+                        }
+                        : ''
+                    ),
+
+                TextColumn::make('type')
+                    ->label('Тип')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'rectangular' => 'info',
-                        'oval' => 'success',
-                        'other' => 'warning',
-                        default => 'gray',
+                        'push'       => 'info',
+                        'pull'       => 'success',
+                        'electronic' => 'warning',
+                        default      => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'rectangular' => 'Прямоугольная',
-                        'oval' => 'Овальная',
-                        'other' => 'Другая',
-                        default => $state,
+                        'push'       => 'Нажимная',
+                        'pull'       => 'Бугельная',
+                        'electronic' => 'Электронная',
+                        default      => $state,
                     })
-                    ->sortable()
-                    ->searchable(),
+                    ->sortable(),
 
                 TextColumn::make('color')
                     ->label('Цвет')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'black' => 'gray',
-                        'chrome' => 'info',
-                        'gold' => 'warning',
-                        'bronze' => 'danger',
-                        default => 'gray',
+                        'black'        => 'gray',
+                        'chrome'       => 'info',
+                        'matte-chrome' => 'info',
+                        'gold'         => 'warning',
+                        'bronze'       => 'danger',
+                        default        => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'black' => 'Черный',
-                        'chrome' => 'Хром',
-                        'gold' => 'Золотой',
-                        'bronze' => 'Бронзовый',
-                        default => $state,
+                        'black'        => 'Матовый чёрный',
+                        'chrome'       => 'Хром',
+                        'matte-chrome' => 'Матовый хром',
+                        'gold'         => 'Золотой',
+                        'bronze'       => 'Бронзовый',
+                        default        => $state,
                     })
-                    ->sortable()
-                    ->searchable(),
+                    ->sortable(),
 
+                // ── Primary locks (toggleable) ───────────────────────────
                 TextColumn::make('cylindricalLock.name')
-                    ->label('Цилиндрический замок')
+                    ->label('Цил. замок (осн.)')
                     ->sortable()
                     ->searchable()
-                    ->toggleable()
                     ->placeholder('—')
-                    ->wrap(),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
-                ImageColumn::make('cylindrical_lock_cover_image')
-                    ->label('Накладка')
-                    ->toggleable()
-                    ->defaultImageUrl(url('/images/placeholder.png')),
+                ImageColumn::make('primary_cylindrical_lock_cover_image')
+                    ->label('Накладка цил. (осн.)')
+                    ->disk('public')
+                    ->defaultImageUrl(url('/images/placeholder.png'))
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('leverLock.name')
-                    ->label('Сувальдный замок')
+                    ->label('Сув. замок (осн.)')
                     ->sortable()
                     ->searchable()
-                    ->toggleable()
                     ->placeholder('—')
-                    ->wrap(),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
-                ImageColumn::make('lever_lock_cover_image')
-                    ->label('Накладка')
-                    ->toggleable()
-                    ->defaultImageUrl(url('/images/placeholder.png')),
+                ImageColumn::make('primary_lever_lock_cover_image')
+                    ->label('Накладка сув. (осн.)')
+                    ->disk('public')
+                    ->defaultImageUrl(url('/images/placeholder.png'))
+                    ->toggleable(isToggledHiddenByDefault: true),
 
+                // ── Secondary locks (toggleable) ─────────────────────────
+                TextColumn::make('secondaryCylindricalLock.name')
+                    ->label('Цил. замок (доп.)')
+                    ->sortable()
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('secondaryLeverLock.name')
+                    ->label('Сув. замок (доп.)')
+                    ->sortable()
+                    ->searchable()
+                    ->placeholder('—')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                // ── Other elements (toggleable) ───────────────────────────
                 TextColumn::make('peephole.name')
                     ->label('Глазок')
                     ->sortable()
                     ->searchable()
-                    ->toggleable()
                     ->placeholder('—')
-                    ->wrap(),
-
-                ImageColumn::make('peephole_cover_image')
-                    ->label('Накладка')
-                    ->toggleable()
-                    ->defaultImageUrl(url('/images/placeholder.png')),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('nightLatchTurner.name')
-                    ->label('Ночник')
+                    ->label('Ночная задвижка')
                     ->sortable()
                     ->searchable()
-                    ->toggleable()
                     ->placeholder('—')
-                    ->wrap(),
-
-                ImageColumn::make('night_latch_turner_cover_image')
-                    ->label('Накладка')
-                    ->toggleable()
-                    ->defaultImageUrl(url('/images/placeholder.png')),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('cylinderRod.name')
                     ->label('Вертушка на шток')
                     ->sortable()
                     ->searchable()
-                    ->toggleable()
                     ->placeholder('—')
-                    ->wrap(),
-
-                ImageColumn::make('cylinder_rod_cover_image')
-                    ->label('Вертушка')
-                    ->toggleable()
-                    ->defaultImageUrl(url('/images/placeholder.png')),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('handle.name')
                     ->label('Ручка')
                     ->sortable()
                     ->searchable()
-                    ->toggleable()
                     ->placeholder('—')
-                    ->wrap(),
-
-                ImageColumn::make('handle_cover_image')
-                    ->label('Накладка')
-                    ->toggleable()
-                    ->defaultImageUrl(url('/images/placeholder.png')),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
                     ->label('Создано')
@@ -150,20 +165,28 @@ class FurnitureTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('type')
+                    ->label('Тип')
+                    ->options([
+                        'push'       => 'Нажимная',
+                        'pull'       => 'Бугельная',
+                        'electronic' => 'Электронная',
+                    ]),
                 SelectFilter::make('shape')
                     ->label('Форма')
                     ->options([
                         'rectangular' => 'Прямоугольная',
-                        'oval' => 'Овальная',
-                        'other' => 'Другая',
+                        'oval'        => 'Овальная',
+                        'other'       => 'Другая',
                     ]),
                 SelectFilter::make('color')
                     ->label('Цвет')
                     ->options([
-                        'black' => 'Черный',
-                        'chrome' => 'Хром',
-                        'gold' => 'Золотой',
-                        'bronze' => 'Бронзовый',
+                        'black'        => 'Матовый чёрный',
+                        'chrome'       => 'Хром',
+                        'matte-chrome' => 'Матовый хром',
+                        'gold'         => 'Золотой',
+                        'bronze'       => 'Бронзовый',
                     ]),
             ])
             ->recordActions([

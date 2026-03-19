@@ -45,7 +45,8 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         },
         furniture: {
             furnitureSetId: -1,
-            furnitureShape: undefined,
+            furnitureType: 'push',
+            furnitureShape: 'rectangular',
             furnitureColor: 'black',
             primaryLock: -1,
             primaryCylindricalLockMechanism: -1,

@@ -32,6 +32,7 @@ export interface DoorConfig {
     }
     furniture: {
         furnitureSetId?: number;
+        furnitureType?: 'push' | 'pull' | 'electronic';
         furnitureShape?: string;
         furnitureColor?: string;
         primaryLock?: number;
@@ -138,8 +139,9 @@ export interface DoorModel {
 
 export interface Furniture {
     id: number;
-    title?: string | null;
+    title?: string | null; //title = модель ручки
     preview_image?: string | null;
+    furniture_type: 'push' | 'pull' | 'electronic'; //push - нажимная, pull - бугельная, electronic - электронная
     shape: 'rectangular' | 'oval' | 'other';
     color: 'black' | 'chrome' | 'gold' | 'bronze' | 'matte-chrome';
     cylindrical_lock_cover_image?: string | null;
