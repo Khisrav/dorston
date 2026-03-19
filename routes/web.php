@@ -16,10 +16,6 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
     Route::get('configurator', [ConfiguratorController::class, 'index'])->name('configurator');
     Route::get('configurator/apartment', [ConfiguratorController::class, 'apartment'])->name('configurator.apartment');
