@@ -7,18 +7,18 @@ import { type BreadcrumbItem } from '@/types';
 
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
-import { edit } from '@/routes/appearance';
+// import { edit } from '@/routes/appearance';
 
-const breadcrumbItems: BreadcrumbItem[] = [
-    {
-        title: 'Настройки внешнего вида',
-        href: edit().url,
-    },
-];
+// const breadcrumbItems: BreadcrumbItem[] = [
+//     {
+//         title: 'Настройки внешнего вида',
+//         href: edit().url,
+//     },
+// ];
 </script>
 
 <template>
-    <AppLayout :breadcrumbs="breadcrumbItems">
+    <!-- <AppLayout :breadcrumbs="breadcrumbItems">
         <Head title="Настройки внешнего вида" />
 
         <SettingsLayout>
@@ -30,7 +30,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
                 <AppearanceTabs />
             </div>
         </SettingsLayout>
-    </AppLayout>
+    </AppLayout> -->
 </template>
 
 <style scoped>
