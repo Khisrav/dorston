@@ -15,7 +15,7 @@ class OuterDoorCombinationsImageSeeder extends Seeder
 {
     private const FILM_COLOR_CATEGORY_IDS = [13, 2];
     private const COMBINATIONS_BASE_PATH = 'database/data/door-models/apartment-exterior/combinations';
-    private const VALID_PURPOSES = ['Полотно', 'Вставка Полотно'];
+    private const VALID_PURPOSES = ['Наличник', 'Полотно', 'Вставка наличника', 'Вставка Полотно', 'Вставка полотно'];
 
     public function run(): void
     {
@@ -97,7 +97,7 @@ class OuterDoorCombinationsImageSeeder extends Seeder
                     [
                         'door_model_id' => $model->id,
                         'film_color_id'  => $filmColor->id,
-                        'img_purpose'    => $purpose === 'Вставка Полотно' ? 'Вставка полотна' : $purpose,
+                        'img_purpose'    => in_array($purpose, ['Вставка Полотно', 'Вставка полотно']) ? 'Вставка полотна' : $purpose,
                     ],
                     ['image' => $storagePath]
                 );

@@ -1,18 +1,3 @@
-/*
- * The door visualizer will be consisted of few layers for both exterior and interior doors.
- * Exterior layers:
- * 0. Black background to mimic the door's gaps
- * 1. Casing image which is already pre baked by designer with milling and film color already applied (i will just slap the image on the stage)
- * 1.1 Some door models have additional elements that overlap the door and apply to casing, in this scenario i just need to apply the correct image which has film color in it already
- * 2. Door itself (milling + film color) is also pre baked by designer and i just need to slap the image on the stage
- * 3. Additional elements that overlap the door and apply to casing, in this scenario i just need to apply the correct image which has film color in it already
- * 4. Doorsill, furniture
- * 5. Hinges are a bit trickier, but i will deal with them later
- * 
- * Door size is static and user's defined size won't affect the visualizer (only when window is resized)
- * This time visualizer will be simplified
- */
-
 import { defineStore } from "pinia";
 import { ref, computed } from 'vue';
 import { useImage } from 'vue-konva';
@@ -38,30 +23,54 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         console.log('stage size set to', stageWidth.value, stageHeight.value);
     }
 
-    // Temp test images for exterior
-    const [casingImage] = useImage('/assets/temp/Наличник.png');
-    const [doorImage] = useImage('/assets/temp/Полотно.png');
-    const [additionalCasingElementImage] = useImage('/assets/temp/Доп элемент наличника.png');
-    const [additionalDoorElementImage] = useImage('/assets/temp/Доп элемент полотна.png');
-    const [hingeImage] = useImage('/assets/temp/Петли.png');
-
-    //for interior
-    const [interiorCasingImage] = useImage('/assets/temp/Короб.png')
-
-    const interiorDoorUrl = computed<string>(() => {
-        const modelId = doorCalcStore.doorConfig.interior.panelModel;
-        const filmColorId = doorCalcStore.doorConfig.interior.primaryTexture;
-
+    function findComboUrl(
+        purpose: DoorCombinationImage['purpose'],
+        modelId: number | undefined,
+        filmColorId: number | undefined,
+    ): string {
+        if (!modelId) return '';
         const combo = doorCombinationImages.value.find(img =>
-            img.purpose === 'Полотно' &&
+            img.purpose === purpose &&
             img.door_model_id === modelId &&
             (!filmColorId || img.film_color_id === filmColorId)
         );
-
+        console.log('combo finder executed for', purpose, modelId, filmColorId, combo);
         return combo ? `/storage/${combo.image}` : '';
-    });
+    }
+
+    // Exterior computed URLs
+    const exteriorCasingUrl = computed(() =>
+        findComboUrl('Наличник', doorCalcStore.doorConfig.exterior.panelModel, doorCalcStore.doorConfig.exterior.casingTexture)
+    );
+    //hinge
+    const exteriorHingeUrl = '/assets/temp/Петли.png';
+    const exteriorDoorUrl = computed(() =>
+        findComboUrl('Полотно', doorCalcStore.doorConfig.exterior.panelModel, doorCalcStore.doorConfig.exterior.primaryTexture)
+    );
+    const exteriorAdditionalCasingUrl = computed(() =>
+        findComboUrl('Вставка наличника', doorCalcStore.doorConfig.exterior.panelModel, doorCalcStore.doorConfig.exterior.casingTexture)
+    );
+    const exteriorAdditionalDoorUrl = computed(() =>
+        findComboUrl('Вставка полотна', doorCalcStore.doorConfig.exterior.panelModel, doorCalcStore.doorConfig.exterior.secondaryTexture)
+    );
+
+    // Interior computed URLs
+    const interiorDoorUrl = computed(() =>
+        findComboUrl('Полотно', doorCalcStore.doorConfig.interior.panelModel, doorCalcStore.doorConfig.interior.primaryTexture)
+    );
+    const interiorCasingUrl = computed(() =>
+        findComboUrl('Наличник', doorCalcStore.doorConfig.interior.panelModel, doorCalcStore.doorConfig.interior.casingTexture)
+    );
+
+    const [casingImage] = useImage(exteriorCasingUrl);
+    const [doorImage] = useImage(exteriorDoorUrl);
+    const [exteriorHingeImage] = useImage(exteriorHingeUrl);
+    const [additionalCasingElementImage] = useImage(exteriorAdditionalCasingUrl);
+    const [additionalDoorElementImage] = useImage(exteriorAdditionalDoorUrl);
 
     const [interiorDoorImage] = useImage(interiorDoorUrl);
+    // const [interiorCasingImage] = useImage(interiorCasingUrl);
+    const [interiorCasingImage] = useImage('/assets/temp/Короб.png')
 
     const fullStageRect = computed(() => ({
         x: 0,
@@ -121,12 +130,12 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         stageHeight,
         setStageDimensions,
         casingImage,
+        exteriorHingeImage,
         doorImage,
         additionalCasingElementImage,
         additionalDoorElementImage,
         interiorCasingImage,
         interiorDoorImage,
-        hingeImage,
         fullStageRect,
         layersConfig,
         universalConfig,

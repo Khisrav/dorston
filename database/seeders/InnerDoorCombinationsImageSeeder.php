@@ -15,7 +15,7 @@ class InnerDoorCombinationsImageSeeder extends Seeder
 {
     private const FILM_COLOR_CATEGORY_IDS = [13, 2];
     private const COMBINATIONS_BASE_PATH = 'database/data/door-models/apartment-interior/combinations';
-    private const VALID_PURPOSES = ['Наличник', 'Полотно', 'Вставка наличника', 'Вставка полотна'];
+    private const VALID_PURPOSES = ['Наличник', 'Полотно', 'Вставка наличника', 'Вставка полотна', 'Вставка полотно'];
 
     public function run(): void
     {
@@ -91,7 +91,7 @@ class InnerDoorCombinationsImageSeeder extends Seeder
                     [
                         'door_model_id' => $model->id,
                         'film_color_id'  => $filmColor->id,
-                        'img_purpose'    => $purpose,
+                        'img_purpose'    => $purpose === 'Вставка полотно' ? 'Вставка полотна' : $purpose,
                     ],
                     ['image' => $storagePath]
                 );
