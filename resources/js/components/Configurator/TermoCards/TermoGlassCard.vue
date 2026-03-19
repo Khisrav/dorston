@@ -28,7 +28,7 @@ const showInteriorDrawer = ref(false)
                     />
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-serif text-sm text-sky-900/40 tracking-wider">Наружний</p>
+                    <p class="font-serif text-sm text-sky-900/40 tracking-wider">Снаружи</p>
                     <p class="font-serif font-medium text-sky-900 truncate">
                         {{ store.doorConfig.glassColor.exterior && store.doorConfig.glassColor.exterior !== -1
                             ? store.getFilmColor(store.doorConfig.glassColor.exterior)?.name
@@ -51,7 +51,7 @@ const showInteriorDrawer = ref(false)
                     />
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-serif text-sm text-sky-900/40 tracking-wider">Внутренний</p>
+                    <p class="font-serif text-sm text-sky-900/40 tracking-wider">Внутри</p>
                     <p class="font-serif font-medium text-sky-900 truncate">
                         {{ store.doorConfig.glassColor.interior && store.doorConfig.glassColor.interior !== -1
                             ? store.getFilmColor(store.doorConfig.glassColor.interior)?.name

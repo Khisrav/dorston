@@ -104,7 +104,7 @@ const selectedSecondaryLock = computed(() =>
         <p class="font-serif text-sm inline-block mb-3 text-sky-900/70">Цилиндры</p>
         <div class="grid grid-cols-1 gap-3">
             <div>
-                <label class="font-serif text-xs inline-block mb-1.5 text-sky-900/70">Основной цилиндр</label>
+                <label class="font-serif text-xs inline-block mb-1.5 text-sky-900/70">Цилиндр основного замка</label>
                 <Select
                     v-model="doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism"
                     :options="availableCylinders"
@@ -121,7 +121,7 @@ const selectedSecondaryLock = computed(() =>
             </div>
 
             <div v-if="doorCalcStore.doorConfig.furniture.hasSecondaryLock">
-                <label class="font-serif text-xs inline-block mb-1.5 text-sky-900/70">Дополнительный цилиндр</label>
+                <label class="font-serif text-xs inline-block mb-1.5 text-sky-900/70">Цилиндр дополнительного замка</label>
                 <Select
                     v-model="doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism"
                     :options="availableCylinders"

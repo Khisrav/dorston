@@ -8,6 +8,7 @@ use App\Filament\Resources\Nomenclatures\Pages\ListNomenclatures;
 use App\Filament\Resources\Nomenclatures\Schemas\NomenclatureForm;
 use App\Filament\Resources\Nomenclatures\Tables\NomenclaturesTable;
 use App\Models\Nomenclature;
+use App\Filament\Resources\Nomenclatures\RelationManagers\NomenclaturePropertiesRelationManager;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -40,7 +41,7 @@ class NomenclatureResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            NomenclaturePropertiesRelationManager::class,
         ];
     }
 

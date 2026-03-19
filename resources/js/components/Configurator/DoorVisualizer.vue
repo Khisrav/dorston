@@ -23,11 +23,14 @@ onMounted(() => {
             <div class="flex justify-center items-start gap-4 md:gap-7">
 
                 <!-- Exterior stage -->
-                <div class="relative">
+                <div class="relativ">
                     <v-stage :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
                         <!-- Layer 0: Black background -->
                         <v-layer>
                             <v-rect :config="{ ...doorVisualStore.layersConfig.exterior.background }" />
+                        </v-layer>
+                        <v-layer>
+                            <v-image :config="{ ...doorVisualStore.fullStageRect, image: doorVisualStore.exteriorHingeImage }" />
                         </v-layer>
                         <!-- Layer 1: Casing (Наличник) -->
                         <v-layer>
@@ -44,10 +47,6 @@ onMounted(() => {
                         <!-- Layer 3: Additional door element -->
                         <v-layer>
                             <v-image :config="{ ...doorVisualStore.fullStageRect, image: doorVisualStore.additionalDoorElementImage }" />
-                        </v-layer>
-                        <!-- Layer 4: Hinges -->
-                        <v-layer>
-                            <v-image :config="{ ...doorVisualStore.fullStageRect, image: doorVisualStore.hingeImage }" />
                         </v-layer>
                     </v-stage>
                     <!-- <div class="absolute -bottom-6 right-0 left-0 text-center">

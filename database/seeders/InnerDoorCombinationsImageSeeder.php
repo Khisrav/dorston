@@ -15,7 +15,7 @@ class InnerDoorCombinationsImageSeeder extends Seeder
 {
     private const FILM_COLOR_CATEGORY_IDS = [13, 2];
     private const COMBINATIONS_BASE_PATH = 'database/data/door-models/apartment-interior/combinations';
-    private const VALID_PURPOSES = ['Наличник', 'Полотно', 'Вставка наличника', 'Вставка полотна'];
+    private const VALID_PURPOSES = ['Наличник', 'Полотно', 'Вставка наличника', 'Вставка полотна', 'Вставка полотно'];
 
     public function run(): void
     {
@@ -28,13 +28,21 @@ class InnerDoorCombinationsImageSeeder extends Seeder
         $skippedParse = 0;
         $skippedNomenclature = 0;
         $missingFolders = 0;
+        $failed = [];
 
         foreach ($models as $model) {
             $folderPath = base_path(self::COMBINATIONS_BASE_PATH . '/' . $model->name);
 
             if (!is_dir($folderPath)) {
-                $this->command?->warn("No combinations folder for model: {$model->name}");
+                $this->command?->warn("Папка комбинаций не найдена для модели: {$model->name}");
                 $missingFolders++;
+                $failed[] = [
+                    'model'    => $model->name,
+                    'color'    => '—',
+                    'purpose'  => '—',
+                    'filename' => '—',
+                    'reason'   => 'Папка модели не найдена',
+                ];
                 continue;
             }
 
@@ -47,8 +55,15 @@ class InnerDoorCombinationsImageSeeder extends Seeder
                 $parsed = $this->parseFilename($filename);
 
                 if (!$parsed) {
-                    $this->command?->warn("Cannot parse filename: {$filename}");
+                    $this->command?->warn("Не удалось разобрать имя файла: {$filename}");
                     $skippedParse++;
+                    $failed[] = [
+                        'model'    => $model->name,
+                        'color'    => '—',
+                        'purpose'  => '—',
+                        'filename' => $filename,
+                        'reason'   => 'Не удалось разобрать имя файла',
+                    ];
                     continue;
                 }
 
@@ -57,8 +72,15 @@ class InnerDoorCombinationsImageSeeder extends Seeder
                 $filmColor = $this->findNomenclature($colorName, $nomenclatures);
 
                 if (!$filmColor) {
-                    $this->command?->warn("Nomenclature not found for color: '{$colorName}' (file: {$filename})");
+                    $this->command?->warn("Цвет не найден в номенклатуре: '{$colorName}' (файл: {$filename})");
                     $skippedNomenclature++;
+                    $failed[] = [
+                        'model'    => $model->name,
+                        'color'    => $colorName,
+                        'purpose'  => $purpose,
+                        'filename' => $filename,
+                        'reason'   => 'Цвет не найден в номенклатуре',
+                    ];
                     continue;
                 }
 
@@ -69,12 +91,12 @@ class InnerDoorCombinationsImageSeeder extends Seeder
                     [
                         'door_model_id' => $model->id,
                         'film_color_id'  => $filmColor->id,
-                        'img_purpose'    => $purpose,
+                        'img_purpose'    => $purpose === 'Вставка полотно' ? 'Вставка полотна' : $purpose,
                     ],
                     ['image' => $storagePath]
                 );
 
-                $this->command?->info("Imported: {$filename}");
+                $this->command?->info("Импортировано: {$filename}");
                 $imported++;
             }
         }
@@ -83,15 +105,36 @@ class InnerDoorCombinationsImageSeeder extends Seeder
 
         $this->command?->newLine();
         $this->command?->table(
-            ['Metric', 'Count'],
+            ['Показатель', 'Кол-во'],
             [
-                ['Imported',                  $imported],
-                ['Skipped (parse error)',      $skippedParse],
-                ['Skipped (no nomenclature)',  $skippedNomenclature],
-                ['Total skipped',              $skippedTotal],
-                ['Models without folder',      $missingFolders],
+                ['Импортировано',                      $imported],
+                ['Пропущено (ошибка имени файла)',      $skippedParse],
+                ['Пропущено (цвет не найден)',          $skippedNomenclature],
+                ['Пропущено итого',                    $skippedTotal],
+                ['Модели без папки',                   $missingFolders],
             ]
         );
+
+        if (!empty($failed)) {
+            $this->command?->newLine();
+            $this->command?->warn('=== КОМБИНАЦИИ, КОТОРЫЕ НЕ УДАЛОСЬ ИМПОРТИРОВАТЬ ===');
+            $this->command?->table(
+                ['Модель', 'Цвет', 'Назначение', 'Файл', 'Причина'],
+                array_map(fn($f) => array_values($f), $failed)
+            );
+
+            $logPath = storage_path('logs/inner-door-combinations-failed.log');
+            $lines = ['Комбинации, которые не удалось импортировать — ' . now()->toDateTimeString(), ''];
+            $lines[] = implode(' | ', ['Модель', 'Цвет', 'Назначение', 'Файл', 'Причина']);
+            $lines[] = str_repeat('-', 100);
+            foreach ($failed as $f) {
+                $lines[] = implode(' | ', array_values($f));
+            }
+            file_put_contents($logPath, implode(PHP_EOL, $lines) . PHP_EOL);
+
+            $this->command?->newLine();
+            $this->command?->line("Список также сохранён в файл: {$logPath}");
+        }
     }
 
     private function clearPrevious(): void
@@ -112,7 +155,7 @@ class InnerDoorCombinationsImageSeeder extends Seeder
             $combinations->toQuery()->delete();
         }
 
-        $this->command?->info("Cleared {$deleted} existing combination(s) from DB and storage.");
+        $this->command?->info("Удалено {$deleted} существующих комбинаций из БД и хранилища.");
     }
 
     private function parseFilename(string $filename): ?array
