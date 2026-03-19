@@ -3,7 +3,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc'
 import { getImageUrl } from '@/lib/utils'
 import { type Furniture, type peepholePosition } from '@/types/configurator'
 import { Drawer, SelectButton, ToggleSwitch } from 'primevue'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import ConfiguratorCard from './ConfiguratorCard.vue'
 
 const doorCalcStore = useDoorCalc()
@@ -282,7 +282,7 @@ const peepholeOptions: { label: string; value: peepholePosition }[] = [
                     type="button"
                     @click="selectSet(furniture)"
                     :class="[
-                        'flex items-center gap-4 w-full p-3 rounded-2xl border text-left transition-all duration-200 cursor-pointer w-full',
+                        'flex items-center gap-4 w-full p-3 rounded-2xl border text-left transition-all duration-200 cursor-pointer',
                         doorCalcStore.doorConfig.furniture.furnitureSetId === furniture.id
                             ? 'border-sky-900/60 border-2 bg-sky-900/5'
                             : 'border-sky-900/10 hover:border-sky-900/30'

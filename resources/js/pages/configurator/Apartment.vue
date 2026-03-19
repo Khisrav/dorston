@@ -43,7 +43,6 @@ doorCalcStore.furnitures = furnitures.value
 doorCalcStore.handles = handles.value
 doorCalcStore.locks = locks.value
 doorCalcStore.cylinders = cylinders.value
-doorCalcStore.initializeDefaultConfig()
 
 // Computed properties to filter door models
 const exteriorDoorModels = computed(() => {
@@ -153,6 +152,7 @@ function fetchDoorCombinations(exteriorModelId: number | undefined, interiorMode
 }
 
 onMounted(() => {
+    doorCalcStore.initializeDefaultConfig()
     fetchDoorCombinations(doorCalcStore.doorConfig.exterior.panelModel, doorCalcStore.doorConfig.interior.panelModel);
 });
 

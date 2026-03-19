@@ -1,14 +1,12 @@
 <script setup lang="ts">
+import AppLogoIcon from '@/components/AppLogoIcon.vue';
 import InputError from '@/components/InputError.vue';
-import TextLink from '@/components/TextLink.vue';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/AuthLayout.vue';
+import PublicLayout from '@/layouts/PublicLayout.vue';
 import { login } from '@/routes';
 import { email } from '@/routes/password';
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, Link } from '@inertiajs/vue3';
+import { MailIcon } from 'lucide-vue-next';
+import { Button, IconField, InputIcon, InputText } from 'primevue';
 
 defineProps<{
     status?: string;
@@ -16,50 +14,71 @@ defineProps<{
 </script>
 
 <template>
-    <AuthLayout
-        title="Forgot password"
-        description="Enter your email to receive a password reset link"
-    >
-        <Head title="Forgot password" />
+    <Head title="Восстановление пароля" />
+    <PublicLayout>
+        <div class="flex flex-1 items-center justify-center py-16 px-4">
+            <div class="w-full max-w-md">
 
-        <div
-            v-if="status"
-            class="mb-4 text-center text-sm font-medium text-green-600"
-        >
-            {{ status }}
-        </div>
+                <div class="bg-white border border-sky-950/10 rounded-3xl shadow-2xl shadow-sky-900/5 p-8 sm:p-10">
 
-        <div class="space-y-6">
-            <Form v-bind="email.form()" v-slot="{ errors, processing }">
-                <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
-                    <Input
-                        id="email"
-                        type="email"
-                        name="email"
-                        autocomplete="off"
-                        autofocus
-                        placeholder="email@example.com"
-                    />
-                    <InputError :message="errors.email" />
-                </div>
+                    <div class="flex flex-col items-center gap-3 mb-8">
+                        <Link href="/" class="flex items-center justify-center rounded-sm border border-black/20 bg-white size-10">
+                            <AppLogoIcon class="size-6" />
+                        </Link>
+                        <div class="text-center">
+                            <h1 class="font-serif font-bold text-2xl sm:text-3xl tracking-tight text-black mb-1">Восстановление пароля</h1>
+                            <p class="font-serif text-sm text-black/50">Укажите почту — мы отправим ссылку для сброса</p>
+                        </div>
+                    </div>
 
-                <div class="my-6 flex items-center justify-start">
-                    <Button
-                        class="w-full"
-                        :disabled="processing"
-                        data-test="email-password-reset-link-button"
+                    <div
+                        v-if="status"
+                        class="mb-6 rounded-2xl bg-green-50 border border-green-200 px-4 py-3 text-center text-sm font-serif text-green-700"
                     >
-                        <Spinner v-if="processing" />
-                        Email password reset link
-                    </Button>
-                </div>
-            </Form>
+                        {{ status }}
+                    </div>
 
-            <div class="space-x-1 text-center text-sm text-muted-foreground">
-                <span>Or, return to</span>
-                <TextLink :href="login()">log in</TextLink>
+                    <Form v-bind="email.form()" v-slot="{ errors, processing }" class="flex flex-col gap-5">
+                        <div class="flex flex-col gap-1.5">
+                            <label for="email" class="text-sm font-serif font-medium text-black/70">Электронная почта</label>
+                            <IconField>
+                                <InputIcon>
+                                    <MailIcon class="size-4" />
+                                </InputIcon>
+                                <InputText
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    autocomplete="off"
+                                    autofocus
+                                    placeholder="ivan@example.com"
+                                    class="w-full"
+                                />
+                            </IconField>
+                            <InputError :message="errors.email" />
+                        </div>
+
+                        <Button
+                            type="submit"
+                            label="Отправить ссылку"
+                            :loading="processing"
+                            :disabled="processing"
+                            icon="pi pi-send"
+                            icon-pos="right"
+                            class="mt-2 w-full"
+                            data-test="email-password-reset-link-button"
+                        />
+                    </Form>
+
+                    <p class="mt-6 text-center text-sm font-serif text-black/40">
+                        Вспомнили пароль?
+                        <Link :href="login()" class="text-black/70 hover:text-black transition-colors underline underline-offset-2">
+                            Войти
+                        </Link>
+                    </p>
+
+                </div>
             </div>
         </div>
-    </AuthLayout>
+    </PublicLayout>
 </template>

@@ -77,10 +77,11 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         applyDoorModelConfig(defaultInteriorModel?.id ?? 2, 'interior')
 
         // Auto-select furniture if only one available
-        if (furnitures.value.length === 1) {
+        if (furnitures.value.length != 0) {
             doorConfig.value.furniture.furnitureShape = furnitures.value[0].shape
             doorConfig.value.furniture.furnitureColor = furnitures.value[0].color
             doorConfig.value.furniture.furnitureSetId = furnitures.value[0].id
+            doorConfig.value.furniture.furnitureType = furnitures.value[0].furniture_type
         }
     }
 
