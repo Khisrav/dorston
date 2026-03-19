@@ -10,6 +10,8 @@ class Furniture extends Model
     protected $table = 'furnitures';
     
     protected $fillable = [
+        'preview_image',
+        'title',
         'shape', 
         'color', 
         'cylindrical_lock_cover_image', 

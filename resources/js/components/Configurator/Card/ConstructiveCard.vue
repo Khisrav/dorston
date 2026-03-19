@@ -60,9 +60,19 @@ function toggleBoxDesignInfo(opt: typeof boxDesignOptions[0], event: MouseEvent)
 }
 
 const exteriorSize = computed(() => {
-    let size = {
+    //forta, kombi, verso, stark
+    const isMP = ['Forta', 'Kombi', 'Verso', 'Stark'].includes(doorCalcStore.doorModels?.find((m) => m.id === doorCalcStore.doorConfig.exterior.panelModel)?.name ?? '')
+    let size: Record<string, number> = {
         width: 0,
         height: 0,
+    };
+    
+    if (isMP) {
+        size.width = doorCalcStore.doorConfig.doorWidth + 114
+        size.height = doorCalcStore.doorConfig.doorHeight + 57
+    } else {
+        size.width = doorCalcStore.doorConfig.doorWidth + 134
+        size.height = doorCalcStore.doorConfig.doorHeight + 67
     }
     
     return size
@@ -176,7 +186,7 @@ const exteriorSize = computed(() => {
                 />
             </div>
         </div>
-        <p class="mt-2 text-xs text-sky-900/50 font-serif">Наружный размер двери с наличником: {{ exteriorSize.width }}x{{ exteriorSize.height }} мм</p>
+        <p class="mt-2 text-xs text-sky-900/50 font-serif">Наружный размер двери с наличником: <span class="font-semibold">{{ exteriorSize.width }}x{{ exteriorSize.height }} мм</span></p>
 
         <div class="border-t border-sky-900/5 my-4 mb-2" />
 

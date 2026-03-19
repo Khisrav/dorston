@@ -40,6 +40,8 @@ class ConfiguratorController extends Controller
             ])->get()->map(function ($furniture) {
                 return [
                     'id' => $furniture->id,
+                    'title' => $furniture->title,
+                    'preview_image' => $furniture->preview_image,
                     'shape' => $furniture->shape,
                     'color' => $furniture->color,
                     'cylindrical_lock_cover_image' => $furniture->cylindrical_lock_cover_image,
@@ -108,6 +110,8 @@ class ConfiguratorController extends Controller
             ])->get()->map(function ($furniture) {
                 return [
                     'id' => $furniture->id,
+                    'title' => $furniture->title,
+                    'preview_image' => $furniture->preview_image,
                     'shape' => $furniture->shape,
                     'color' => $furniture->color,
                     'cylindrical_lock_cover_image' => $furniture->cylindrical_lock_cover_image,

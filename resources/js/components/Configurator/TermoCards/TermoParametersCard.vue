@@ -4,6 +4,7 @@ import { type doorHandleSide, type peepholePosition } from '@/types/configurator
 import { InputNumber } from 'primevue'
 import { PanelLeftIcon, PanelRightIcon } from 'lucide-vue-next'
 import ConfiguratorCard from '../Card/ConfiguratorCard.vue'
+import { computed } from 'vue'
 
 const store = useTermoDoorCalc()
 
@@ -17,6 +18,25 @@ const peepholeOptions: { label: string; value: peepholePosition }[] = [
     { label: 'С боку',    value: 'Side' },
     { label: 'По центру', value: 'Center' },
 ]
+
+const exteriorSize = computed(() => {
+    //forta, kombi, verso, stark
+    const isMP = ['Forta', 'Kombi', 'Verso', 'Stark'].includes(store.doorModels?.find((m) => m.id === store.doorConfig.exterior.panelModel)?.name ?? '')
+    let size: Record<string, number> = {
+        width: 0,
+        height: 0,
+    };
+    
+    if (isMP) {
+        size.width = store.doorConfig.width + 114
+        size.height = store.doorConfig.height + 57
+    } else {
+        size.width = store.doorConfig.width + 134
+        size.height = store.doorConfig.height + 67
+    }
+    
+    return size
+})
 </script>
 
 <template>
@@ -47,6 +67,7 @@ const peepholeOptions: { label: string; value: peepholePosition }[] = [
                 />
             </div>
         </div>
+        <p class="mt-2 text-xs text-sky-900/50 font-serif">Наружный размер двери с наличником: <span class="font-semibold">{{ exteriorSize.width }}x{{ exteriorSize.height }} мм</span></p>
 
         <div class="border-t border-sky-900/5 my-4 mb-2" />
 

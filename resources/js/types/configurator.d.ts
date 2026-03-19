@@ -138,8 +138,10 @@ export interface DoorModel {
 
 export interface Furniture {
     id: number;
+    title?: string | null;
+    preview_image?: string | null;
     shape: 'rectangular' | 'oval' | 'other';
-    color: 'black' | 'chrome' | 'gold' | 'bronze';
+    color: 'black' | 'chrome' | 'gold' | 'bronze' | 'matte-chrome';
     cylindrical_lock_cover_image?: string | null;
     lever_lock_cover_image?: string | null;
     peephole_cover_image?: string | null;
