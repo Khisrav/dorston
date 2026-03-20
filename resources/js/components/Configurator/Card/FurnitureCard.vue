@@ -2,8 +2,8 @@
 import { useDoorCalc } from '@/composables/useDoorCalc'
 import { getImageUrl } from '@/lib/utils'
 import { type Furniture, type peepholePosition } from '@/types/configurator'
-import { Drawer, SelectButton, ToggleSwitch } from 'primevue'
-import { computed, onMounted, ref } from 'vue'
+import { Button, Drawer, SelectButton, ToggleSwitch } from 'primevue'
+import { computed, ref, watch } from 'vue'
 import ConfiguratorCard from './ConfiguratorCard.vue'
 
 const doorCalcStore = useDoorCalc()
@@ -21,11 +21,11 @@ const typeOptions: { value: Furniture['furniture_type']; label: string }[] = [
 // ─── Color definitions ────────────────────────────────────────────────────────
 
 const colorOptions: { value: Furniture['color']; label: string; image: string }[] = [
-    { value: 'black',        label: 'Матовый чёрный', image: '/assets/furniture-colors/matte-black.png' },
-    { value: 'chrome',       label: 'Хром',           image: '/assets/furniture-colors/chrome.png' },
+    { value: 'black',        label: 'Матовый чёрный', image: '/assets/furniture-colors/matte-black.png'  },
+    { value: 'chrome',       label: 'Хром',           image: '/assets/furniture-colors/chrome.png'       },
     { value: 'matte-chrome', label: 'Матовый хром',   image: '/assets/furniture-colors/matte-chrome.png' },
-    { value: 'gold',         label: 'Золото',         image: '/assets/furniture-colors/gold.png' },
-    { value: 'bronze',       label: 'Бронза',         image: '/assets/furniture-colors/bronze.png' },
+    { value: 'gold',         label: 'Золото',         image: '/assets/furniture-colors/gold.png'         },
+    { value: 'bronze',       label: 'Бронза',         image: '/assets/furniture-colors/bronze.png'       },
 ]
 
 // ─── Shape definitions ────────────────────────────────────────────────────────
@@ -36,12 +36,19 @@ const shapeLabel: Record<Furniture['shape'], string> = {
     other:       'Другое',
 }
 
-// Shape picker inside drawer — only for push, only rectangular/oval
 const drawerShapeOptions: { value: 'rectangular' | 'oval'; label: string }[] = [
     { value: 'rectangular', label: 'Квадратный' },
-    { value: 'oval',        label: 'Круглый' },
+    { value: 'oval',        label: 'Круглый'    },
 ]
 const drawerShape = ref<'rectangular' | 'oval'>('rectangular')
+
+// ─── Peephole options ─────────────────────────────────────────────────────────
+
+const peepholeOptions: { label: string; value: peepholePosition }[] = [
+    { label: 'Нет',       value: 'None'   },
+    { label: 'Сбоку',     value: 'Side'   },
+    { label: 'По центру', value: 'Center' },
+]
 
 // ─── Computed ─────────────────────────────────────────────────────────────────
 
@@ -56,6 +63,16 @@ const selectedTypeLabel = computed(() =>
     typeOptions.find(t => t.value === selectedType.value)?.label ?? ''
 )
 
+// Colors that have at least one furniture for the current type
+const availableColorOptions = computed(() => {
+    if (!selectedType.value) return colorOptions
+    return colorOptions.filter(opt =>
+        doorCalcStore.furnitures.some(
+            f => f.furniture_type === selectedType.value && f.color === opt.value
+        )
+    )
+})
+
 /** Sets shown in the drawer, filtered by type + color + (shape if push) */
 const drawerSets = computed(() => {
     const type  = selectedType.value
@@ -63,8 +80,6 @@ const drawerSets = computed(() => {
     if (!type || !color) return []
 
     let sets = doorCalcStore.furnitures.filter(f => f.furniture_type === type && f.color === color)
-    // let sets = doorCalcStore.furnitures
-    console.log(type, color, sets)
 
     if (type === 'push') {
         sets = sets.filter(f => f.shape === drawerShape.value)
@@ -75,18 +90,48 @@ const drawerSets = computed(() => {
 
 // ─── Actions ──────────────────────────────────────────────────────────────────
 
+function autoSelectFirst() {
+    const type  = selectedType.value
+    const color = selectedColor.value
+    if (!type || !color) return
+
+    let candidates = doorCalcStore.furnitures.filter(
+        f => f.furniture_type === type && f.color === color
+    )
+    if (type === 'push') {
+        candidates = candidates.filter(f => f.shape === drawerShape.value)
+        if (!candidates.length) {
+            candidates = doorCalcStore.furnitures.filter(
+                f => f.furniture_type === type && f.color === color
+            )
+        }
+    }
+    const first = candidates[0]
+    if (first) {
+        doorCalcStore.doorConfig.furniture.furnitureSetId = first.id
+        doorCalcStore.doorConfig.furniture.furnitureShape = first.shape
+    } else {
+        doorCalcStore.doorConfig.furniture.furnitureSetId = -1
+        doorCalcStore.doorConfig.furniture.furnitureShape = undefined
+    }
+}
+
 function selectType(type: Furniture['furniture_type']) {
-    doorCalcStore.doorConfig.furniture.furnitureType  = type
-    doorCalcStore.doorConfig.furniture.furnitureSetId = -1
-    doorCalcStore.doorConfig.furniture.furnitureShape = undefined
-    // Reset drawer shape to default when switching types
+    doorCalcStore.doorConfig.furniture.furnitureType = type
     drawerShape.value = 'rectangular'
+
+    // If the currently selected color has no furniture for the new type, fall back
+    const colorStillValid = availableColorOptions.value.some(c => c.value === selectedColor.value)
+    if (!colorStillValid) {
+        doorCalcStore.doorConfig.furniture.furnitureColor = availableColorOptions.value[0]?.value
+    }
+
+    autoSelectFirst()
 }
 
 function selectColor(color: Furniture['color']) {
     doorCalcStore.doorConfig.furniture.furnitureColor = color
-    doorCalcStore.doorConfig.furniture.furnitureSetId = -1
-    doorCalcStore.doorConfig.furniture.furnitureShape = undefined
+    autoSelectFirst()
 }
 
 function selectSet(furniture: Furniture) {
@@ -98,7 +143,6 @@ function selectSet(furniture: Furniture) {
 }
 
 function openSetDrawer() {
-    // Pre-fill drawerShape from already selected set if applicable
     const current = selectedSet.value
     if (current && selectedType.value === 'push' && (current.shape === 'rectangular' || current.shape === 'oval')) {
         drawerShape.value = current.shape
@@ -106,13 +150,8 @@ function openSetDrawer() {
     showSetDrawer.value = true
 }
 
-// ─── Peephole options ─────────────────────────────────────────────────────────
-
-const peepholeOptions: { label: string; value: peepholePosition }[] = [
-    { label: 'Нет',       value: 'None'   },
-    { label: 'Сбоку',     value: 'Side'   },
-    { label: 'По центру', value: 'Center' },
-]
+// Re-run auto-select when shape filter changes inside the drawer
+watch(drawerShape, autoSelectFirst)
 </script>
 
 <template>
@@ -137,7 +176,7 @@ const peepholeOptions: { label: string; value: peepholePosition }[] = [
                 <p class="font-serif text-sm text-sky-900/70 mb-3">Цвет фурнитуры</p>
                 <div class="grid grid-cols-4 md:grid-cols-6 gap-4">
                     <button
-                        v-for="opt in colorOptions"
+                        v-for="opt in availableColorOptions"
                         :key="opt.value"
                         type="button"
                         :title="opt.label"
@@ -178,11 +217,14 @@ const peepholeOptions: { label: string; value: peepholePosition }[] = [
                         <span v-else class="text-xs text-neutral-400 font-serif text-center px-1">Нет фото</span>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="font-serif font-semibold text-sky-900 truncate line-clamp-1 text-sm">
+                        <p class="font-serif font-semibold text-sky-900 truncate text-sm">
                             {{ selectedSet.title ?? 'Модель без названия' }}
                         </p>
                         <div class="flex flex-wrap gap-1.5 mt-1">
-                            <span class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[10px] font-serif text-sky-900">
+                            <span
+                                v-if="selectedType === 'push'"
+                                class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[10px] font-serif text-sky-900"
+                            >
                                 {{ shapeLabel[selectedSet.shape] }}
                             </span>
                             <span class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[10px] font-serif text-sky-900">
@@ -193,7 +235,7 @@ const peepholeOptions: { label: string; value: peepholePosition }[] = [
                     <Button variant="outlined" size="small" label="Изменить" />
                 </div>
 
-                <!-- No set selected: placeholder -->
+                <!-- No set selected -->
                 <div
                     v-else
                     class="flex items-center gap-3 p-3 rounded-2xl border border-dashed border-sky-900/20 cursor-pointer hover:border-sky-900/40 transition-colors"
@@ -299,11 +341,14 @@ const peepholeOptions: { label: string; value: peepholePosition }[] = [
                     </div>
 
                     <div class="flex-1 min-w-0 space-y-1.5">
-                        <p class="font-serif font-medium text-sky-900 truncate line-clamp-1 w-full">
+                        <p class="font-serif font-medium text-sky-900 truncate w-full">
                             {{ furniture.title ?? 'Модель без названия' }}
                         </p>
                         <div class="flex flex-wrap gap-1.5">
-                            <span class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[11px] font-serif text-sky-900">
+                            <span
+                                v-if="selectedType === 'push'"
+                                class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[11px] font-serif text-sky-900"
+                            >
                                 {{ shapeLabel[furniture.shape] }}
                             </span>
                             <span class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[11px] font-serif text-sky-900">

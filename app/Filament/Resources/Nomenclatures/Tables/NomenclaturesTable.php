@@ -4,13 +4,14 @@ namespace App\Filament\Resources\Nomenclatures\Tables;
 
 use App\Models\NomenclatureCategory;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Filters\MultiSelectFilter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class NomenclaturesTable
@@ -21,59 +22,78 @@ class NomenclaturesTable
             ->columns([
                 ImageColumn::make('image')
                     ->disk('public')
-                    ->height(64)
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->label(''),
+                    ->height(56)
+                    ->label('')
+                    ->toggleable(),
+
                 TextColumn::make('id')
                     ->label('ID')
                     ->sortable()
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextInputColumn::make('name')
                     ->label('Название')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: false),
-                TextColumn::make('nomenclature_category_id')
+                    ->grow()
+                    ->toggleable(),
+
+                TextColumn::make('nomenclatureCategory.name')
                     ->label('Категория')
-                    // ->badge()
-                    ->formatStateUsing(fn (int $state) => NomenclatureCategory::find($state)?->name)
+                    ->badge()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(),
+
                 TextInputColumn::make('base_price')
-                    ->label('Базовая цена')
+                    ->label('Цена')
                     ->type('number')
-                    ->suffix('₽')
-                    // ->money('RUB')
+                    ->suffix(' ₽')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(),
+
                 TextColumn::make('unit')
                     ->label('Ед. изм.')
                     ->badge()
-                    ->toggleable(isToggledHiddenByDefault: false),
-                TextInputColumn::make('tag')
+                    ->color('gray')
+                    ->toggleable(),
+
+                TextColumn::make('tag')
                     ->label('Метка')
+                    ->badge()
+                    ->color('info')
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(),
+
                 TextColumn::make('created_at')
                     ->label('Создан')
-                    ->dateTime()
+                    ->dateTime('d.m.Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('updated_at')
                     ->label('Обновлен')
-                    ->dateTime()
+                    ->dateTime('d.m.Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('id', 'desc')
             ->filters([
                 MultiSelectFilter::make('nomenclature_category_id')
                     ->label('Категория')
-                    ->options(NomenclatureCategory::all()->pluck('name', 'id'))
+                    ->options(fn () => NomenclatureCategory::all()->pluck('name', 'id')),
+
+                SelectFilter::make('tag')
+                    ->label('Метка')
+                    ->options([
+                        'primary-lock'   => 'Основной замок',
+                        'secondary-lock' => 'Вспомогательный замок',
+                    ]),
             ])
             ->recordActions([
                 EditAction::make(),
             ])
             ->toolbarActions([
+                CreateAction::make(),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
