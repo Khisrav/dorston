@@ -57,10 +57,8 @@ class NomenclaturesTable
                     ->color('gray')
                     ->toggleable(),
 
-                TextColumn::make('tag')
+                TextInputColumn::make('tag')
                     ->label('Метка')
-                    ->badge()
-                    ->color('info')
                     ->searchable()
                     ->toggleable(),
 

@@ -14,6 +14,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     const handles = ref<Nomenclature[]>([]);
     const locks = ref<{ primary: Nomenclature[], secondary: Nomenclature[] }>({ primary: [], secondary: [] });
     const cylinders = ref<Nomenclature[]>([]);
+    const pricing = ref<{ [key: string]: number }>({})
 
     const total_price = ref(0)
 
@@ -129,8 +130,8 @@ export const useDoorCalc = defineStore('doorCalc', () => {
             default:
                 total_price.value = 0
         }
-        total_price.value *= (1.3 * 1.055)
-        total_price.value = roundUpTo100(total_price.value)
+        // total_price.value *= (1.3 * 1.055)
+        // total_price.value = roundUpTo100(total_price.value)
     }, { deep: true, immediate: true })
 
     //if primary texture changed, then apply primary texture value to casing texture
@@ -189,6 +190,7 @@ export const useDoorCalc = defineStore('doorCalc', () => {
         handles,
         locks,
         cylinders,
+        pricing,
         getDoorModelInfo,
         getFilmColor,
         getPaintColor,
