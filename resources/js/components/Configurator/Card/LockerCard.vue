@@ -14,6 +14,24 @@ const showSecondaryLockDrawer = ref(false)
 const primaryLocks = computed(() => doorCalcStore.locks.primary)
 const secondaryLocks = computed(() => doorCalcStore.locks.secondary)
 
+// Pull and electronic furniture types force "Гардиан 32.21" as the primary lock
+const forcedPrimaryLockName = 'Гардиан 32.21'
+
+const isPrimaryLockForced = computed(() => {
+    const type = doorCalcStore.doorConfig.furniture.furnitureType
+    return type === 'pull' || type === 'electronic'
+})
+
+const forcedPrimaryLock = computed(() =>
+    primaryLocks.value.find(l => l.name === forcedPrimaryLockName) ?? null
+)
+
+watch(isPrimaryLockForced, (forced) => {
+    if (forced && forcedPrimaryLock.value) {
+        doorCalcStore.doorConfig.furniture.primaryLock = forcedPrimaryLock.value.id
+    }
+}, { immediate: true })
+
 const availableCylinders = computed(() =>
     doorCalcStore.cylinders.map(c => ({ label: c.name, value: c.id }))
 )
@@ -100,11 +118,22 @@ function securityLevel(value: string): number {
     <ConfiguratorCard :step="5" title="Замки">
 
         <!-- Primary lock -->
-        <p class="font-serif text-sm inline-block mb-3 text-sky-900/70">Основной замок</p>
+        <div class="flex items-center justify-between mb-3">
+            <p class="font-serif text-sm text-sky-900/70">Основной замок</p>
+            <span
+                v-if="isPrimaryLockForced"
+                class="font-serif text-[10px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200"
+            >Фиксирован</span>
+        </div>
         <button
             type="button"
-            @click="showPrimaryLockDrawer = true"
-            class="w-full flex items-center gap-3 p-3 rounded-2xl border border-sky-900/10 hover:border-sky-900/30 text-left transition-all duration-200"
+            @click="!isPrimaryLockForced && (showPrimaryLockDrawer = true)"
+            :class="[
+                'w-full flex items-center gap-3 p-3 rounded-2xl border text-left transition-all duration-200',
+                isPrimaryLockForced
+                    ? 'border-sky-900/8 bg-sky-900/3 cursor-default'
+                    : 'border-sky-900/10 hover:border-sky-900/30 cursor-pointer'
+            ]"
         >
             <div class="w-12 h-12 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
                 <img
@@ -121,7 +150,14 @@ function securityLevel(value: string): number {
                     {{ selectedPrimaryLock?.name ?? 'Не выбрано' }}
                 </p>
             </div>
-            <i class="pi pi-chevron-right text-sky-900/30" />
+            <i
+                v-if="!isPrimaryLockForced"
+                class="pi pi-chevron-right text-sky-900/30"
+            />
+            <i
+                v-else
+                class="pi pi-lock text-sky-900/20"
+            />
         </button>
 
         <div class="border-t border-sky-900/5 my-4" />

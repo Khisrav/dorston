@@ -35,6 +35,7 @@ const furnitures = ref(usePage().props.furnitures as Furniture[])
 const locks = ref(usePage().props.locks as { primary: Nomenclature[], secondary: Nomenclature[] })
 const cylinders = ref(usePage().props.cylinders as Nomenclature[])
 const handles = ref(usePage().props.handles as Nomenclature[])
+const pricing = ref(usePage().props.pricing as { [key: string]: number })
 
 const doorCalcStore = useDoorCalc()
 doorCalcStore.paints = paints.value
@@ -44,7 +45,7 @@ doorCalcStore.furnitures = furnitures.value
 doorCalcStore.handles = handles.value
 doorCalcStore.locks = locks.value
 doorCalcStore.cylinders = cylinders.value
-
+doorCalcStore.pricing = pricing.value
 // Computed properties to filter door models
 const exteriorDoorModels = computed(() => {
     return doorCalcStore.doorModels.filter((model: DoorModel) => model.type === 'exterior');

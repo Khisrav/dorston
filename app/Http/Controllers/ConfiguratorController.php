@@ -147,6 +147,8 @@ class ConfiguratorController extends Controller
                     ->select('id', 'image', 'img_purpose as purpose', 'door_model_id', 'film_color_id')
                     ->get();
             }),
+            'pricing' => Nomenclature::whereIn('nomenclature_category_id', [1, 4, 7, 9, 14, 15, 22])
+                ->pluck('base_price', 'name'),
         ]);
     }
 }

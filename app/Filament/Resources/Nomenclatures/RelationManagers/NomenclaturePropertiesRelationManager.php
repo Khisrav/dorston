@@ -10,7 +10,7 @@ use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 
 class NomenclaturePropertiesRelationManager extends RelationManager
@@ -18,22 +18,24 @@ class NomenclaturePropertiesRelationManager extends RelationManager
     protected static string $relationship = 'nomenclatureProperties';
     protected static ?string $title = 'Свойства';
     protected static ?string $pluralTitle = 'Свойства номенклатуры';
-    protected static ?string $modelLabel = 'Свойство номенклатуры';
+    protected static ?string $modelLabel = 'Свойство';
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TextInput::make('property_name')
-                    ->label('Название свойства')
+                    ->label('Свойство')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->datalist(['Страна', 'Механизм', 'Безопасность']),
 
                 TextInput::make('property_value')
-                    ->label('Значение свойства')
+                    ->label('Значение')
                     ->required()
                     ->maxLength(255),
-            ]);
+            ])
+            ->columns(2);
     }
 
     public function table(Table $table): Table
@@ -41,25 +43,17 @@ class NomenclaturePropertiesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('property_name')
             ->columns([
-                TextColumn::make('property_name')
+                TextInputColumn::make('property_name')
                     ->label('Свойство')
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('property_value')
+                TextInputColumn::make('property_value')
                     ->label('Значение')
                     ->searchable()
                     ->sortable(),
-
-                TextColumn::make('created_at')
-                    ->label('Создано')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
+            ->filters([])
             ->headerActions([
                 CreateAction::make(),
             ])
