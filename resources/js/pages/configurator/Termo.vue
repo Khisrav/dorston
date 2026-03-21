@@ -97,8 +97,8 @@ store.initializeDefaultConfig()
                     <TermoInteriorCard />
                     <TermoMetalCard />
                     <TermoGlassCard />
-                    <TermoLockerCard />
                     <TermoFurnitureCard />
+                    <TermoLockerCard />
                 </div>
             </div>
         </div>

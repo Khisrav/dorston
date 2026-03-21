@@ -2,7 +2,7 @@
 import { useTermoDoorCalc } from '@/composables/useTermoDoorCalc'
 import { getImageUrl } from '@/lib/utils'
 import { Drawer, ToggleSwitch } from 'primevue'
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import ConfiguratorCard from '../Card/ConfiguratorCard.vue'
 
 const store = useTermoDoorCalc()
@@ -10,6 +10,19 @@ const store = useTermoDoorCalc()
 const showPrimaryDrawer = ref(false)
 const showSecondaryDrawer = ref(false)
 const showInnerCasingDrawer = ref(false)
+
+const isUndercoatActive = computed(() => {
+    const primaryPaintName = store.getPaintColor(store.doorConfig.metalPainting.primaryColor ?? -1)?.name
+    const secondaryPaintName = store.getPaintColor(store.doorConfig.metalPainting.secondaryColor ?? -1)?.name
+    const innerCasingPaintName = store.getPaintColor(store.doorConfig.metalPainting.innerCasingColor ?? -1)?.name
+    return !!(primaryPaintName?.includes('Муар') || secondaryPaintName?.includes('Муар') || innerCasingPaintName?.includes('Муар'))
+})
+
+watch(isUndercoatActive, (active) => {
+    if (active) {
+        store.doorConfig.metalPainting.undercoat = true
+    }
+}, { immediate: true })
 </script>
 
 <template>
@@ -89,8 +102,10 @@ const showInnerCasingDrawer = ref(false)
         <div class="border-t border-sky-900/5 my-4"></div>
 
         <div class="flex items-center justify-between gap-4 p-3 rounded-2xl border border-sky-900/10">
-            <p class="font-serif text-sm text-sky-900/70">Цинкогрунтование</p>
-            <ToggleSwitch v-model="store.doorConfig.metalPainting.undercoat" />
+            <div>
+                <p class="font-serif text-sm text-sky-900/70">Цинкогрунтование</p>
+            </div>
+            <ToggleSwitch v-model="store.doorConfig.metalPainting.undercoat" :disabled="isUndercoatActive" />
         </div>
     </ConfiguratorCard>
 

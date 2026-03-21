@@ -46,6 +46,7 @@ export interface DoorConfig {
 }
 
 export interface TermoDoorConfig {
+    constructive: 'Termo+' | 'Termo Premium';
     width: number;
     height: number;
     handleSide: doorHandleSide;
@@ -74,6 +75,7 @@ export interface TermoDoorConfig {
     }
     furniture: {
         furnitureSetId?: number;
+        furnitureType?: 'push' | 'pull' | 'electronic';
         furnitureShape?: string;
         furnitureColor?: string;
         primaryLock?: number;

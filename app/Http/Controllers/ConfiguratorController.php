@@ -79,9 +79,11 @@ class ConfiguratorController extends Controller
             'locks' => [
                 'primary' => Nomenclature::where('tag', 'primary-lock')
                     ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id', 'properties')
+                    ->with('nomenclatureProperties')
                     ->get(),
                 'secondary' => Nomenclature::where('tag', 'secondary-lock')
                     ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id', 'properties')
+                    ->with('nomenclatureProperties')
                     ->get(),
             ],
             'cylinders' => Nomenclature::where('nomenclature_category_id', 5)
@@ -89,6 +91,9 @@ class ConfiguratorController extends Controller
                 ->get(),
             'handles' => Nomenclature::where('nomenclature_category_id', 6)
                 ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id')
+                ->get(),
+            'pricing' => Nomenclature::whereIn('nomenclature_category_id', [1, 4, 7, 9, 14, 15, 22])
+                ->pluck('base_price', 'name'),
         ]);
     }
 

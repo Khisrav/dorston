@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useTermoDoorCalc } from '@/composables/useTermoDoorCalc'
-import { getImageUrl } from '@/lib/utils'
 import { Drawer } from 'primevue'
 import { ref } from 'vue'
 import ConfiguratorCard from '../Card/ConfiguratorCard.vue'
@@ -20,20 +19,12 @@ const showInteriorDrawer = ref(false)
                 @click="showExteriorDrawer = true"
                 class="w-full flex items-center gap-3 p-3 rounded-2xl border border-sky-900/10 hover:border-sky-900/30 text-left transition-all duration-200"
             >
-                <div class="w-12 h-12 bg-neutral-100 rounded-md shrink-0 overflow-hidden">
-                    <img
-                        v-if="store.doorConfig.glassColor.exterior && store.doorConfig.glassColor.exterior !== -1"
-                        :src="getImageUrl(store.getFilmColor(store.doorConfig.glassColor.exterior)?.image ?? null)"
-                        class="w-full h-full object-cover"
-                    />
+                <div class="w-12 h-12 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+                    <i class="pi pi-sun text-neutral-300 text-lg" />
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="font-serif text-sm text-sky-900/40 tracking-wider">Снаружи</p>
-                    <p class="font-serif font-medium text-sky-900 truncate">
-                        {{ store.doorConfig.glassColor.exterior && store.doorConfig.glassColor.exterior !== -1
-                            ? store.getFilmColor(store.doorConfig.glassColor.exterior)?.name
-                            : 'Без тонировки' }}
-                    </p>
+                    <p class="font-serif font-medium text-sky-900 truncate">Без тонировки</p>
                 </div>
                 <i class="pi pi-chevron-right text-sky-900/30" />
             </button>
@@ -43,20 +34,12 @@ const showInteriorDrawer = ref(false)
                 @click="showInteriorDrawer = true"
                 class="w-full flex items-center gap-3 p-3 rounded-2xl border border-sky-900/10 hover:border-sky-900/30 text-left transition-all duration-200"
             >
-                <div class="w-12 h-12 bg-neutral-100 rounded-md shrink-0 overflow-hidden">
-                    <img
-                        v-if="store.doorConfig.glassColor.interior && store.doorConfig.glassColor.interior !== -1"
-                        :src="getImageUrl(store.getFilmColor(store.doorConfig.glassColor.interior)?.image ?? null)"
-                        class="w-full h-full object-cover"
-                    />
+                <div class="w-12 h-12 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+                    <i class="pi pi-home text-neutral-300 text-lg" />
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="font-serif text-sm text-sky-900/40 tracking-wider">Внутри</p>
-                    <p class="font-serif font-medium text-sky-900 truncate">
-                        {{ store.doorConfig.glassColor.interior && store.doorConfig.glassColor.interior !== -1
-                            ? store.getFilmColor(store.doorConfig.glassColor.interior)?.name
-                            : 'Без тонировки' }}
-                    </p>
+                    <p class="font-serif font-medium text-sky-900 truncate">Без тонировки</p>
                 </div>
                 <i class="pi pi-chevron-right text-sky-900/30" />
             </button>
@@ -64,49 +47,27 @@ const showInteriorDrawer = ref(false)
 
     </ConfiguratorCard>
 
-    <!-- DRAWER: Glass exterior -->
+    <!-- DRAWER: Glass exterior (tinted glass options — coming soon) -->
     <Drawer v-model:visible="showExteriorDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
         <template #header>
-            <h2 class="font-serif text-lg tracking-tight">Стекло: Снаружи</h2>
+            <h2 class="font-serif text-lg tracking-tight">Тонировка стекла: Снаружи</h2>
         </template>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-1">
-            <div
-                v-for="color in store.filmColors"
-                :key="color.id"
-                @click="() => { store.doorConfig.glassColor.exterior = color.id; showExteriorDrawer = false }"
-                :class="[
-                    'cursor-pointer border transition-all duration-200 aspect-video',
-                    store.doorConfig.glassColor.exterior === color.id
-                        ? 'border-sky-900'
-                        : 'border-transparent hover:border-sky-900/30'
-                ]"
-            >
-                <img :src="getImageUrl(color.image ?? null)" :alt="color.name ?? ''" class="w-full h-full object-cover" />
-                <p class="text-xs text-center p-1 truncate">{{ color.name }}</p>
-            </div>
+        <div class="flex flex-col items-center justify-center py-16 text-center">
+            <i class="pi pi-clock text-4xl text-neutral-300 mb-3" />
+            <p class="font-serif font-semibold text-black/40">Скоро</p>
+            <p class="font-serif text-sm text-black/30 mt-1">Варианты тонировки появятся в ближайшее время</p>
         </div>
     </Drawer>
 
-    <!-- DRAWER: Glass interior -->
+    <!-- DRAWER: Glass interior (tinted glass options — coming soon) -->
     <Drawer v-model:visible="showInteriorDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
         <template #header>
-            <h2 class="font-serif text-lg tracking-tight">Стекло: Изнутри</h2>
+            <h2 class="font-serif text-lg tracking-tight">Тонировка стекла: Внутри</h2>
         </template>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-1">
-            <div
-                v-for="color in store.filmColors"
-                :key="color.id"
-                @click="() => { store.doorConfig.glassColor.interior = color.id; showInteriorDrawer = false }"
-                :class="[
-                    'cursor-pointer border transition-all duration-200 aspect-video',
-                    store.doorConfig.glassColor.interior === color.id
-                        ? 'border-sky-900'
-                        : 'border-transparent hover:border-sky-900/30'
-                ]"
-            >
-                <img :src="getImageUrl(color.image ?? null)" :alt="color.name ?? ''" class="w-full h-full object-cover" />
-                <p class="text-xs text-center p-1 truncate">{{ color.name }}</p>
-            </div>
+        <div class="flex flex-col items-center justify-center py-16 text-center">
+            <i class="pi pi-clock text-4xl text-neutral-300 mb-3" />
+            <p class="font-serif font-semibold text-black/40">Скоро</p>
+            <p class="font-serif text-sm text-black/30 mt-1">Варианты тонировки появятся в ближайшее время</p>
         </div>
     </Drawer>
 </template>

@@ -3,8 +3,17 @@ import { useDoorCalc } from '@/composables/useDoorCalc'
 import { type doorConstructive, type doorBoxDesign, type doorHandleSide } from '@/types/configurator'
 import ConfiguratorCard from './ConfiguratorCard.vue'
 import { InfoIcon, PanelLeftIcon, PanelRightIcon } from 'lucide-vue-next'
-import { InputNumber, Popover } from 'primevue'
+import { Select, Popover } from 'primevue'
 import { computed, ref } from 'vue'
+
+function generateRange(min: number, max: number, step: number): { label: string; value: number }[] {
+    const result: { label: string; value: number }[] = []
+    for (let i = min; i <= max; i += step) result.push({ label: `${i} мм`, value: i })
+    return result
+}
+
+const widthOptions  = generateRange(800, 1050, 10)
+const heightOptions = generateRange(1800, 2300, 10)
 
 const doorCalcStore = useDoorCalc()
 
@@ -165,24 +174,22 @@ const exteriorSize = computed(() => {
         <div class="grid grid-cols-2 gap-3">
             <div>
                 <label class="font-serif text-xs inline-block mb-1.5 text-sky-900/70">Ширина</label>
-                <InputNumber
+                <Select
                     v-model="doorCalcStore.doorConfig.doorWidth"
-                    :min="600" :max="3000" :step="10"
-                    showButtons buttonLayout="horizontal"
-                    decrementButtonClass="p-button-text" incrementButtonClass="p-button-text"
-                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-                    fluid suffix=" мм"
+                    :options="widthOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    fluid
                 />
             </div>
             <div>
                 <label class="font-serif text-xs inline-block mb-1.5 text-sky-900/70">Высота</label>
-                <InputNumber
+                <Select
                     v-model="doorCalcStore.doorConfig.doorHeight"
-                    :min="600" :max="3000" :step="10"
-                    showButtons buttonLayout="horizontal"
-                    decrementButtonClass="p-button-text" incrementButtonClass="p-button-text"
-                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-                    fluid suffix=" мм"
+                    :options="heightOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    fluid
                 />
             </div>
         </div>
