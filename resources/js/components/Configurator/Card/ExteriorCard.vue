@@ -231,7 +231,7 @@ const secondaryPaintColor = computed(() =>
         <template #header>
             <h2 class="font-serif text-lg tracking-tight">Модель наружной панели</h2>
         </template>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-1">
+        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 p-1">
             <div
                 v-for="model in exteriorModels"
                 :key="model.id"

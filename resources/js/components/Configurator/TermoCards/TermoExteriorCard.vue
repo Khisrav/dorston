@@ -11,9 +11,15 @@ const showModelDrawer = ref(false)
 const showPrimaryFilmDrawer = ref(false)
 const showSecondaryFilmDrawer = ref(false)
 
-const exteriorModels = computed(() =>
-    store.doorModels.filter(m => m.type === 'exterior')
-)
+const exteriorModels = computed(() => {
+    const termoPlusModels = ['Optima', 'Credo', 'Credo SP', 'Senator SP', 'Senator Max SP', 'Nova', 'Imperato']
+
+    if (store.doorConfig.constructive === 'Termo+') {
+        return store.doorModels.filter(m => m.type === 'exterior' && termoPlusModels.includes(m.name))
+    } else {
+        return store.doorModels.filter(m => m.type === 'exterior' && !termoPlusModels.includes(m.name))
+    }
+})
 
 const selectedModel = computed(() =>
     store.getDoorModelInfo(store.doorConfig.exterior.panelModel)
@@ -59,10 +65,10 @@ const secondaryFilmColor = computed(() =>
             </div>
         </div>
 
-        <div class="border-t border-sky-900/5 my-4 mb-2" />
+        <div v-if="store.doorConfig.constructive !== 'Termo+'" class="border-t border-sky-900/5 my-4 mb-2" />
 
-        <label class="font-serif text-sm inline-block mb-3 text-sky-900/70">Цвет HPL панели</label>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <label v-if="store.doorConfig.constructive !== 'Termo+'" class="font-serif text-sm inline-block mb-3 text-sky-900/70">Цвет HPL панели</label>
+        <div v-if="store.doorConfig.constructive !== 'Termo+'" class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <button
                 type="button"
                 @click="showPrimaryFilmDrawer = true"

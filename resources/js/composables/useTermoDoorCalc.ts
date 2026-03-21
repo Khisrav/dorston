@@ -17,6 +17,7 @@ export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
     const total_price = ref(0)
 
     const doorConfig = ref<TermoDoorConfig>({
+        constructive: 'Termo+',
         width: 820,
         height: 2050,
         handleSide: 'Left',
@@ -45,6 +46,7 @@ export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
         },
         furniture: {
             furnitureSetId: -1,
+            furnitureType: 'push' as 'push' | 'pull' | 'electronic',
             furnitureShape: undefined,
             furnitureColor: undefined,
             primaryLock: -1,

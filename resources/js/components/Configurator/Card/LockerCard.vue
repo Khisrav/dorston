@@ -80,33 +80,32 @@ watch(isSecondaryCylinricalLock, (newVal) => {
     }
 })
 
-const COUNTRY_FLAGS: Record<string, string> = {
-    'Россия': '🇷🇺',
-    'Германия': '🇩🇪',
-    'Италия': '🇮🇹',
-    'Израиль': '🇮🇱',
-    'Финляндия': '🇫🇮',
-    'Австрия': '🇦🇹',
-    'Китай': '🇨🇳',
-    'Турция': '🇹🇷',
-    'Чехия': '🇨🇿',
-    'Польша': '🇵🇱',
-    'США': '🇺🇸',
-    'Великобритания': '🇬🇧',
-    'Франция': '🇫🇷',
-    'Швеция': '🇸🇪',
-    'Беларусь': '🇧🇾',
-    'Испания': '🇪🇸',
-    'Япония': '🇯🇵',
-    'Корея': '🇰🇷',
+const COUNTRY_ABBR: Record<string, string> = {
+    'Россия': 'RU',
+    'Германия': 'DE',
+    'Италия': 'IT',
+    'Финляндия': 'FI',
+    'Австрия': 'AT',
+    'Китай': 'CN',
+    'Турция': 'TR',
+    'Чехия': 'CZ',
+    'Польша': 'PL',
+    'США': 'US',
+    'Великобритания': 'GB',
+    'Франция': 'FR',
+    'Швеция': 'SE',
+    'Беларусь': 'BY',
+    'Испания': 'ES',
+    'Япония': 'JP',
+    'Корея': 'KR',
 }
 
 function getLockProp(lock: { nomenclature_properties?: { property_name: string; property_value: string }[] }, name: string): string | undefined {
     return lock.nomenclature_properties?.find(p => p.property_name === name)?.property_value
 }
 
-function countryFlag(country: string): string {
-    return COUNTRY_FLAGS[country] ?? '🏳️'
+function countryAbbr(country: string): string {
+    return COUNTRY_ABBR[country] ?? '??'
 }
 
 function securityLevel(value: string): number {
@@ -277,9 +276,17 @@ function securityLevel(value: string): number {
                         <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
                             <span
                                 v-if="getLockProp(lock, 'Страна')"
-                                class="text-xs font-serif"
-                                :class="doorCalcStore.doorConfig.furniture.primaryLock === lock.id ? 'text-white/60' : 'text-sky-900/50'"
-                            >{{ countryFlag(getLockProp(lock, 'Страна')!) }} {{ getLockProp(lock, 'Страна') }}</span>
+                                class="flex items-center gap-1"
+                            >
+                                <span
+                                    class="text-[10px] font-mono font-bold px-1 py-0.5 rounded leading-none"
+                                    :class="doorCalcStore.doorConfig.furniture.primaryLock === lock.id ? 'bg-white/15 text-white/80' : 'bg-sky-900/8 text-sky-900/60'"
+                                >{{ countryAbbr(getLockProp(lock, 'Страна')!) }}</span>
+                                <span
+                                    class="text-xs font-serif"
+                                    :class="doorCalcStore.doorConfig.furniture.primaryLock === lock.id ? 'text-white/60' : 'text-sky-900/50'"
+                                >{{ getLockProp(lock, 'Страна') }}</span>
+                            </span>
                             <span
                                 v-if="getLockProp(lock, 'Механизм')"
                                 class="text-xs font-serif px-1.5 py-0.5 rounded-full"
@@ -350,9 +357,17 @@ function securityLevel(value: string): number {
                         <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
                             <span
                                 v-if="getLockProp(lock, 'Страна')"
-                                class="text-xs font-serif"
-                                :class="doorCalcStore.doorConfig.furniture.secondaryLock === lock.id ? 'text-white/60' : 'text-sky-900/50'"
-                            >{{ countryFlag(getLockProp(lock, 'Страна')!) }} {{ getLockProp(lock, 'Страна') }}</span>
+                                class="flex items-center gap-1"
+                            >
+                                <span
+                                    class="text-[10px] font-mono font-bold px-1 py-0.5 rounded leading-none"
+                                    :class="doorCalcStore.doorConfig.furniture.secondaryLock === lock.id ? 'bg-white/15 text-white/80' : 'bg-sky-900/8 text-sky-900/60'"
+                                >{{ countryAbbr(getLockProp(lock, 'Страна')!) }}</span>
+                                <span
+                                    class="text-xs font-serif"
+                                    :class="doorCalcStore.doorConfig.furniture.secondaryLock === lock.id ? 'text-white/60' : 'text-sky-900/50'"
+                                >{{ getLockProp(lock, 'Страна') }}</span>
+                            </span>
                             <span
                                 v-if="getLockProp(lock, 'Механизм')"
                                 class="text-xs font-serif px-1.5 py-0.5 rounded-full"
