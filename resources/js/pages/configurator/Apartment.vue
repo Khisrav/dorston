@@ -11,22 +11,13 @@ import { Link, router, usePage } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
 import { SelectButton, InputNumber, Drawer, Button } from 'primevue';
 import { computed, ref, watch, onMounted } from 'vue';
+import axios from 'axios';
+import { generate as generatePdf } from '@/routes/pdf';
 import ExteriorCard from '@/components/Configurator/Card/ExteriorCard.vue';
 import InteriorCard from '@/components/Configurator/Card/InteriorCard.vue';
 import FurnitureCard from '@/components/Configurator/Card/FurnitureCard.vue';
 import LockerCard from '@/components/Configurator/Card/LockerCard.vue'
 import AdditionalsCard from '@/components/Configurator/Card/AdditionalsCard.vue';
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Конфигуратор',
-        href: '/configurator',
-    },
-    {
-        title: 'Для квартиры',
-        href: '/configurator/apartment',
-    },
-]
 
 const paints = ref(usePage().props.paints as Nomenclature[])
 const doorModels = ref(usePage().props.doorModels as DoorModel[])
@@ -54,48 +45,6 @@ const exteriorDoorModels = computed(() => {
 const interiorDoorModels = computed(() => {
     return doorCalcStore.doorModels.filter((model: DoorModel) => model.type === 'interior');
 });
-
-const isLoggedIn = computed(() => {
-    if (!usePage().props.auth) return null;
-    return usePage().props.auth.user !== null;
-});
-
-// Accordion state for door parameters
-const isParametersExpanded = ref(true);
-
-const doorConstructiveOptions = [
-    { label: 'Comfort', value: 'Comfort' },
-    { label: 'Absolut', value: 'Absolut' },
-    { label: 'Termo', value: 'Termo' }
-];
-
-const handleSideOptions = [
-    { label: 'Левая', value: 'Left' },
-    { label: 'Правая', value: 'Right' }
-];
-
-const boxDesignOptions = [
-    { label: 'Открытый', value: 'Opened' },
-    { label: 'Закрытый', value: 'Closed' }
-];
-
-
-const parametersSummary = computed(() => {
-    let doorWidth = doorCalcStore.doorConfig.doorWidth
-    let doorHeight = doorCalcStore.doorConfig.doorHeight
-    let handleSide = 'Ручка ' + (doorCalcStore.doorConfig.doorHandleSide === 'Left' ? 'слева' : 'справа')
-    let boxDesign = (doorCalcStore.doorConfig.doorBoxDesign === 'Opened' ? 'Открытый' : 'Закрытый') + ' короб'
-    // let doorType = doorCalcStore.doorConfig.doorType === 'Apartment' ? 'Квартирная' : 'Уличная'
-    let doorConstructive = doorCalcStore.doorConfig.doorConstructive
-    
-    return [
-        `${doorWidth}x${doorHeight} мм`,
-        // doorType,
-        doorConstructive,
-        handleSide,
-        boxDesign,
-    ]
-})
 
 // View mode: exterior or interior
 const viewMode = ref<'exterior' | 'interior'>('exterior');
@@ -125,13 +74,35 @@ const exteriorDoorModel = computed(() => {
     return doorCalcStore.getDoorModelInfo(modelId);
 });
 
-const hasPrimaryFilmColor = computed(() => currentDoorModel.value?.has_primary_film_color ?? false);
-const hasSecondaryFilmColor = computed(() => currentDoorModel.value?.has_secondary_film_color ?? false);
-const hasCasingFilmColor = computed(() => currentDoorModel.value?.has_casing_film_color ?? false);
-const hasPrimaryPaint = computed(() => exteriorDoorModel.value?.has_primary_paint ?? false);
-const hasSecondaryPaint = computed(() => exteriorDoorModel.value?.has_secondary_paint ?? false);
-
 const doorVisualStore = useDoorVisual();
+const doorVisualizerRef = ref<InstanceType<typeof DoorVisualizer> | null>(null);
+const isGeneratingPdf = ref(false);
+
+async function downloadPdf() {
+    if (!doorVisualizerRef.value) return;
+
+    const images = doorVisualizerRef.value.exportStageImages();
+    if (!images) return;
+
+    isGeneratingPdf.value = true;
+    try {
+        const response = await axios.post(generatePdf.url(), {
+            exterior_image: images.exteriorImage,
+            interior_image: images.interiorImage,
+        }, { responseType: 'blob' });
+
+        const url = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'door-config.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } finally {
+        isGeneratingPdf.value = false;
+    }
+}
 
 function fetchDoorCombinations(exteriorModelId: number | undefined, interiorModelId: number | undefined) {
     const modelIds = [exteriorModelId, interiorModelId].filter((id): id is number => !!id);
@@ -199,7 +170,7 @@ watch(
                         <!-- Visualization Area -->
                         <div class="relative">
                             <div class="">
-                                <DoorVisualizer />
+                                <DoorVisualizer ref="doorVisualizerRef" />
                             </div>
                         </div>
 
@@ -209,7 +180,7 @@ watch(
                             </div>
                             <div class="flex gap-4 mt-4">
                                 <Button label="Оформить заказ" variant="" icon="pi pi-shopping-cart" size="small" />
-                                <Button label="Скачать PDF" variant="outlined" icon="pi pi-file-pdf" size="small" />
+                                <Button label="Скачать PDF" variant="outlined" icon="pi pi-file-pdf" size="small" :loading="isGeneratingPdf" @click="downloadPdf" />
                             </div>
                         </div>
                     </div>

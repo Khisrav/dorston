@@ -88,7 +88,7 @@ const moduleSampleImage = computed(() => {
                     </div>
 
                     <!-- Door sample image -->
-                    <div class="relative w-[160px] h-[202px] shrink-0">
+                    <div class="relative w-[160px] h-[202px] md:w-[202px] md:h-[256px] shrink-0">
                         <Transition name="img-swap">
                             <div
                                 v-if="!moduleSampleImage"

@@ -1,27 +1,38 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useDoorVisual } from '@/composables/useDoorVisual';
+import { useImage } from 'vue-konva';
 
 const doorVisualStore = useDoorVisual();
-const visualizerContainerRef = ref<HTMLDivElement | null>(null);
+const exteriorStageRef = ref<any>(null);
+const interiorStageRef = ref<any>(null);
 
-onMounted(() => {
-    if (visualizerContainerRef.value) {
-        const width = visualizerContainerRef.value.clientWidth;
-        const gap = window.innerWidth > 768 ? 32 : 16;
-        doorVisualStore.setStageDimensions((width - gap) / 2, 0);
-    }
-});
+function exportStageImages(): { exteriorImage: string; interiorImage: string } | null {
+    const exteriorStage = exteriorStageRef.value?.getNode();
+    const interiorStage = interiorStageRef.value?.getNode();
+
+    if (!exteriorStage || !interiorStage) return null;
+
+    // Buffer is already 960×2050; pixelRatio 2 → 1920×4100 for PDF / sharp zoom
+    const exteriorImage = exteriorStage.toDataURL({ mimeType: 'image/png', pixelRatio: 0.5 });
+    const interiorImage = interiorStage.toDataURL({ mimeType: 'image/png', pixelRatio: 0.5 });
+
+    return { exteriorImage, interiorImage };
+}
+
+defineExpose({ exportStageImages });
+
+const [furnitureShadow] = useImage('/storage/furniture/handle-covers/01KMDN6MZFGAZMHE0VGHB1ZJV6.png');
 </script>
 
 <template>
     <div class="border border-sky-900/10 bg-gradient-to-b to-white from-sky-900/5 shadow-md shadow-sky-800/5 p-4 md:p-7 pr-2 md:pr-4 flex items-center justify-center relative overflow-hidden rounded-3xl">
-        <div ref="visualizerContainerRef" class="w-full h-full">
+        <div class="w-full h-full">
             <div class="flex justify-center items-start gap-4 md:gap-7">
 
-                <!-- Exterior stage -->
-                <div>
-                    <v-stage :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
+                <!-- Exterior stage — high-res buffer, CSS-scaled to fit -->
+                <div class="door-stage-fit min-w-0 flex-1">
+                    <v-stage ref="exteriorStageRef" :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
                         <!-- Black background -->
                         <v-layer>
                             <v-rect :config="doorVisualStore.backgroundConfig" />
@@ -48,10 +59,14 @@ onMounted(() => {
                         </v-layer>
                         <!-- Furniture overlays -->
                         <v-layer>
-                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furniturePrimaryCylindricalLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furniturePrimaryLeverLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureSecondaryCylindricalLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureSecondaryLeverLockImage }" />
+                            <v-image :config="{
+                                ...doorVisualStore.exteriorImageConfig,
+                                image: furnitureShadow,
+                            }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorPrimaryCylindricalLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorPrimaryLeverLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorSecondaryCylindricalLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorSecondaryLeverLockImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furniturePeepholeImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureNightLatchTurnerImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureCylinderRodImage }" />
@@ -61,8 +76,8 @@ onMounted(() => {
                 </div>
 
                 <!-- Interior stage -->
-                <div>
-                    <v-stage :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
+                <div class="door-stage-fit min-w-0 flex-1">
+                    <v-stage ref="interiorStageRef" :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
                         <!-- Door panel -->
                         <v-layer>
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.interiorDoorImage }" />
@@ -73,10 +88,14 @@ onMounted(() => {
                         </v-layer>
                         <!-- Furniture overlays (mirrored) -->
                         <v-layer>
-                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furniturePrimaryCylindricalLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furniturePrimaryLeverLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureSecondaryCylindricalLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureSecondaryLeverLockImage }" />
+                            <v-image :config="{
+                                ...doorVisualStore.interiorImageConfig,
+                                image: furnitureShadow,
+                            }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorPrimaryCylindricalLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorPrimaryLeverLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorSecondaryCylindricalLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorSecondaryLeverLockImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furniturePeepholeImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureNightLatchTurnerImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureCylinderRodImage }" />
@@ -89,3 +108,21 @@ onMounted(() => {
         </div>
     </div>
 </template>
+
+<style scoped>
+/* Konva draws at 960×2050; shrink for layout without losing backing-store resolution */
+.door-stage-fit :deep(.konvajs-content) {
+    width: 100% !important;
+    height: auto !important;
+}
+
+.door-stage-fit :deep(canvas) {
+    width: 100% !important;
+    height: auto !important;
+    display: block;
+}
+
+.door-stage-fit {
+    aspect-ratio: 960 / 2050;
+}
+</style>

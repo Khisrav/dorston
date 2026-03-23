@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConfiguratorController;
+use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -21,6 +22,8 @@ Route::middleware('auth')->group(function () {
     Route::get('configurator/apartment', [ConfiguratorController::class, 'apartment'])->name('configurator.apartment');
     Route::get('configurator/termo', [ConfiguratorController::class, 'termo'])->name('configurator.termo');
     Route::get('configurator/termo/modular', [ConfiguratorController::class, 'termoModular'])->name('configurator.termo.modular');
+
+    Route::post('pdf/generate', [PDFController::class, 'generate'])->name('pdf.generate');
 });
 
 require __DIR__.'/settings.php';
