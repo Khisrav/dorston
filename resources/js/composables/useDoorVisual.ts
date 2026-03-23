@@ -7,19 +7,24 @@ import { DoorCombinationImage, Furniture } from "@/types/configurator";
 export const useDoorVisual = defineStore('doorVisual', () => {
     const doorCalcStore = useDoorCalc();
 
-    const stageWidth = ref<number>(0);
-    const stageHeight = ref<number>(0);
+    /** Design resolution for Konva — matches door art aspect ratio. */
     const doorDimensions = {
         width: 960,
         height: 2050,
-    }
+    } as const;
+
+    /**
+     * Stage is always this size in pixels so layers composite at full quality.
+     * DoorVisualizer scales the canvas with CSS to fit the layout (small on screen, sharp for PDF).
+     */
+    const stageWidth = doorDimensions.width;
+    const stageHeight = doorDimensions.height;
+
     const doorCombinationImages = ref<DoorCombinationImage[]>([]);
     const isCombinationsLoading = ref(false);
 
-    const setStageDimensions = (width: number, height: number) => {
-        stageWidth.value = width;
-        stageHeight.value = width * doorDimensions.height / doorDimensions.width;
-    }
+    /** @deprecated No-op — stage is always design resolution; CSS scales in the UI. */
+    function setStageDimensions(_width: number, _height: number): void {}
 
     function findComboUrl(
         purpose: DoorCombinationImage['purpose'],
@@ -149,10 +154,10 @@ export const useDoorVisual = defineStore('doorVisual', () => {
 
     function makeFlipConfig(flipped: boolean) {
         return {
-            x: flipped ? stageWidth.value : 0,
+            x: flipped ? stageWidth : 0,
             y: 0,
-            width: stageWidth.value,
-            height: stageHeight.value,
+            width: stageWidth,
+            height: stageHeight,
             scaleX: flipped ? -1 : 1,
         };
     }
@@ -168,16 +173,17 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     // ── Background rect config (symmetric — no flip needed) ──────────────────
 
     const backgroundConfig = computed(() => ({
-        x: (stageWidth.value - stageWidth.value * 0.9) / 2,
-        y: (stageHeight.value - stageHeight.value * 0.99) / 2,
-        width: stageWidth.value * 0.9,
-        height: stageHeight.value * 0.99,
+        x: (stageWidth - stageWidth * 0.9) / 2,
+        y: (stageHeight - stageHeight * 0.99) / 2,
+        width: stageWidth * 0.9,
+        height: stageHeight * 0.99,
         fill: 'black',
     }));
 
     return {
         stageWidth,
         stageHeight,
+        doorDimensions,
         setStageDimensions,
         doorCombinationImages,
         isCombinationsLoading,

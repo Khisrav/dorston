@@ -23,6 +23,7 @@ class PDFController extends Controller
             'margin_left'   => 10,
             'margin_right'  => 10,
             'orientation'   => 'P',
+            'img_dpi'       => 192,
         ]);
 
         $exteriorImage = $request->input('exterior_image');

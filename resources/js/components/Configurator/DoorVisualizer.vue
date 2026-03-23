@@ -1,20 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { useDoorVisual } from '@/composables/useDoorVisual';
 import { useImage } from 'vue-konva';
 
 const doorVisualStore = useDoorVisual();
-const visualizerContainerRef = ref<HTMLDivElement | null>(null);
 const exteriorStageRef = ref<any>(null);
 const interiorStageRef = ref<any>(null);
-
-onMounted(() => {
-    if (visualizerContainerRef.value) {
-        const width = visualizerContainerRef.value.clientWidth;
-        const gap = window.innerWidth > 768 ? 32 : 16;
-        doorVisualStore.setStageDimensions((width - gap) / 2, 0);
-    }
-});
 
 function exportStageImages(): { exteriorImage: string; interiorImage: string } | null {
     const exteriorStage = exteriorStageRef.value?.getNode();
@@ -22,9 +13,9 @@ function exportStageImages(): { exteriorImage: string; interiorImage: string } |
 
     if (!exteriorStage || !interiorStage) return null;
 
-    // PNG preserves transparency; pixelRatio:1 keeps file size reasonable
-    const exteriorImage = exteriorStage.toDataURL({ mimeType: 'image/png', pixelRatio: 1.5 });
-    const interiorImage = interiorStage.toDataURL({ mimeType: 'image/png', pixelRatio: 1.5 });
+    // Buffer is already 960×2050; pixelRatio 2 → 1920×4100 for PDF / sharp zoom
+    const exteriorImage = exteriorStage.toDataURL({ mimeType: 'image/png', pixelRatio: 0.5 });
+    const interiorImage = interiorStage.toDataURL({ mimeType: 'image/png', pixelRatio: 0.5 });
 
     return { exteriorImage, interiorImage };
 }
@@ -36,11 +27,11 @@ const [furnitureShadow] = useImage('/storage/furniture/handle-covers/01KMDN6MZFG
 
 <template>
     <div class="border border-sky-900/10 bg-gradient-to-b to-white from-sky-900/5 shadow-md shadow-sky-800/5 p-4 md:p-7 pr-2 md:pr-4 flex items-center justify-center relative overflow-hidden rounded-3xl">
-        <div ref="visualizerContainerRef" class="w-full h-full">
+        <div class="w-full h-full">
             <div class="flex justify-center items-start gap-4 md:gap-7">
 
-                <!-- Exterior stage -->
-                <div>
+                <!-- Exterior stage — high-res buffer, CSS-scaled to fit -->
+                <div class="door-stage-fit min-w-0 flex-1">
                     <v-stage ref="exteriorStageRef" :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
                         <!-- Black background -->
                         <v-layer>
@@ -85,7 +76,7 @@ const [furnitureShadow] = useImage('/storage/furniture/handle-covers/01KMDN6MZFG
                 </div>
 
                 <!-- Interior stage -->
-                <div>
+                <div class="door-stage-fit min-w-0 flex-1">
                     <v-stage ref="interiorStageRef" :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
                         <!-- Door panel -->
                         <v-layer>
@@ -117,3 +108,21 @@ const [furnitureShadow] = useImage('/storage/furniture/handle-covers/01KMDN6MZFG
         </div>
     </div>
 </template>
+
+<style scoped>
+/* Konva draws at 960×2050; shrink for layout without losing backing-store resolution */
+.door-stage-fit :deep(.konvajs-content) {
+    width: 100% !important;
+    height: auto !important;
+}
+
+.door-stage-fit :deep(canvas) {
+    width: 100% !important;
+    height: auto !important;
+    display: block;
+}
+
+.door-stage-fit {
+    aspect-ratio: 960 / 2050;
+}
+</style>
