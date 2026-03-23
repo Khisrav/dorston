@@ -83,8 +83,8 @@ const whatYouGet = [
 			<div class="flex h-full flex-1 flex-col items-center justify-center gap-8 p-4 py-12 md:py-32 sm:px-8 lg:px-12">
 				<div class="flex flex-col items-center gap-8 w-full">
 					<div class="text-center max-w-5xl mx-auto">
-						<h1 class="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl tracking-tight text-black mb-3">Увеличьте свои продажи до 30% на нестандартных заказах за 3 шага</h1>
-						<p class="font-serif text-base sm:text-lg text-black/50">Настройте дизайн, цвет и фурнитуру за несколько шагов. Конфигуратор рассчитает цену автоматически.</p>
+						<h1 class="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl tracking-tight text-black mb-3">Увеличьте свои продажи на нестандартных заказах</h1>
+						<p class="font-serif text-base sm:text-lg text-black/50">Индивидуальные проекты и уникальные решения для клиентов в одном месте</p>
 					</div>
 
 					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 w-full max-w-5xl">
@@ -127,10 +127,10 @@ const whatYouGet = [
 		<section class=" bg-gradient-to-br from-[#F8FAFC] to-[#EFF6FF]">
 			<div class="max-w-6xl mx-auto py-16 px-4 sm:px-8 lg:px-12">
 				<div class="flex h-full flex-1 flex-col items-center justify-center gap-8">
-					<h2 class="font-serif font-bold text-2xl sm:text-3xl lg:text-4xl tracking-tight text-black">Зарабатывайте на нестандартных дверях до +30% прибыли</h2>
+					<h2 class="font-serif font-bold text-2xl sm:text-3xl lg:text-4xl tracking-tight text-black text-center">Конфигуратор Dorston - современное решение. Быстрый и точный расчет онлайн</h2>
 					<div class="bg-white px-6 py-9 border border-sky-900/10 shadow-2xl shadow-sky-900/5 rounded-3xl text-center space-y-4 text-[18px] max-w-5xl mx-auto">
 						<img src="/assets/ui/section2.png" alt="Зарабатывайте на нестандартных дверях до +30% прибыли" class="w-full rounded">
-						<p><span class="text-sky-900">Конфигуратор Dorston</span> помогает дилерам и салонам быстро рассчитывать нестандартные двери и не терять клиентов из-за долгих расчетов.</p>
+						<p>Конфигуратор помогает дилерам быстро рассчитать нестандартные двери и не терять клиентов из-за долгих расчетов</p>
 						<Button label="Перейти к конфигуратору" size="" icon="pi pi-calculator" icon-pos="left" />
 					</div>
 				</div>
@@ -139,7 +139,7 @@ const whatYouGet = [
 
 		<section>
 			<div class="max-w-6xl mx-auto py-16 px-4 sm:px-8 lg:px-12">
-				<h2 class="font-serif text-center max-w-2xl mx-auto mb-8 font-bold text-2xl sm:text-3xl lg:text-4xl tracking-tight text-black mb-3">Что даст вам конфигуратор <b>Dorston</b></h2>
+				<h2 class="font-serif text-center max-w-2xl mx-auto mb-8 font-bold text-2xl sm:text-3xl lg:text-4xl tracking-tight text-black">Что даст вам конфигуратор <b>Dorston</b></h2>
 				<div class="flex h-full flex-1 flex-col items-center justify-center gap-8">
 					<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 sm:gap-6">
 						<div v-for="item in whatYouGet" :key="item.title" class="bg-gradient-to-br from-[#F8FAFC] to-[#EFF6FF] rounded-2xl p-6 space-y-3 relative flex flex-col gap-4">
@@ -206,7 +206,7 @@ const whatYouGet = [
 						<div class="flex items-center justify-center gap-4 bg-sky-900 p-4 pr-5 rounded-full">
 							<div class="size-12 text-2xl rounded-full bg-white/20 flex items-center justify-center">⚡</div>
 							<div class="flex flex-col items-start justify-center">
-								<span class="text-sm text-sky-100">Среднее время настройки</span>
+								<span class="text-sm text-sky-100">Среднее время сделки</span>
 								<span class="text-base font-bold text-white">5–10 минут</span>
 							</div>
 						</div>

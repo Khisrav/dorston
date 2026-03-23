@@ -54,6 +54,20 @@ export interface TermoDoorConfig {
     hasStainlessSteelDoorsill?: boolean;
     hasThermalCable: boolean;
     isModular: boolean;
+    modules?: {
+        top: {
+            size: number;
+            withGlass: boolean;
+        }
+        left: {
+            size: number;
+            withGlass: boolean;
+        }
+        right: {
+            size: number;
+            withGlass: boolean;
+        }
+    }
     interior: {
         panelModel: number;
         primaryTexture: number;
@@ -86,22 +100,6 @@ export interface TermoDoorConfig {
         hasPeephole?: boolean;
         hasNightLatchTurner?: boolean;
     }
-}
-
-export interface ModularTermoDoorConfig {
-    hasTopModule: boolean;
-    hasLeftModule: boolean;
-    hasRightModule: boolean;
-    
-    topSize: number;
-    leftSize: number;
-    rightSize: number;
-    
-    topWithGlass: boolean;
-    leftWithGlass: boolean;
-    rightWithGlass: boolean;
-    
-    config: TermoDoorConfig;
 }
 
 export interface Nomenclature {
@@ -150,25 +148,31 @@ export interface NomenclatureProperty {
 
 export interface Furniture {
     id: number;
-    title?: string | null; //title = модель ручки
+    title?: string | null;
     preview_image?: string | null;
-    furniture_type: 'push' | 'pull' | 'electronic'; //push - нажимная, pull - бугельная, electronic - электронная
+    furniture_type: 'push' | 'pull' | 'electronic';
     shape: 'rectangular' | 'oval' | 'other';
     color: 'black' | 'chrome' | 'gold' | 'bronze' | 'matte-chrome';
-    cylindrical_lock_cover_image?: string | null;
-    lever_lock_cover_image?: string | null;
+    primary_cylindrical_lock_cover_image?: string | null;
+    primary_lever_lock_cover_image?: string | null;
+    secondary_cylindrical_lock_cover_image?: string | null;
+    secondary_lever_lock_cover_image?: string | null;
     peephole_cover_image?: string | null;
     night_latch_turner_cover_image?: string | null;
     cylinder_rod_cover_image?: string | null;
     handle_cover_image?: string | null;
-    cylindrical_lock_id?: number | null;
-    lever_lock_id?: number | null;
+    primary_cylindrical_lock_id?: number | null;
+    primary_lever_lock_id?: number | null;
+    secondary_cylindrical_lock_id?: number | null;
+    secondary_lever_lock_id?: number | null;
     peephole_id?: number | null;
     night_latch_turner_id?: number | null;
     cylinder_rod_id?: number | null;
     handle_id?: number | null;
-    cylindrical_lock_price?: number | null;
-    lever_lock_price?: number | null;
+    primary_cylindrical_lock_price?: number | null;
+    primary_lever_lock_price?: number | null;
+    secondary_cylindrical_lock_price?: number | null;
+    secondary_lever_lock_price?: number | null;
     peephole_price?: number | null;
     night_latch_turner_price?: number | null;
     cylinder_rod_price?: number | null;

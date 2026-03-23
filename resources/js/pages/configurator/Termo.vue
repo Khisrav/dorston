@@ -13,6 +13,7 @@ import TermoMetalCard from '@/components/Configurator/TermoCards/TermoMetalCard.
 import TermoGlassCard from '@/components/Configurator/TermoCards/TermoGlassCard.vue';
 import TermoLockerCard from '@/components/Configurator/TermoCards/TermoLockerCard.vue';
 import TermoFurnitureCard from '@/components/Configurator/TermoCards/TermoFurnitureCard.vue';
+import TermoModularCard from '@/components/Configurator/TermoCards/TermoModularCard.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Конфигуратор', href: '/configurator' },
@@ -93,6 +94,7 @@ store.initializeDefaultConfig()
                 <!-- Right Column: Cards -->
                 <div class="lg:col-span-6 space-y-4">
                     <TermoParametersCard />
+                    <TermoModularCard />
                     <TermoExteriorCard />
                     <TermoInteriorCard />
                     <TermoMetalCard />
