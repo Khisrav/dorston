@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useDoorVisual } from '@/composables/useDoorVisual';
+import { useImage } from 'vue-konva';
 
 const doorVisualStore = useDoorVisual();
 const visualizerContainerRef = ref<HTMLDivElement | null>(null);
+const exteriorStageRef = ref<any>(null);
+const interiorStageRef = ref<any>(null);
 
 onMounted(() => {
     if (visualizerContainerRef.value) {
@@ -12,6 +15,23 @@ onMounted(() => {
         doorVisualStore.setStageDimensions((width - gap) / 2, 0);
     }
 });
+
+function exportStageImages(): { exteriorImage: string; interiorImage: string } | null {
+    const exteriorStage = exteriorStageRef.value?.getNode();
+    const interiorStage = interiorStageRef.value?.getNode();
+
+    if (!exteriorStage || !interiorStage) return null;
+
+    // PNG preserves transparency; pixelRatio:1 keeps file size reasonable
+    const exteriorImage = exteriorStage.toDataURL({ mimeType: 'image/png', pixelRatio: 1.5 });
+    const interiorImage = interiorStage.toDataURL({ mimeType: 'image/png', pixelRatio: 1.5 });
+
+    return { exteriorImage, interiorImage };
+}
+
+defineExpose({ exportStageImages });
+
+const [furnitureShadow] = useImage('/storage/furniture/handle-covers/01KMDN6MZFGAZMHE0VGHB1ZJV6.png');
 </script>
 
 <template>
@@ -21,7 +41,7 @@ onMounted(() => {
 
                 <!-- Exterior stage -->
                 <div>
-                    <v-stage :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
+                    <v-stage ref="exteriorStageRef" :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
                         <!-- Black background -->
                         <v-layer>
                             <v-rect :config="doorVisualStore.backgroundConfig" />
@@ -48,6 +68,10 @@ onMounted(() => {
                         </v-layer>
                         <!-- Furniture overlays -->
                         <v-layer>
+                            <v-image :config="{
+                                ...doorVisualStore.exteriorImageConfig,
+                                image: furnitureShadow,
+                            }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furniturePrimaryCylindricalLockImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furniturePrimaryLeverLockImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureSecondaryCylindricalLockImage }" />
@@ -62,7 +86,7 @@ onMounted(() => {
 
                 <!-- Interior stage -->
                 <div>
-                    <v-stage :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
+                    <v-stage ref="interiorStageRef" :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
                         <!-- Door panel -->
                         <v-layer>
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.interiorDoorImage }" />
@@ -73,6 +97,10 @@ onMounted(() => {
                         </v-layer>
                         <!-- Furniture overlays (mirrored) -->
                         <v-layer>
+                            <v-image :config="{
+                                ...doorVisualStore.interiorImageConfig,
+                                image: furnitureShadow,
+                            }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furniturePrimaryCylindricalLockImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furniturePrimaryLeverLockImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureSecondaryCylindricalLockImage }" />
