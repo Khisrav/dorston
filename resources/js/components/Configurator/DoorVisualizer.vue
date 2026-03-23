@@ -72,10 +72,10 @@ const [furnitureShadow] = useImage('/storage/furniture/handle-covers/01KMDN6MZFG
                                 ...doorVisualStore.exteriorImageConfig,
                                 image: furnitureShadow,
                             }" />
-                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furniturePrimaryCylindricalLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furniturePrimaryLeverLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureSecondaryCylindricalLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureSecondaryLeverLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorPrimaryCylindricalLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorPrimaryLeverLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorSecondaryCylindricalLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorSecondaryLeverLockImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furniturePeepholeImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureNightLatchTurnerImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureCylinderRodImage }" />
@@ -101,10 +101,10 @@ const [furnitureShadow] = useImage('/storage/furniture/handle-covers/01KMDN6MZFG
                                 ...doorVisualStore.interiorImageConfig,
                                 image: furnitureShadow,
                             }" />
-                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furniturePrimaryCylindricalLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furniturePrimaryLeverLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureSecondaryCylindricalLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureSecondaryLeverLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorPrimaryCylindricalLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorPrimaryLeverLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorSecondaryCylindricalLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorSecondaryLeverLockImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furniturePeepholeImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureNightLatchTurnerImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureCylinderRodImage }" />

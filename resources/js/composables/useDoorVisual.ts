@@ -83,20 +83,41 @@ export const useDoorVisual = defineStore('doorVisual', () => {
 
     // ── Furniture image URLs ──────────────────────────────────────────────────
 
-    const furniturePrimaryCylindricalLockUrl = makeFurnitureUrl(f => f.primary_cylindrical_lock_cover_image);
-    const furniturePrimaryLeverLockUrl = makeFurnitureUrl(f => f.primary_lever_lock_cover_image);
-    const furnitureSecondaryCylindricalLockUrl = makeFurnitureUrl(
-        f => f.secondary_cylindrical_lock_cover_image,
+    // Exterior lock cover images
+    const furnitureExteriorPrimaryCylindricalLockUrl = makeFurnitureUrl(f => f.exterior_primary_cylindrical_lock_cover_image);
+    const furnitureExteriorPrimaryLeverLockUrl = makeFurnitureUrl(f => f.exterior_primary_lever_lock_cover_image);
+    const furnitureExteriorSecondaryCylindricalLockUrl = makeFurnitureUrl(
+        f => f.exterior_secondary_cylindrical_lock_cover_image,
         () => !!doorCalcStore.doorConfig.furniture.hasSecondaryLock,
     );
-    const furnitureSecondaryLeverLockUrl = makeFurnitureUrl(
-        f => f.secondary_lever_lock_cover_image,
+    const furnitureExteriorSecondaryLeverLockUrl = makeFurnitureUrl(
+        f => f.exterior_secondary_lever_lock_cover_image,
         () => !!doorCalcStore.doorConfig.furniture.hasSecondaryLock,
     );
+
+    // Interior lock cover images
+    const furnitureInteriorPrimaryCylindricalLockUrl = makeFurnitureUrl(f => f.interior_primary_cylindrical_lock_cover_image);
+    const furnitureInteriorPrimaryLeverLockUrl = makeFurnitureUrl(f => f.interior_primary_lever_lock_cover_image);
+    const furnitureInteriorSecondaryCylindricalLockUrl = makeFurnitureUrl(
+        f => f.interior_secondary_cylindrical_lock_cover_image,
+        () => !!doorCalcStore.doorConfig.furniture.hasSecondaryLock,
+    );
+    const furnitureInteriorSecondaryLeverLockUrl = makeFurnitureUrl(
+        f => f.interior_secondary_lever_lock_cover_image,
+        () => !!doorCalcStore.doorConfig.furniture.hasSecondaryLock,
+    );
+
+    // Peephole cover image — selected by position
     const furniturePeepholeUrl = makeFurnitureUrl(
-        f => f.peephole_cover_image,
+        f => {
+            const pos = doorCalcStore.doorConfig.peepholePosition;
+            if (pos === 'Side') return f.side_peephole_cover_image;
+            if (pos === 'Center') return f.center_peephole_cover_image;
+            return f.peephole_cover_image;
+        },
         () => !!doorCalcStore.doorConfig.furniture.hasPeephole && doorCalcStore.doorConfig.peepholePosition !== 'None',
     );
+
     const furnitureNightLatchTurnerUrl = makeFurnitureUrl(
         f => f.night_latch_turner_cover_image,
         () => !!doorCalcStore.doorConfig.furniture.hasNightLatchTurner,
@@ -106,10 +127,16 @@ export const useDoorVisual = defineStore('doorVisual', () => {
 
     // ── Furniture image loading ───────────────────────────────────────────────
 
-    const [furniturePrimaryCylindricalLockImage] = useImage(furniturePrimaryCylindricalLockUrl);
-    const [furniturePrimaryLeverLockImage] = useImage(furniturePrimaryLeverLockUrl);
-    const [furnitureSecondaryCylindricalLockImage] = useImage(furnitureSecondaryCylindricalLockUrl);
-    const [furnitureSecondaryLeverLockImage] = useImage(furnitureSecondaryLeverLockUrl);
+    const [furnitureExteriorPrimaryCylindricalLockImage] = useImage(furnitureExteriorPrimaryCylindricalLockUrl);
+    const [furnitureExteriorPrimaryLeverLockImage] = useImage(furnitureExteriorPrimaryLeverLockUrl);
+    const [furnitureExteriorSecondaryCylindricalLockImage] = useImage(furnitureExteriorSecondaryCylindricalLockUrl);
+    const [furnitureExteriorSecondaryLeverLockImage] = useImage(furnitureExteriorSecondaryLeverLockUrl);
+
+    const [furnitureInteriorPrimaryCylindricalLockImage] = useImage(furnitureInteriorPrimaryCylindricalLockUrl);
+    const [furnitureInteriorPrimaryLeverLockImage] = useImage(furnitureInteriorPrimaryLeverLockUrl);
+    const [furnitureInteriorSecondaryCylindricalLockImage] = useImage(furnitureInteriorSecondaryCylindricalLockUrl);
+    const [furnitureInteriorSecondaryLeverLockImage] = useImage(furnitureInteriorSecondaryLeverLockUrl);
+
     const [furniturePeepholeImage] = useImage(furniturePeepholeUrl);
     const [furnitureNightLatchTurnerImage] = useImage(furnitureNightLatchTurnerUrl);
     const [furnitureCylinderRodImage] = useImage(furnitureCylinderRodUrl);
@@ -164,11 +191,19 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         interiorCasingImage,
         interiorDoorImage,
 
-        // Furniture images
-        furniturePrimaryCylindricalLockImage,
-        furniturePrimaryLeverLockImage,
-        furnitureSecondaryCylindricalLockImage,
-        furnitureSecondaryLeverLockImage,
+        // Furniture images — exterior
+        furnitureExteriorPrimaryCylindricalLockImage,
+        furnitureExteriorPrimaryLeverLockImage,
+        furnitureExteriorSecondaryCylindricalLockImage,
+        furnitureExteriorSecondaryLeverLockImage,
+
+        // Furniture images — interior
+        furnitureInteriorPrimaryCylindricalLockImage,
+        furnitureInteriorPrimaryLeverLockImage,
+        furnitureInteriorSecondaryCylindricalLockImage,
+        furnitureInteriorSecondaryLeverLockImage,
+
+        // Shared furniture images
         furniturePeepholeImage,
         furnitureNightLatchTurnerImage,
         furnitureCylinderRodImage,

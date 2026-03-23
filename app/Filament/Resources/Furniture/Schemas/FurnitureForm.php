@@ -81,15 +81,26 @@ class FurnitureForm
                                 ->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
-                            ->nullable(),
+                            ->nullable()
+                            ->columnSpan(2),
 
-                        FileUpload::make('primary_cylindrical_lock_cover_image')
-                            ->label('Накладка цилиндрического замка')
+                        FileUpload::make('exterior_primary_cylindrical_lock_cover_image')
+                            ->label('Накладка цил. замка — Экстерьер')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
                             ->disk('public')
-                            ->directory('furniture/cylindrical-lock-covers'),
+                            ->directory('furniture/cylindrical-lock-covers/exterior')
+                            ->columnSpan(1),
+
+                        FileUpload::make('interior_primary_cylindrical_lock_cover_image')
+                            ->label('Накладка цил. замка — Интерьер')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(2048)
+                            ->disk('public')
+                            ->directory('furniture/cylindrical-lock-covers/interior')
+                            ->columnSpan(1),
 
                         Select::make('primary_lever_lock_id')
                             ->label('Сувальдный замок (осн.)')
@@ -97,17 +108,28 @@ class FurnitureForm
                                 ->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
-                            ->nullable(),
+                            ->nullable()
+                            ->columnSpan(2),
 
-                        FileUpload::make('primary_lever_lock_cover_image')
-                            ->label('Накладка сувальдного замка')
+                        FileUpload::make('exterior_primary_lever_lock_cover_image')
+                            ->label('Накладка сув. замка — Экстерьер')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
                             ->disk('public')
-                            ->directory('furniture/lever-lock-covers'),
+                            ->directory('furniture/lever-lock-covers/exterior')
+                            ->columnSpan(1),
+
+                        FileUpload::make('interior_primary_lever_lock_cover_image')
+                            ->label('Накладка сув. замка — Интерьер')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(2048)
+                            ->disk('public')
+                            ->directory('furniture/lever-lock-covers/interior')
+                            ->columnSpan(1),
                     ])
-                    ->columns(2)
+                    ->columns(4)
                     ->columnSpanFull()
                     ->collapsible(),
 
@@ -121,15 +143,26 @@ class FurnitureForm
                                 ->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
-                            ->nullable(),
+                            ->nullable()
+                            ->columnSpan(2),
 
-                        FileUpload::make('secondary_cylindrical_lock_cover_image')
-                            ->label('Накладка цилиндрического замка (доп.)')
+                        FileUpload::make('exterior_secondary_cylindrical_lock_cover_image')
+                            ->label('Накладка цил. замка (доп.) — Экстерьер')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
                             ->disk('public')
-                            ->directory('furniture/cylindrical-lock-covers/secondary'),
+                            ->directory('furniture/cylindrical-lock-covers/secondary/exterior')
+                            ->columnSpan(1),
+
+                        FileUpload::make('interior_secondary_cylindrical_lock_cover_image')
+                            ->label('Накладка цил. замка (доп.) — Интерьер')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(2048)
+                            ->disk('public')
+                            ->directory('furniture/cylindrical-lock-covers/secondary/interior')
+                            ->columnSpan(1),
 
                         Select::make('secondary_lever_lock_id')
                             ->label('Сувальдный замок (доп.)')
@@ -137,17 +170,28 @@ class FurnitureForm
                                 ->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
-                            ->nullable(),
+                            ->nullable()
+                            ->columnSpan(2),
 
-                        FileUpload::make('secondary_lever_lock_cover_image')
-                            ->label('Накладка сувальдного замка (доп.)')
+                        FileUpload::make('exterior_secondary_lever_lock_cover_image')
+                            ->label('Накладка сув. замка (доп.) — Экстерьер')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
                             ->disk('public')
-                            ->directory('furniture/lever-lock-covers/secondary'),
+                            ->directory('furniture/lever-lock-covers/secondary/exterior')
+                            ->columnSpan(1),
+
+                        FileUpload::make('interior_secondary_lever_lock_cover_image')
+                            ->label('Накладка сув. замка (доп.) — Интерьер')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(2048)
+                            ->disk('public')
+                            ->directory('furniture/lever-lock-covers/secondary/interior')
+                            ->columnSpan(1),
                     ])
-                    ->columns(2)
+                    ->columns(4)
                     ->columnSpanFull()
                     ->collapsible()
                     ->collapsed(),
@@ -162,15 +206,26 @@ class FurnitureForm
                                 ->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
-                            ->nullable(),
+                            ->nullable()
+                            ->columnSpan(2),
 
-                        FileUpload::make('peephole_cover_image')
-                            ->label('Накладка глазка')
+                        FileUpload::make('side_peephole_cover_image')
+                            ->label('Накладка глазка — Боковая позиция')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
                             ->disk('public')
-                            ->directory('furniture/peephole-covers'),
+                            ->directory('furniture/peephole-covers/side')
+                            ->columnSpan(1),
+
+                        FileUpload::make('center_peephole_cover_image')
+                            ->label('Накладка глазка — Центральная позиция')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(2048)
+                            ->disk('public')
+                            ->directory('furniture/peephole-covers/center')
+                            ->columnSpan(1),
 
                         Select::make('night_latch_turner_id')
                             ->label('Ночная задвижка + вертушок')
@@ -178,7 +233,8 @@ class FurnitureForm
                                 ->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
-                            ->nullable(),
+                            ->nullable()
+                            ->columnSpan(2),
 
                         FileUpload::make('night_latch_turner_cover_image')
                             ->label('Накладка ночной задвижки')
@@ -186,7 +242,8 @@ class FurnitureForm
                             ->imageEditor()
                             ->maxSize(2048)
                             ->disk('public')
-                            ->directory('furniture/night-latch-covers'),
+                            ->directory('furniture/night-latch-covers')
+                            ->columnSpan(2),
 
                         Select::make('cylinder_rod_id')
                             ->label('Вертушка на шток цилиндра')
@@ -194,7 +251,8 @@ class FurnitureForm
                                 ->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
-                            ->nullable(),
+                            ->nullable()
+                            ->columnSpan(2),
 
                         FileUpload::make('cylinder_rod_cover_image')
                             ->label('Накладка вертушки на шток')
@@ -202,7 +260,8 @@ class FurnitureForm
                             ->imageEditor()
                             ->maxSize(2048)
                             ->disk('public')
-                            ->directory('furniture/cylinder-rod-covers'),
+                            ->directory('furniture/cylinder-rod-covers')
+                            ->columnSpan(2),
 
                         Select::make('handle_id')
                             ->label('Ручка')
@@ -210,7 +269,8 @@ class FurnitureForm
                                 ->pluck('name', 'id'))
                             ->searchable()
                             ->preload()
-                            ->nullable(),
+                            ->nullable()
+                            ->columnSpan(2),
 
                         FileUpload::make('handle_cover_image')
                             ->label('Накладка ручки')
@@ -218,9 +278,10 @@ class FurnitureForm
                             ->imageEditor()
                             ->maxSize(2048)
                             ->disk('public')
-                            ->directory('furniture/handle-covers'),
+                            ->directory('furniture/handle-covers')
+                            ->columnSpan(2),
                     ])
-                    ->columns(2)
+                    ->columns(4)
                     ->columnSpanFull()
                     ->collapsible()
                     ->collapsed(),
