@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useDoorVisual } from '@/composables/useDoorVisual';
-import { DoorCombinationImage } from '@/types/configurator';
-import { usePage } from '@inertiajs/vue3';
-import { Button } from 'primevue';
 
 const doorVisualStore = useDoorVisual();
 const visualizerContainerRef = ref<HTMLDivElement | null>(null);
@@ -23,51 +20,69 @@ onMounted(() => {
             <div class="flex justify-center items-start gap-4 md:gap-7">
 
                 <!-- Exterior stage -->
-                <div class="relativ">
+                <div>
                     <v-stage :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
-                        <!-- Layer 0: Black background -->
+                        <!-- Black background -->
                         <v-layer>
-                            <v-rect :config="{ ...doorVisualStore.layersConfig.exterior.background }" />
+                            <v-rect :config="doorVisualStore.backgroundConfig" />
                         </v-layer>
+                        <!-- Hinges -->
                         <v-layer>
-                            <v-image :config="{ ...doorVisualStore.fullStageRect, image: doorVisualStore.exteriorHingeImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.exteriorHingeImage }" />
                         </v-layer>
-                        <!-- Layer 1: Casing (Наличник) -->
+                        <!-- Casing (Наличник) -->
                         <v-layer>
-                            <v-image :config="{ ...doorVisualStore.layersConfig.exterior.casing, image: doorVisualStore.casingImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.casingImage }" />
                         </v-layer>
-                        <!-- Layer 1.1: Additional casing element -->
+                        <!-- Additional casing element (Вставка наличника) -->
                         <v-layer>
-                            <v-image :config="{ ...doorVisualStore.fullStageRect, image: doorVisualStore.additionalCasingElementImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.additionalCasingElementImage }" />
                         </v-layer>
-                        <!-- Layer 2: Door itself (Полотно) -->
+                        <!-- Door panel (Полотно) -->
                         <v-layer>
-                            <v-image :config="{ ...doorVisualStore.fullStageRect, image: doorVisualStore.doorImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.doorImage }" />
                         </v-layer>
-                        <!-- Layer 3: Additional door element -->
+                        <!-- Additional door element (Вставка полотна) -->
                         <v-layer>
-                            <v-image :config="{ ...doorVisualStore.fullStageRect, image: doorVisualStore.additionalDoorElementImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.additionalDoorElementImage }" />
+                        </v-layer>
+                        <!-- Furniture overlays -->
+                        <v-layer>
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furniturePrimaryCylindricalLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furniturePrimaryLeverLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureSecondaryCylindricalLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureSecondaryLeverLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furniturePeepholeImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureNightLatchTurnerImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureCylinderRodImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureHandleImage }" />
                         </v-layer>
                     </v-stage>
-                    <!-- <div class="absolute -bottom-6 right-0 left-0 text-center">
-                        <Button variant="outline" class="" size="small">Снаружи</Button>
-                    </div> -->
                 </div>
 
-                <!-- Interior stage (placeholder for now) -->
-                <div class="relative">
+                <!-- Interior stage -->
+                <div>
                     <v-stage :config="{ width: doorVisualStore.stageWidth, height: doorVisualStore.stageHeight }">
-                        <!-- Layer 0: Black background -->
+                        <!-- Door panel -->
                         <v-layer>
-                            <v-image :config="{ ...doorVisualStore.universalConfig, image: doorVisualStore.interiorDoorImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.interiorDoorImage }" />
                         </v-layer>
+                        <!-- Casing / box (Короб) -->
                         <v-layer>
-                            <v-image :config="{ ...doorVisualStore.universalConfig, image: doorVisualStore.interiorCasingImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.interiorCasingImage }" />
+                        </v-layer>
+                        <!-- Furniture overlays (mirrored) -->
+                        <v-layer>
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furniturePrimaryCylindricalLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furniturePrimaryLeverLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureSecondaryCylindricalLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureSecondaryLeverLockImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furniturePeepholeImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureNightLatchTurnerImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureCylinderRodImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureHandleImage }" />
                         </v-layer>
                     </v-stage>
-                    <!-- <div class="absolute -bottom-6 right-0 left-0 text-center">
-                        <Button variant="outline" class="" size="small">Изнутри</Button>
-                    </div> -->
                 </div>
 
             </div>
