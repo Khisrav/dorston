@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { useTermoDoorCalc } from '@/composables/useTermoDoorCalc'
 import { type doorHandleSide } from '@/types/configurator'
-import { Select } from 'primevue'
-import { PanelLeftIcon, PanelRightIcon } from 'lucide-vue-next'
+import { Select, Popover } from 'primevue'
+import { PanelLeftIcon, PanelRightIcon, InfoIcon } from 'lucide-vue-next'
 import ConfiguratorCard from '../Card/ConfiguratorCard.vue'
-import { computed } from 'vue'
-import { InfoIcon } from 'lucide-vue-next'
+import { computed, ref } from 'vue'
 
 function generateRange(min: number, max: number, step: number): { label: string; value: number }[] {
     const result: { label: string; value: number }[] = []
@@ -42,13 +41,27 @@ const exteriorSize = computed(() => {
     return size
 })
 
-const constructiveOptions: { label: string; value: 'Termo+' | 'Termo Premium'; description: string }[] = [
-    { label: 'Termo+', value: 'Termo+', description: 'asd' },
-    { label: 'Termo Premium', value: 'Termo Premium', description: 'asd' },
+const constructiveOptions: { label: string; value: 'Termo+' | 'Termo Premium'; image: string; description: string }[] = [
+    {
+        label: 'Termo+',
+        value: 'Termo+',
+        image: '/assets/ui/termo-plus-constructive.jpg',
+        description: 'Короб: 1,5 мм (закрытый). Уплотнитель на полотне: 2 шт. (Шлегель). Уплотнитель на коробе: D-образный. Заполнитель двери: Минеральная вата 11кг/м3 + пенополистирол',
+    },
+    {
+        label: 'Termo Premium',
+        value: 'Termo Premium',
+        image: '/assets/ui/termo-premium-constructive.jpg',
+        description: 'Короб: 1,6 мм (закрытый). Уплотнитель на полотне: 2 шт. (Шлегель). Уплотнитель на коробе: D-образный. Заполнитель двери: Минеральная вата 11кг/м3 + пенополистирол',
+    },
 ]
 
-const toggleConstructiveInfo = (opt: typeof constructiveOptions[0], event: MouseEvent) => {
-    store.doorConfig.constructive = opt.value
+const constructivePopover = ref<InstanceType<typeof Popover> | null>(null)
+const activeConstructiveOpt = ref<typeof constructiveOptions[0] | null>(null)
+
+function toggleConstructiveInfo(opt: typeof constructiveOptions[0], event: MouseEvent) {
+    activeConstructiveOpt.value = opt
+    constructivePopover.value?.toggle(event)
 }
 </script>
 
@@ -85,9 +98,10 @@ const toggleConstructiveInfo = (opt: typeof constructiveOptions[0], event: Mouse
         </div>
 
         <Popover ref="constructivePopover">
-            <div class="max-w-56 space-y-2">
-                <p class="font-serif font-semibold text-sky-900">{{ store.doorConfig.constructive }}</p>
-                <p class="text-sm text-sky-900/60 leading-relaxed">{{ constructiveOptions.find((opt) => opt.value === store.doorConfig.constructive)?.description }}</p>
+            <div v-if="activeConstructiveOpt" class="max-w-56 space-y-2">
+                <img :src="activeConstructiveOpt.image" :alt="activeConstructiveOpt.label" class="w-full rounded-xl object-cover" />
+                <p class="font-serif font-semibold text-sky-900">{{ activeConstructiveOpt.label }}</p>
+                <p class="text-sm text-sky-900/60 leading-relaxed">{{ activeConstructiveOpt.description }}</p>
             </div>
         </Popover>
 

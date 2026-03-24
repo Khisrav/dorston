@@ -30,12 +30,6 @@ const colorOptions: { value: Furniture['color']; label: string; image: string }[
 
 // ─── Shape definitions ────────────────────────────────────────────────────────
 
-const shapeLabel: Record<Furniture['shape'], string> = {
-    rectangular: 'Квадратный',
-    oval:        'Овальный',
-    other:       'Другое',
-}
-
 const drawerShapeOptions: { value: 'rectangular' | 'oval'; label: string }[] = [
     { value: 'rectangular', label: 'Квадратный' },
     { value: 'oval',        label: 'Круглый'    },
@@ -238,17 +232,6 @@ watch(drawerShape, autoSelectFirst)
                         <p class="font-serif font-semibold text-sky-900 text-sm truncate line-clamp-1">
                             {{ selectedSet.title ?? 'Модель без названия' }}
                         </p>
-                        <div class="flex flex-wrap gap-1.5 mt-1">
-                            <span
-                                v-if="selectedType === 'push'"
-                                class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[10px] font-serif text-sky-900 truncate max-w-full"
-                            >
-                                {{ shapeLabel[selectedSet.shape] }}
-                            </span>
-                            <span class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[10px] font-serif text-sky-900 truncate max-w-full">
-                                {{ selectedColorLabel }}
-                            </span>
-                        </div>
                     </div>
                     <i class="pi pi-chevron-right text-sky-900/20 ml-auto text-sm" />
                 </div>
@@ -353,55 +336,42 @@ watch(drawerShape, autoSelectFirst)
                 />
             </div>
 
-            <!-- Sets list ────────────────────────────────────────────── -->
-            <div class="space-y-3">
+            <!-- Sets grid ────────────────────────────────────────────── -->
+            <div class="grid grid-cols-2 gap-3">
                 <button
                     v-for="furniture in drawerSets"
                     :key="furniture.id"
                     type="button"
                     @click="selectSet(furniture)"
                     :class="[
-                        'flex items-center gap-4 w-full p-3 rounded-2xl border text-left transition-all duration-200 cursor-pointer',
+                        'flex flex-col overflow-hidden rounded-2xl border text-left transition-all duration-200 cursor-pointer',
                         store.doorConfig.furniture.furnitureSetId === furniture.id
                             ? 'border-sky-900/60 border-2 bg-sky-900/5'
                             : 'border-sky-900/10 hover:border-sky-900/30'
                     ]"
                 >
-                    <div class="size-20 shrink-0 rounded-xl bg-neutral-100 overflow-hidden flex items-center justify-center">
+                    <div class="w-full aspect-[4/3] bg-neutral-100 overflow-hidden flex items-center justify-center">
                         <img
                             v-if="furniture.preview_image"
                             :src="getImageUrl(furniture.preview_image)"
                             :alt="furniture.title ?? 'Модель'"
-                            class="size-full object-cover"
+                            class="w-full h-full object-cover"
                         />
-                        <span v-else class="text-xs text-neutral-400 font-serif text-center px-1">Нет фото</span>
+                        <span v-else class="text-xs text-neutral-400 font-serif text-center px-2">Нет фото</span>
                     </div>
-
-                    <div class="flex-1 min-w-0 space-y-1.5">
-                        <p class="font-serif font-medium text-sky-900 truncate w-full">
+                    <div class="flex items-center gap-2 p-2.5 min-w-0">
+                        <p class="font-serif font-medium text-sky-900 text-xs leading-snug line-clamp-2 flex-1 min-w-0">
                             {{ furniture.title ?? 'Модель без названия' }}
                         </p>
-                        <div class="flex flex-wrap gap-1.5">
-                            <span
-                                v-if="selectedType === 'push'"
-                                class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[11px] font-serif text-sky-900"
+                        <div class="shrink-0">
+                            <div
+                                v-if="store.doorConfig.furniture.furnitureSetId === furniture.id"
+                                class="size-6 rounded-full bg-sky-900 flex items-center justify-center"
                             >
-                                {{ shapeLabel[furniture.shape] }}
-                            </span>
-                            <span class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[11px] font-serif text-sky-900">
-                                {{ colorOptions.find(c => c.value === furniture.color)?.label ?? furniture.color }}
-                            </span>
+                                <i class="pi pi-check text-white text-xs" />
+                            </div>
+                            <div v-else class="size-6 rounded-full border border-sky-900/20" />
                         </div>
-                    </div>
-
-                    <div class="shrink-0">
-                        <div
-                            v-if="store.doorConfig.furniture.furnitureSetId === furniture.id"
-                            class="size-6 rounded-full bg-sky-900 flex items-center justify-center"
-                        >
-                            <i class="pi pi-check text-white text-xs" />
-                        </div>
-                        <div v-else class="size-6 rounded-full border border-sky-900/20" />
                     </div>
                 </button>
             </div>
