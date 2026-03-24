@@ -4,6 +4,7 @@ import { ref, watch, computed } from "vue";
 import { useComfortConstructive } from "./door-constructives/useComfortConstructive";
 import { isDoorStandard, roundUpTo100 } from "@/lib/utils";
 import { useAbsolutConstructive } from "./door-constructives/useAbsolutConstructive";
+import { remapApartmentCylindersToMatchDoor } from "@/lib/cylinders";
 
 export const useDoorCalc = defineStore('doorCalc', () => {
     //static vars
@@ -108,6 +109,15 @@ export const useDoorCalc = defineStore('doorCalc', () => {
     watch(() => doorConfig.value.exterior.panelModel, (newModelId: number) => {
         applyDoorModelConfig(newModelId, 'exterior')
     })
+
+    watch(
+        () => ({
+            panel: doorConfig.value.exterior.panelModel,
+            constructive: doorConfig.value.doorConstructive,
+        }),
+        () => remapApartmentCylindersToMatchDoor(doorConfig.value),
+        { immediate: true },
+    )
     watch(() => doorConfig.value.interior.panelModel, (newModelId: number) => {
         applyDoorModelConfig(newModelId, 'interior')
     })

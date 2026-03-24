@@ -191,6 +191,7 @@ watch(drawerShape, autoSelectFirst)
                         >
                             <img :src="opt.image" :alt="opt.label" class="size-full object-contain drop-shadow-sm" />
                         </div>
+                        <p class="text-xs text-sky-900/50 mt-1 text-center">{{ opt.label }}</p>
                     </button>
                 </div>
             </div>

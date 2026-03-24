@@ -18,6 +18,8 @@ class PDFController extends Controller
         ]);
 
         $mpdf = new Mpdf([
+            'tempDir'       => storage_path('app/mpdf'),
+
             'margin_top'    => 10,
             'margin_bottom' => 10,
             'margin_left'   => 10,

@@ -101,7 +101,7 @@ const secondaryPaintColor = computed(() =>
                                 v-if="primaryFilmColor"
                                 :src="getImageUrl(primaryFilmColor.image ?? null)"
                                 :alt="primaryFilmColor.name"
-                                class="w-full rounded-md"
+                                class="w-full h-full object-cover rounded-md"
                             />
                         </div>
                         <div class="flex-1 min-w-0">
@@ -124,7 +124,7 @@ const secondaryPaintColor = computed(() =>
                                 v-if="secondaryFilmColor"
                                 :src="getImageUrl(secondaryFilmColor.image ?? null)"
                                 :alt="secondaryFilmColor.name"
-                                class="w-full rounded-md"
+                                class="w-full h-full object-cover rounded-md"
                             />
                         </div>
                         <div class="flex-1 min-w-0">
@@ -147,7 +147,7 @@ const secondaryPaintColor = computed(() =>
                                 v-if="casingFilmColor"
                                 :src="getImageUrl(casingFilmColor.image ?? null)"
                                 :alt="casingFilmColor.name"
-                                class="w-full rounded-md"
+                                class="w-full h-full object-cover rounded-md"
                             />
                         </div>
                         <div class="flex-1 min-w-0">
