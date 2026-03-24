@@ -51,6 +51,7 @@ class NomenclatureForm
                         'р/м²'   => 'Р/м²',
                         'р/м³'   => 'Р/м³',
                         'р/кг'   => 'Р/кг',
+                        'р/компл.' => 'Р/компл.',
                     ])
                     ->searchable()
                     ->nullable(),
@@ -58,6 +59,8 @@ class NomenclatureForm
                 FileUpload::make('image')
                     ->label('Изображение')
                     ->directory('nomenclatures')
+                    ->imageEditor()
+                    ->disk('public')
                     ->image()
                     ->imagePreviewHeight('96')
                     ->columnSpanFull(),
