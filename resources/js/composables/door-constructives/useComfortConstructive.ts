@@ -366,15 +366,21 @@ export const useComfortConstructive = defineStore('comfortConstructive', () => {
             if (secondaryLock) sum += secondaryLock.base_price
         }
 
-        // Primary cylinder price
         if (doorConfig.furniture.primaryCylindricalLockMechanism && doorConfig.furniture.primaryCylindricalLockMechanism !== -1) {
-            const primaryCylinder = doorCalcStore.cylinders.find((c) => c.id === doorConfig.furniture.primaryCylindricalLockMechanism)
+            const primaryCylinder = doorCalcStore.cylinders.find(
+                (c) => c.id === doorConfig.furniture.primaryCylindricalLockMechanism,
+            )
             if (primaryCylinder) sum += primaryCylinder.base_price
         }
 
-        // Secondary cylinder price (if enabled)
-        if (doorConfig.furniture.hasSecondaryLock && doorConfig.furniture.secondaryCylindricalLockMechanism && doorConfig.furniture.secondaryCylindricalLockMechanism !== -1) {
-            const secondaryCylinder = doorCalcStore.cylinders.find((c) => c.id === doorConfig.furniture.secondaryCylindricalLockMechanism)
+        if (
+            doorConfig.furniture.hasSecondaryLock &&
+            doorConfig.furniture.secondaryCylindricalLockMechanism &&
+            doorConfig.furniture.secondaryCylindricalLockMechanism !== -1
+        ) {
+            const secondaryCylinder = doorCalcStore.cylinders.find(
+                (c) => c.id === doorConfig.furniture.secondaryCylindricalLockMechanism,
+            )
             if (secondaryCylinder) sum += secondaryCylinder.base_price
         }
 

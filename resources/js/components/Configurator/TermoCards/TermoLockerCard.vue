@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useTermoDoorCalc } from '@/composables/useTermoDoorCalc'
+import { TERMO_CYLINDER_NOMENCLATURE_IDS } from '@/lib/cylinders'
 import { getImageUrl } from '@/lib/utils'
 import { Drawer, ToggleSwitch, Select } from 'primevue'
 import { computed, ref, watch } from 'vue'
@@ -32,8 +33,29 @@ watch(isPrimaryLockForced, (forced) => {
     }
 }, { immediate: true })
 
-const availableCylinders = computed(() =>
-    store.cylinders.map(c => ({ label: c.name, value: c.id }))
+const availableCylinders = computed(() => {
+    const order = new Map(TERMO_CYLINDER_NOMENCLATURE_IDS.map((id, i) => [id, i]))
+    return store.cylinders
+        .filter((c) => order.has(c.id))
+        .sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0))
+        .map((c) => ({ label: c.name, value: c.id }))
+})
+
+const allowedTermoCylinderIds = new Set<number>(TERMO_CYLINDER_NOMENCLATURE_IDS)
+
+watch(
+    [availableCylinders, () => store.doorConfig.furniture.primaryCylindricalLockMechanism, () => store.doorConfig.furniture.secondaryCylindricalLockMechanism],
+    () => {
+        const p = store.doorConfig.furniture.primaryCylindricalLockMechanism
+        if (p != null && p !== -1 && !allowedTermoCylinderIds.has(p)) {
+            store.doorConfig.furniture.primaryCylindricalLockMechanism = -1
+        }
+        const s = store.doorConfig.furniture.secondaryCylindricalLockMechanism
+        if (s != null && s !== -1 && !allowedTermoCylinderIds.has(s)) {
+            store.doorConfig.furniture.secondaryCylindricalLockMechanism = -1
+        }
+    },
+    { immediate: true },
 )
 
 const selectedPrimaryCylinder = computed(() => {
