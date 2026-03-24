@@ -22,7 +22,7 @@ class NomenclaturesTable
             ->columns([
                 ImageColumn::make('image')
                     ->disk('public')
-                    ->height(56)
+                    ->imageSize(56)
                     ->label('')
                     ->toggleable(),
 
