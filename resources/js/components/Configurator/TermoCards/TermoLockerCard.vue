@@ -2,7 +2,7 @@
 import { useTermoDoorCalc } from '@/composables/useTermoDoorCalc'
 import { TERMO_CYLINDER_NOMENCLATURE_IDS } from '@/lib/cylinders'
 import { getImageUrl } from '@/lib/utils'
-import { Drawer, ToggleSwitch, Select } from 'primevue'
+import { Drawer, ToggleSwitch } from 'primevue'
 import { computed, ref, watch } from 'vue'
 import { LockKeyhole } from 'lucide-vue-next'
 import ConfiguratorCard from '../Card/ConfiguratorCard.vue'
@@ -11,6 +11,8 @@ const store = useTermoDoorCalc()
 
 const showPrimaryLockDrawer = ref(false)
 const showSecondaryLockDrawer = ref(false)
+const showPrimaryCylinderDrawer = ref(false)
+const showSecondaryCylinderDrawer = ref(false)
 
 const primaryLocks = computed(() => store.locks.primary)
 const secondaryLocks = computed(() => store.locks.secondary)
@@ -33,18 +35,17 @@ watch(isPrimaryLockForced, (forced) => {
     }
 }, { immediate: true })
 
-const availableCylinders = computed(() => {
+const orderedTermoCylinders = computed(() => {
     const order = new Map(TERMO_CYLINDER_NOMENCLATURE_IDS.map((id, i) => [id, i]))
     return store.cylinders
         .filter((c) => order.has(c.id))
         .sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0))
-        .map((c) => ({ label: c.name, value: c.id }))
 })
 
 const allowedTermoCylinderIds = new Set<number>(TERMO_CYLINDER_NOMENCLATURE_IDS)
 
 watch(
-    [availableCylinders, () => store.doorConfig.furniture.primaryCylindricalLockMechanism, () => store.doorConfig.furniture.secondaryCylindricalLockMechanism],
+    [orderedTermoCylinders, () => store.doorConfig.furniture.primaryCylindricalLockMechanism, () => store.doorConfig.furniture.secondaryCylindricalLockMechanism],
     () => {
         const p = store.doorConfig.furniture.primaryCylindricalLockMechanism
         if (p != null && p !== -1 && !allowedTermoCylinderIds.has(p)) {
@@ -220,42 +221,158 @@ function securityLevel(value: string): number {
         <div class="grid grid-cols-1 gap-3">
             <div>
                 <label class="font-serif text-xs inline-block mb-1.5 text-sky-900/70">Цилиндр основного замка</label>
-                <Select
-                    v-model="store.doorConfig.furniture.primaryCylindricalLockMechanism"
-                    :options="availableCylinders"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="Выберите цилиндр"
-                    :disabled="!isPrimaryCylinricalLock"
-                    size="small"
-                    showClear
-                    fluid
-                />
-                <p v-if="selectedPrimaryCylinder" class="mt-1 font-serif text-xs text-sky-900/50">
-                    {{ selectedPrimaryCylinder.base_price.toLocaleString('ru-RU') }} ₽
-                </p>
+                <button
+                    type="button"
+                    @click="isPrimaryCylinricalLock && (showPrimaryCylinderDrawer = true)"
+                    :class="[
+                        'w-full flex items-center gap-3 p-3 rounded-2xl border text-left transition-all duration-200',
+                        !isPrimaryCylinricalLock
+                            ? 'border-sky-900/8 bg-sky-900/3 cursor-default opacity-50'
+                            : 'border-sky-900/10 hover:border-sky-900/30 cursor-pointer'
+                    ]"
+                >
+                    <div class="w-10 h-10 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+                        <img
+                            v-if="selectedPrimaryCylinder?.image"
+                            :src="getImageUrl(selectedPrimaryCylinder.image)"
+                            :alt="selectedPrimaryCylinder.name"
+                            class="w-full h-full object-contain p-1"
+                        />
+                        <i v-else class="pi pi-circle text-base text-neutral-400" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-serif font-semibold text-sky-900 truncate text-sm">
+                            {{ selectedPrimaryCylinder?.name ?? 'Не выбрано' }}
+                        </p>
+                        <p v-if="selectedPrimaryCylinder" class="font-serif text-xs text-sky-900/50">
+                            {{ selectedPrimaryCylinder.base_price.toLocaleString('ru-RU') }} ₽
+                        </p>
+                    </div>
+                    <i v-if="isPrimaryCylinricalLock" class="pi pi-chevron-right text-sky-900/30" />
+                </button>
             </div>
 
             <div v-if="store.doorConfig.furniture.hasSecondaryLock">
                 <label class="font-serif text-xs inline-block mb-1.5 text-sky-900/70">Цилиндр дополнительного замка</label>
-                <Select
-                    v-model="store.doorConfig.furniture.secondaryCylindricalLockMechanism"
-                    :options="availableCylinders"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="Выберите цилиндр"
-                    :disabled="!isSecondaryCylinricalLock"
-                    size="small"
-                    showClear
-                    fluid
-                />
-                <p v-if="selectedSecondaryCylinder" class="mt-1 font-serif text-xs text-sky-900/50">
-                    {{ selectedSecondaryCylinder.base_price.toLocaleString('ru-RU') }} ₽
-                </p>
+                <button
+                    type="button"
+                    @click="isSecondaryCylinricalLock && (showSecondaryCylinderDrawer = true)"
+                    :class="[
+                        'w-full flex items-center gap-3 p-3 rounded-2xl border text-left transition-all duration-200',
+                        !isSecondaryCylinricalLock
+                            ? 'border-sky-900/8 bg-sky-900/3 cursor-default opacity-50'
+                            : 'border-sky-900/10 hover:border-sky-900/30 cursor-pointer'
+                    ]"
+                >
+                    <div class="w-10 h-10 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+                        <img
+                            v-if="selectedSecondaryCylinder?.image"
+                            :src="getImageUrl(selectedSecondaryCylinder.image)"
+                            :alt="selectedSecondaryCylinder.name"
+                            class="w-full h-full object-contain p-1"
+                        />
+                        <i v-else class="pi pi-circle text-base text-neutral-400" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-serif font-semibold text-sky-900 truncate text-sm">
+                            {{ selectedSecondaryCylinder?.name ?? 'Не выбрано' }}
+                        </p>
+                        <p v-if="selectedSecondaryCylinder" class="font-serif text-xs text-sky-900/50">
+                            {{ selectedSecondaryCylinder.base_price.toLocaleString('ru-RU') }} ₽
+                        </p>
+                    </div>
+                    <i v-if="isSecondaryCylinricalLock" class="pi pi-chevron-right text-sky-900/30" />
+                </button>
             </div>
         </div>
 
     </ConfiguratorCard>
+
+    <!-- DRAWER: Primary cylinder -->
+    <Drawer v-model:visible="showPrimaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+        <template #header>
+            <h2 class="font-serif text-lg tracking-tight">Цилиндр основного замка</h2>
+        </template>
+        <div class="space-y-3 p-1">
+            <div
+                v-for="cyl in orderedTermoCylinders"
+                :key="cyl.id"
+                @click="() => { store.doorConfig.furniture.primaryCylindricalLockMechanism = cyl.id; showPrimaryCylinderDrawer = false }"
+                :class="[
+                    'flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all duration-200',
+                    store.doorConfig.furniture.primaryCylindricalLockMechanism === cyl.id
+                        ? 'border-sky-950 bg-sky-900 text-white'
+                        : 'border-sky-900/10 hover:border-sky-900/30'
+                ]"
+            >
+                <div class="h-16 w-16 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+                    <img
+                        v-if="cyl.image"
+                        :src="getImageUrl(cyl.image)"
+                        :alt="cyl.name"
+                        class="w-full h-full object-contain p-2"
+                    />
+                    <i v-else class="pi pi-circle text-2xl text-neutral-400" />
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-serif font-semibold truncate">{{ cyl.name }}</p>
+                    <p
+                        class="font-serif text-sm mt-0.5"
+                        :class="store.doorConfig.furniture.primaryCylindricalLockMechanism === cyl.id ? 'text-white/60' : 'text-sky-900/50'"
+                    >
+                        {{ cyl.base_price.toLocaleString('ru-RU') }} ₽
+                    </p>
+                </div>
+                <i
+                    v-if="store.doorConfig.furniture.primaryCylindricalLockMechanism === cyl.id"
+                    class="pi pi-check-circle text-xl text-white"
+                />
+            </div>
+        </div>
+    </Drawer>
+
+    <!-- DRAWER: Secondary cylinder -->
+    <Drawer v-model:visible="showSecondaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+        <template #header>
+            <h2 class="font-serif text-lg tracking-tight">Цилиндр дополнительного замка</h2>
+        </template>
+        <div class="space-y-3 p-1">
+            <div
+                v-for="cyl in orderedTermoCylinders"
+                :key="cyl.id"
+                @click="() => { store.doorConfig.furniture.secondaryCylindricalLockMechanism = cyl.id; showSecondaryCylinderDrawer = false }"
+                :class="[
+                    'flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all duration-200',
+                    store.doorConfig.furniture.secondaryCylindricalLockMechanism === cyl.id
+                        ? 'border-sky-950 bg-sky-900 text-white'
+                        : 'border-sky-900/10 hover:border-sky-900/30'
+                ]"
+            >
+                <div class="h-16 w-16 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+                    <img
+                        v-if="cyl.image"
+                        :src="getImageUrl(cyl.image)"
+                        :alt="cyl.name"
+                        class="w-full h-full object-contain p-2"
+                    />
+                    <i v-else class="pi pi-circle text-2xl text-neutral-400" />
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-serif font-semibold truncate">{{ cyl.name }}</p>
+                    <p
+                        class="font-serif text-sm mt-0.5"
+                        :class="store.doorConfig.furniture.secondaryCylindricalLockMechanism === cyl.id ? 'text-white/60' : 'text-sky-900/50'"
+                    >
+                        {{ cyl.base_price.toLocaleString('ru-RU') }} ₽
+                    </p>
+                </div>
+                <i
+                    v-if="store.doorConfig.furniture.secondaryCylindricalLockMechanism === cyl.id"
+                    class="pi pi-check-circle text-xl text-white"
+                />
+            </div>
+        </div>
+    </Drawer>
 
     <!-- DRAWER: Primary lock -->
     <Drawer v-model:visible="showPrimaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">

@@ -2,7 +2,7 @@
 import { useTermoDoorCalc } from '@/composables/useTermoDoorCalc'
 import { getImageUrl } from '@/lib/utils'
 import { type Furniture, type peepholePosition } from '@/types/configurator'
-import { Button, Drawer, SelectButton, ToggleSwitch } from 'primevue'
+import { Drawer, RadioButton, SelectButton, ToggleSwitch } from 'primevue'
 import { computed, ref, watch } from 'vue'
 import ConfiguratorCard from '../Card/ConfiguratorCard.vue'
 
@@ -157,16 +157,35 @@ watch(drawerShape, autoSelectFirst)
 
         <!-- ── Step 1: Type ────────────────────────────────────────── -->
         <p class="font-serif text-sm text-sky-900/70 mb-3">Тип ручки</p>
-        <SelectButton
-            :model-value="selectedType"
-            :options="typeOptions"
-            option-label="label"
-            option-value="value"
-            size="small"
-            fluid
-            class="mb-5"
-            @update:model-value="selectType"
-        />
+
+        <!-- Mobile: radio buttons -->
+        <div class="flex flex-col gap-2 mb-5 md:hidden">
+            <label
+                v-for="opt in typeOptions"
+                :key="opt.value"
+                class="flex items-center gap-3 cursor-pointer select-none"
+            >
+                <RadioButton
+                    :model-value="selectedType"
+                    :value="opt.value"
+                    @update:model-value="selectType"
+                />
+                <span class="text-sm text-sky-900/80">{{ opt.label }}</span>
+            </label>
+        </div>
+
+        <!-- Desktop: segmented SelectButton -->
+        <div class="hidden md:flex mb-5">
+            <SelectButton
+                :model-value="selectedType"
+                :options="typeOptions"
+                option-label="label"
+                option-value="value"
+                size="small"
+                fluid
+                @update:model-value="selectType"
+            />
+        </div>
 
         <!-- ── Step 2: Color (only when type is selected) ─────────── -->
         <template v-if="selectedType">
@@ -203,7 +222,7 @@ watch(drawerShape, autoSelectFirst)
                 <!-- Selected set preview -->
                 <div
                     v-if="selectedSet"
-                    class="flex items-center gap-3 p-3 rounded-2xl border border-sky-900/10 mb-3 cursor-pointer hover:border-sky-900/30 transition-colors"
+                    class="flex items-center gap-3 p-3 rounded-2xl border border-sky-900/10 mb-3 cursor-pointer hover:border-sky-900/30 transition-colors w-[calc(100vw-64px)] md:w-auto"
                     @click="openSetDrawer"
                 >
                     <div class="size-16 shrink-0 rounded-xl bg-neutral-100 overflow-hidden flex items-center justify-center">
@@ -215,23 +234,23 @@ watch(drawerShape, autoSelectFirst)
                         />
                         <span v-else class="text-xs text-neutral-400 font-serif text-center px-1">Нет фото</span>
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-serif font-semibold text-sky-900 truncate text-sm">
+                    <div class="flex-1 min-w-0 overflow-hidden">
+                        <p class="font-serif font-semibold text-sky-900 text-sm truncate line-clamp-1">
                             {{ selectedSet.title ?? 'Модель без названия' }}
                         </p>
                         <div class="flex flex-wrap gap-1.5 mt-1">
                             <span
                                 v-if="selectedType === 'push'"
-                                class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[10px] font-serif text-sky-900"
+                                class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[10px] font-serif text-sky-900 truncate max-w-full"
                             >
                                 {{ shapeLabel[selectedSet.shape] }}
                             </span>
-                            <span class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[10px] font-serif text-sky-900">
+                            <span class="inline-flex items-center rounded-full bg-sky-900/8 px-2 py-0.5 text-[10px] font-serif text-sky-900 truncate max-w-full">
                                 {{ selectedColorLabel }}
                             </span>
                         </div>
                     </div>
-                    <Button variant="outlined" size="small" label="Изменить" />
+                    <i class="pi pi-chevron-right text-sky-900/20 ml-auto text-sm" />
                 </div>
 
                 <!-- No set selected -->
@@ -264,14 +283,33 @@ watch(drawerShape, autoSelectFirst)
 
         <!-- ── Peephole position ───────────────────────────────────── -->
         <p class="font-serif text-sm text-sky-900/70 mb-3">Глазок</p>
-        <SelectButton
-            v-model="store.doorConfig.peepholePosition"
-            :options="peepholeOptions"
-            option-label="label"
-            option-value="value"
-            size="small"
-            fluid
-        />
+
+        <!-- Mobile: radio buttons -->
+        <div class="flex flex-col gap-2 md:hidden">
+            <label
+                v-for="opt in peepholeOptions"
+                :key="opt.value"
+                class="flex items-center gap-3 cursor-pointer select-none"
+            >
+                <RadioButton
+                    v-model="store.doorConfig.peepholePosition"
+                    :value="opt.value"
+                />
+                <span class="text-sm text-sky-900/80">{{ opt.label }}</span>
+            </label>
+        </div>
+
+        <!-- Desktop: segmented SelectButton -->
+        <div class="hidden md:flex">
+            <SelectButton
+                v-model="store.doorConfig.peepholePosition"
+                :options="peepholeOptions"
+                option-label="label"
+                option-value="value"
+                size="small"
+                fluid
+            />
+        </div>
 
     </ConfiguratorCard>
 
