@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Mpdf\Mpdf;
-use Mpdf\Config\ConfigVariables;
-use Mpdf\Config\FontVariables;
+use InvalidArgumentException;
 
 class PDFController extends Controller
 {
@@ -31,14 +30,26 @@ class PDFController extends Controller
         $exteriorImage = $request->input('exterior_image');
         $interiorImage = $request->input('interior_image');
 
-        // Page 1 — Exterior view
-        $mpdf->WriteHTML($this->buildImagePage($exteriorImage, 'Внешний вид'));
+        $tempPaths = [];
+        try {
+            $tempPaths[] = $this->dataUrlToTempPng($exteriorImage);
+            $tempPaths[] = $this->dataUrlToTempPng($interiorImage);
 
-        // Page 2 — Interior view
-        $mpdf->AddPage();
-        $mpdf->WriteHTML($this->buildImagePage($interiorImage, 'Внутренний вид'));
+            // Page 1 — Exterior view
+            $mpdf->WriteHTML($this->buildImagePage($tempPaths[0], 'Внешний вид'));
 
-        $pdfContent = $mpdf->Output('', 'S');
+            // Page 2 — Interior view
+            $mpdf->AddPage();
+            $mpdf->WriteHTML($this->buildImagePage($tempPaths[1], 'Внутренний вид'));
+
+            $pdfContent = $mpdf->Output('', 'S');
+        } finally {
+            foreach ($tempPaths as $path) {
+                if (is_string($path) && $path !== '' && is_file($path)) {
+                    @unlink($path);
+                }
+            }
+        }
 
         return response($pdfContent, 200, [
             'Content-Type'        => 'application/pdf',
@@ -46,12 +57,41 @@ class PDFController extends Controller
         ]);
     }
 
-    private function buildImagePage(string $dataUrl, string $label): string
+    /**
+     * mPDF parses HTML with PCRE; huge data: URLs in one WriteHTML() string exceed pcre.backtrack_limit.
+     */
+    private function dataUrlToTempPng(string $dataUrl): string
     {
+        if (! preg_match('#^data:image/png;base64,(.+)$#s', $dataUrl, $m)) {
+            throw new InvalidArgumentException('Invalid PNG data URL.');
+        }
+
+        $binary = base64_decode($m[1], true);
+        if ($binary === false || $binary === '') {
+            throw new InvalidArgumentException('Invalid base64 image data.');
+        }
+
+        $dir = storage_path('app/mpdf');
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        $path = $dir.'/'.uniqid('pdfimg_', true).'.png';
+        if (file_put_contents($path, $binary) === false) {
+            throw new InvalidArgumentException('Could not write temporary image.');
+        }
+
+        return realpath($path) ?: $path;
+    }
+
+    private function buildImagePage(string $absoluteImagePath, string $label): string
+    {
+        $src = htmlspecialchars($absoluteImagePath, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
         return <<<HTML
         <div style="text-align:center; font-family: Arial, sans-serif;">
             <p style="font-size:16pt; margin-bottom:8px;">{$label}</p>
-            <img src="{$dataUrl}" style="max-width:100%; height:auto;" />
+            <img src="{$src}" style="max-width:100%; height:auto;" />
         </div>
         HTML;
     }
