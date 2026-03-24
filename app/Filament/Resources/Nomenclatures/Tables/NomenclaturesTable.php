@@ -36,6 +36,7 @@ class NomenclaturesTable
                     ->label('Название')
                     ->searchable()
                     ->grow()
+                    ->sortable()
                     ->toggleable(),
 
                 TextColumn::make('nomenclatureCategory.name')
