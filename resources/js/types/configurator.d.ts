@@ -149,10 +149,32 @@ export interface NomenclatureProperty {
 export interface Furniture {
     id: number;
     title?: string | null;
+    preview?: string | null;
     preview_image?: string | null;
     furniture_type: 'push' | 'pull' | 'electronic';
     shape: 'rectangular' | 'oval' | 'other';
     color: 'black' | 'chrome' | 'gold' | 'bronze' | 'matte-chrome';
+
+    // Client-spec image fields (new naming)
+    handle_exterior_image?: string | null;
+    handle_interior_image?: string | null;
+    peephole_exterior_center_image?: string | null;
+    peephole_exterior_side_image?: string | null;
+    peephole_interior_center_image?: string | null;
+    peephole_interior_side_image?: string | null;
+    night_latch_turner_image?: string | null;
+
+    primary_exterior_cylindrical_lock_image?: string | null;
+    primary_interior_cylindrical_lock_image?: string | null;
+    primary_exterior_lever_lock_image?: string | null;
+    primary_interior_lever_lock_image?: string | null;
+
+    secondary_exterior_cylindrical_lock_image?: string | null;
+    secondary_interior_cylindrical_lock_image?: string | null;
+    secondary_exterior_lever_lock_image?: string | null;
+    secondary_interior_lever_lock_image?: string | null;
+
+    // Legacy image fields required by the current door visualizer
     exterior_primary_cylindrical_lock_cover_image?: string | null;
     interior_primary_cylindrical_lock_cover_image?: string | null;
     exterior_primary_lever_lock_cover_image?: string | null;

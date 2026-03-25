@@ -58,7 +58,7 @@ class FurnitureForm
                             ->required()
                             ->native(false),
 
-                        FileUpload::make('preview_image')
+                        FileUpload::make('preview')
                             ->label('Превью набора')
                             ->image()
                             ->imageEditor()
@@ -84,7 +84,7 @@ class FurnitureForm
                             ->nullable()
                             ->columnSpan(2),
 
-                        FileUpload::make('exterior_primary_cylindrical_lock_cover_image')
+                        FileUpload::make('primary_exterior_cylindrical_lock_image')
                             ->label('Накладка цил. замка — Экстерьер')
                             ->image()
                             ->imageEditor()
@@ -93,7 +93,7 @@ class FurnitureForm
                             ->directory('furniture/cylindrical-lock-covers/exterior')
                             ->columnSpan(1),
 
-                        FileUpload::make('interior_primary_cylindrical_lock_cover_image')
+                        FileUpload::make('primary_interior_cylindrical_lock_image')
                             ->label('Накладка цил. замка — Интерьер')
                             ->image()
                             ->imageEditor()
@@ -111,7 +111,7 @@ class FurnitureForm
                             ->nullable()
                             ->columnSpan(2),
 
-                        FileUpload::make('exterior_primary_lever_lock_cover_image')
+                        FileUpload::make('primary_exterior_lever_lock_image')
                             ->label('Накладка сув. замка — Экстерьер')
                             ->image()
                             ->imageEditor()
@@ -120,7 +120,7 @@ class FurnitureForm
                             ->directory('furniture/lever-lock-covers/exterior')
                             ->columnSpan(1),
 
-                        FileUpload::make('interior_primary_lever_lock_cover_image')
+                        FileUpload::make('primary_interior_lever_lock_image')
                             ->label('Накладка сув. замка — Интерьер')
                             ->image()
                             ->imageEditor()
@@ -146,7 +146,7 @@ class FurnitureForm
                             ->nullable()
                             ->columnSpan(2),
 
-                        FileUpload::make('exterior_secondary_cylindrical_lock_cover_image')
+                        FileUpload::make('secondary_exterior_cylindrical_lock_image')
                             ->label('Накладка цил. замка (доп.) — Экстерьер')
                             ->image()
                             ->imageEditor()
@@ -155,7 +155,7 @@ class FurnitureForm
                             ->directory('furniture/cylindrical-lock-covers/secondary/exterior')
                             ->columnSpan(1),
 
-                        FileUpload::make('interior_secondary_cylindrical_lock_cover_image')
+                        FileUpload::make('secondary_interior_cylindrical_lock_image')
                             ->label('Накладка цил. замка (доп.) — Интерьер')
                             ->image()
                             ->imageEditor()
@@ -173,7 +173,7 @@ class FurnitureForm
                             ->nullable()
                             ->columnSpan(2),
 
-                        FileUpload::make('exterior_secondary_lever_lock_cover_image')
+                        FileUpload::make('secondary_exterior_lever_lock_image')
                             ->label('Накладка сув. замка (доп.) — Экстерьер')
                             ->image()
                             ->imageEditor()
@@ -182,7 +182,7 @@ class FurnitureForm
                             ->directory('furniture/lever-lock-covers/secondary/exterior')
                             ->columnSpan(1),
 
-                        FileUpload::make('interior_secondary_lever_lock_cover_image')
+                        FileUpload::make('secondary_interior_lever_lock_image')
                             ->label('Накладка сув. замка (доп.) — Интерьер')
                             ->image()
                             ->imageEditor()
@@ -209,22 +209,40 @@ class FurnitureForm
                             ->nullable()
                             ->columnSpan(2),
 
-                        FileUpload::make('side_peephole_cover_image')
-                            ->label('Накладка глазка — Боковая позиция')
+                        FileUpload::make('peephole_exterior_side_image')
+                            ->label('Глазок — Экстерьер, боковая позиция')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
                             ->disk('public')
-                            ->directory('furniture/peephole-covers/side')
+                            ->directory('furniture/peephole-covers/exterior/side')
                             ->columnSpan(1),
 
-                        FileUpload::make('center_peephole_cover_image')
-                            ->label('Накладка глазка — Центральная позиция')
+                        FileUpload::make('peephole_exterior_center_image')
+                            ->label('Глазок — Экстерьер, центральная позиция')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
                             ->disk('public')
-                            ->directory('furniture/peephole-covers/center')
+                            ->directory('furniture/peephole-covers/exterior/center')
+                            ->columnSpan(1),
+                        
+                        FileUpload::make('peephole_interior_side_image')
+                            ->label('Глазок — Интерьер, боковая позиция')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(2048)
+                            ->disk('public')
+                            ->directory('furniture/peephole-covers/interior/side')
+                            ->columnSpan(1),
+
+                        FileUpload::make('peephole_interior_center_image')
+                            ->label('Глазок — Интерьер, центральная позиция')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(2048)
+                            ->disk('public')
+                            ->directory('furniture/peephole-covers/interior/center')
                             ->columnSpan(1),
 
                         Select::make('night_latch_turner_id')
@@ -236,7 +254,7 @@ class FurnitureForm
                             ->nullable()
                             ->columnSpan(2),
 
-                        FileUpload::make('night_latch_turner_cover_image')
+                        FileUpload::make('night_latch_turner_image')
                             ->label('Накладка ночной задвижки')
                             ->image()
                             ->imageEditor()
@@ -272,8 +290,17 @@ class FurnitureForm
                             ->nullable()
                             ->columnSpan(2),
 
-                        FileUpload::make('handle_cover_image')
-                            ->label('Накладка ручки')
+                        FileUpload::make('handle_exterior_image')
+                            ->label('Накладка ручки — Экстерьер')
+                            ->image()
+                            ->imageEditor()
+                            ->maxSize(2048)
+                            ->disk('public')
+                            ->directory('furniture/handle-covers')
+                            ->columnSpan(2),
+
+                        FileUpload::make('handle_interior_image')
+                            ->label('Накладка ручки — Интерьер')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)

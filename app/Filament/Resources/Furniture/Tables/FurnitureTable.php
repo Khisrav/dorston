@@ -21,7 +21,7 @@ class FurnitureTable
                     ->sortable()
                     ->width('60px'),
 
-                ImageColumn::make('preview_image')
+                ImageColumn::make('preview')
                     ->label('Превью')
                     ->disk('public')
                     ->defaultImageUrl(url('/images/placeholder.png'))
@@ -89,7 +89,7 @@ class FurnitureTable
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                ImageColumn::make('primary_cylindrical_lock_cover_image')
+                ImageColumn::make('primary_exterior_cylindrical_lock_image')
                     ->label('Накладка цил. (осн.)')
                     ->disk('public')
                     ->defaultImageUrl(url('/images/placeholder.png'))
@@ -102,7 +102,7 @@ class FurnitureTable
                     ->placeholder('—')
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                ImageColumn::make('primary_lever_lock_cover_image')
+                ImageColumn::make('primary_exterior_lever_lock_image')
                     ->label('Накладка сув. (осн.)')
                     ->disk('public')
                     ->defaultImageUrl(url('/images/placeholder.png'))
