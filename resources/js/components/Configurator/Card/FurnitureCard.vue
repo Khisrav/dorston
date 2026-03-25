@@ -261,7 +261,15 @@ watch(drawerShape, autoSelectFirst)
 
         <!-- ── Night latch turner ──────────────────────────────────── -->
         <div class="flex items-center justify-between gap-4">
-            <p class="font-serif text-sm text-sky-900/70">Ночная задвижка + вертушок</p>
+            <div class="flex items-center gap-3 min-w-0">
+                <!-- Placeholder: actual night latch turner image will be different -->
+                <div
+                    class="size-14 rounded-xl bg-neutral-100 shrink-0"
+                    :class="doorCalcStore.doorConfig.furniture.hasNightLatchTurner ? 'opacity-100' : 'opacity-60'"
+                    aria-hidden="true"
+                />
+                <p class="font-serif text-sm text-sky-900/70">Ночная задвижка + вертушок</p>
+            </div>
             <ToggleSwitch v-model="doorCalcStore.doorConfig.furniture.hasNightLatchTurner" />
         </div>
 
