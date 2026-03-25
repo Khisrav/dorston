@@ -3,19 +3,38 @@ import { useTermoDoorCalc } from '@/composables/useTermoDoorCalc'
 import { ToggleSwitch } from 'primevue'
 import { computed, ref, watch } from 'vue'
 import ConfiguratorCard from '../Card/ConfiguratorCard.vue'
+import { MoveHorizontalIcon, MoveVerticalIcon } from 'lucide-vue-next'
 
 const store = useTermoDoorCalc()
+
+const MODULE_SIZE_MIN = 300
+const MODULE_SIZE_MAX = 1000
+const MODULE_SIZE_STEP = 10
+const MODULE_DEFAULT = 300
 
 const hasTop   = ref(false)
 const hasLeft  = ref(false)
 const hasRight = ref(false)
 
+function clampSnapModuleSize(n: number): number {
+    if (!Number.isFinite(n)) return MODULE_DEFAULT
+    const c = Math.min(MODULE_SIZE_MAX, Math.max(MODULE_SIZE_MIN, n))
+    const k = Math.round((c - MODULE_SIZE_MIN) / MODULE_SIZE_STEP)
+    return Math.min(MODULE_SIZE_MAX, MODULE_SIZE_MIN + k * MODULE_SIZE_STEP)
+}
+
+function ensureSideDefaultWhenEnabled(enabled: boolean, getSize: () => number, setSize: (v: number) => void) {
+    if (enabled && getSize() === 0) {
+        setSize(MODULE_DEFAULT)
+    }
+}
+
 watch(() => store.doorConfig.isModular, (enabled) => {
     if (enabled) {
         store.doorConfig.modules ??= {
-            top:   { size: 300, withGlass: false },
-            left:  { size: 300, withGlass: false },
-            right: { size: 300, withGlass: false },
+            top:   { size: 0, withGlass: false },
+            left:  { size: 0, withGlass: false },
+            right: { size: 0, withGlass: false },
         }
     } else {
         hasTop.value   = false
@@ -23,6 +42,35 @@ watch(() => store.doorConfig.isModular, (enabled) => {
         hasRight.value = false
     }
 }, { immediate: true })
+
+watch(hasTop, (on) => {
+    const m = store.doorConfig.modules
+    if (!m) return
+    ensureSideDefaultWhenEnabled(on, () => m.top.size, (v) => { m.top.size = v })
+})
+watch(hasLeft, (on) => {
+    const m = store.doorConfig.modules
+    if (!m) return
+    ensureSideDefaultWhenEnabled(on, () => m.left.size, (v) => { m.left.size = v })
+})
+watch(hasRight, (on) => {
+    const m = store.doorConfig.modules
+    if (!m) return
+    ensureSideDefaultWhenEnabled(on, () => m.right.size, (v) => { m.right.size = v })
+})
+
+const extraLeft = computed(() => (hasLeft.value ? store.doorConfig.modules?.left.size ?? 0 : 0))
+const extraRight = computed(() => (hasRight.value ? store.doorConfig.modules?.right.size ?? 0 : 0))
+const extraTop = computed(() => (hasTop.value ? store.doorConfig.modules?.top.size ?? 0 : 0))
+
+const overallWidth = computed(() => store.doorConfig.width + extraLeft.value + extraRight.value)
+const overallHeight = computed(() => store.doorConfig.height + extraTop.value)
+
+function onModuleSizeBlur(side: 'top' | 'left' | 'right') {
+    const m = store.doorConfig.modules
+    if (!m) return
+    m[side].size = clampSnapModuleSize(m[side].size)
+}
 
 const moduleSampleImage = computed(() => {
     if (!hasTop.value && !hasLeft.value && !hasRight.value) return null
@@ -52,17 +100,24 @@ const moduleSampleImage = computed(() => {
 
                 <!-- ── Top module ──────────────────────────────────────── -->
                 <div class="flex flex-col items-center gap-2 justify-center">
-                    <span class="font-serif text-xs text-sky-900/70">Сверху</span>
+                    <span class="font-serif text-xs text-sky-900/70">Сверху, мм</span>
                     <ToggleSwitch v-model="hasTop" />
                     <Transition name="fade">
                         <div v-if="hasTop" class="num-input-wrap w-24">
                             <input
                                 type="number"
                                 v-model.number="store.doorConfig.modules!.top.size"
-                                min="100" max="600" step="10"
+                                :min="MODULE_SIZE_MIN"
+                                :max="MODULE_SIZE_MAX"
+                                :step="MODULE_SIZE_STEP"
+                                inputmode="numeric"
                                 class="num-input"
+                                @blur="onModuleSizeBlur('top')"
+                                @change="onModuleSizeBlur('top')"
                             />
-                            <span class="num-suffix">мм</span>
+                            <span class="num-suffix">
+                                <MoveVerticalIcon class="w-4 h-4" />
+                            </span>
                         </div>
                     </Transition>
                 </div>
@@ -72,23 +127,30 @@ const moduleSampleImage = computed(() => {
 
                     <!-- Left module -->
                     <div class="flex flex-col items-center gap-2 w-[76px] shrink-0">
-                        <span class="font-serif text-xs text-sky-900/50">Слева</span>
+                        <span class="font-serif text-xs text-sky-900/50">Слева, мм</span>
                         <ToggleSwitch v-model="hasLeft" />
                         <Transition name="fade">
                             <div v-if="hasLeft" class="num-input-wrap w-full">
                                 <input
                                     type="number"
                                     v-model.number="store.doorConfig.modules!.left.size"
-                                    min="50" max="400" step="10"
+                                    :min="MODULE_SIZE_MIN"
+                                    :max="MODULE_SIZE_MAX"
+                                    :step="MODULE_SIZE_STEP"
+                                    inputmode="numeric"
                                     class="num-input"
+                                    @blur="onModuleSizeBlur('left')"
+                                    @change="onModuleSizeBlur('left')"
                                 />
-                                <span class="num-suffix">мм</span>
+                                <span class="num-suffix">
+                                    <MoveHorizontalIcon class="w-4 h-4" />
+                                </span>
                             </div>
                         </Transition>
                     </div>
 
                     <!-- Door sample image -->
-                    <div class="relative w-[160px] h-[202px] md:w-[202px] md:h-[256px] shrink-0">
+                    <div class="relative w-[132px] h-[167px] md:w-[202px] md:h-[256px] shrink-0">
                         <Transition name="img-swap">
                             <div
                                 v-if="!moduleSampleImage"
@@ -111,21 +173,32 @@ const moduleSampleImage = computed(() => {
 
                     <!-- Right module -->
                     <div class="flex flex-col items-center gap-2 w-[76px] shrink-0">
-                        <span class="font-serif text-xs text-sky-900/50">Справа</span>
+                        <span class="font-serif text-xs text-sky-900/50">Справа, мм</span>
                         <ToggleSwitch v-model="hasRight" />
                         <Transition name="fade">
                             <div v-if="hasRight" class="num-input-wrap w-full">
                                 <input
                                     type="number"
                                     v-model.number="store.doorConfig.modules!.right.size"
-                                    min="50" max="400" step="10"
+                                    :min="MODULE_SIZE_MIN"
+                                    :max="MODULE_SIZE_MAX"
+                                    :step="MODULE_SIZE_STEP"
+                                    inputmode="numeric"
                                     class="num-input"
+                                    @blur="onModuleSizeBlur('right')"
+                                    @change="onModuleSizeBlur('right')"
                                 />
-                                <span class="num-suffix">мм</span>
+                                <span class="num-suffix">
+                                    <MoveHorizontalIcon class="w-4 h-4" />
+                                </span>
                             </div>
                         </Transition>
                     </div>
 
+                </div>
+
+                <div>
+                    <p class="font-serif text-xs text-sky-900/50">{{ overallWidth }}x{{ overallHeight }} мм</p>
                 </div>
             </div>
 

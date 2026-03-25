@@ -110,70 +110,142 @@ watch(isUndercoatActive, (active) => {
     </ConfiguratorCard>
 
     <!-- DRAWER: Primary color -->
-    <Drawer v-model:visible="showPrimaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+    <Drawer v-model:visible="showPrimaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
         <template #header>
-            <h2 class="font-serif text-lg tracking-tight">Покраска металла: Основной цвет</h2>
+            <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
+                Покраска металла: основной цвет
+            </h2>
         </template>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-1">
-            <div
-                v-for="paint in store.paints"
-                :key="paint.id"
-                @click="() => { store.doorConfig.metalPainting.primaryColor = paint.id; showPrimaryDrawer = false }"
-                :class="[
-                    'cursor-pointer border transition-all duration-200 aspect-video',
-                    store.doorConfig.metalPainting.primaryColor === paint.id
-                        ? 'border-sky-900'
-                        : 'border-transparent hover:border-sky-900/30'
-                ]"
-            >
-                <img :src="getImageUrl(paint.image ?? null)" :alt="paint.name ?? ''" class="w-full h-full object-cover" />
-                <p class="text-xs text-center p-1 truncate">{{ paint.name }}</p>
+        <div class="p-1">
+            <div class="grid grid-cols-2 gap-3">
+                <button
+                    v-for="paint in store.paints"
+                    :key="paint.id"
+                    type="button"
+                    @click="() => { store.doorConfig.metalPainting.primaryColor = paint.id; showPrimaryDrawer = false }"
+                    :class="[
+                        'flex flex-col overflow-hidden rounded-2xl border text-left transition-all duration-200 cursor-pointer',
+                        store.doorConfig.metalPainting.primaryColor === paint.id
+                            ? 'border-sky-900/60 border-2 bg-sky-900/5'
+                            : 'border-sky-900/10 hover:border-sky-900/30'
+                    ]"
+                >
+                    <div class="w-full aspect-[4/3] bg-neutral-100 overflow-hidden">
+                        <img
+                            :src="getImageUrl(paint.image ?? null)"
+                            :alt="paint.name ?? ''"
+                            class="w-full h-full object-cover"
+                        />
+                    </div>
+                    <div class="flex items-center gap-2 p-2.5 min-w-0">
+                        <p class="font-serif font-medium text-sky-900 text-xs leading-snug line-clamp-2 flex-1 min-w-0">
+                            {{ paint.name }}
+                        </p>
+                        <div class="shrink-0">
+                            <div
+                                v-if="store.doorConfig.metalPainting.primaryColor === paint.id"
+                                class="size-6 rounded-full bg-sky-900 flex items-center justify-center"
+                            >
+                                <i class="pi pi-check text-white text-xs" />
+                            </div>
+                            <div v-else class="size-6 rounded-full border border-sky-900/20" />
+                        </div>
+                    </div>
+                </button>
             </div>
         </div>
     </Drawer>
 
     <!-- DRAWER: Secondary color (Nova) -->
-    <Drawer v-model:visible="showSecondaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+    <Drawer v-model:visible="showSecondaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
         <template #header>
-            <h2 class="font-serif text-lg tracking-tight">Покраска металла: Дополнительный цвет (Nova)</h2>
+            <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
+                Дополнительный цвет (Nova)
+            </h2>
         </template>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-1">
-            <div
-                v-for="paint in store.paints"
-                :key="paint.id"
-                @click="() => { store.doorConfig.metalPainting.secondaryColor = paint.id; showSecondaryDrawer = false }"
-                :class="[
-                    'cursor-pointer border transition-all duration-200 aspect-video',
-                    store.doorConfig.metalPainting.secondaryColor === paint.id
-                        ? 'border-sky-900'
-                        : 'border-transparent hover:border-sky-900/30'
-                ]"
-            >
-                <img :src="getImageUrl(paint.image ?? null)" :alt="paint.name ?? ''" class="w-full h-full object-cover" />
-                <p class="text-xs text-center p-1 truncate">{{ paint.name }}</p>
+        <div class="p-1">
+            <div class="grid grid-cols-2 gap-3">
+                <button
+                    v-for="paint in store.paints"
+                    :key="paint.id"
+                    type="button"
+                    @click="() => { store.doorConfig.metalPainting.secondaryColor = paint.id; showSecondaryDrawer = false }"
+                    :class="[
+                        'flex flex-col overflow-hidden rounded-2xl border text-left transition-all duration-200 cursor-pointer',
+                        store.doorConfig.metalPainting.secondaryColor === paint.id
+                            ? 'border-sky-900/60 border-2 bg-sky-900/5'
+                            : 'border-sky-900/10 hover:border-sky-900/30'
+                    ]"
+                >
+                    <div class="w-full aspect-[4/3] bg-neutral-100 overflow-hidden">
+                        <img
+                            :src="getImageUrl(paint.image ?? null)"
+                            :alt="paint.name ?? ''"
+                            class="w-full h-full object-cover"
+                        />
+                    </div>
+                    <div class="flex items-center gap-2 p-2.5 min-w-0">
+                        <p class="font-serif font-medium text-sky-900 text-xs leading-snug line-clamp-2 flex-1 min-w-0">
+                            {{ paint.name }}
+                        </p>
+                        <div class="shrink-0">
+                            <div
+                                v-if="store.doorConfig.metalPainting.secondaryColor === paint.id"
+                                class="size-6 rounded-full bg-sky-900 flex items-center justify-center"
+                            >
+                                <i class="pi pi-check text-white text-xs" />
+                            </div>
+                            <div v-else class="size-6 rounded-full border border-sky-900/20" />
+                        </div>
+                    </div>
+                </button>
             </div>
         </div>
     </Drawer>
 
     <!-- DRAWER: Inner casing color -->
-    <Drawer v-model:visible="showInnerCasingDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+    <Drawer v-model:visible="showInnerCasingDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
         <template #header>
-            <h2 class="font-serif text-lg tracking-tight">Цвет внутреннего обрамления</h2>
+            <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
+                Цвет внутреннего обрамления
+            </h2>
         </template>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-1">
-            <div
-                v-for="paint in store.paints"
-                :key="paint.id"
-                @click="() => { store.doorConfig.metalPainting.innerCasingColor = paint.id; showInnerCasingDrawer = false }"
-                :class="[
-                    'cursor-pointer border transition-all duration-200 aspect-video',
-                    store.doorConfig.metalPainting.innerCasingColor === paint.id
-                        ? 'border-sky-900'
-                        : 'border-transparent hover:border-sky-900/30'
-                ]"
-            >
-                <img :src="getImageUrl(paint.image ?? null)" :alt="paint.name ?? ''" class="w-full h-full object-cover" />
-                <p class="text-xs text-center p-1 truncate">{{ paint.name }}</p>
+        <div class="p-1">
+            <div class="grid grid-cols-2 gap-3">
+                <button
+                    v-for="paint in store.paints"
+                    :key="paint.id"
+                    type="button"
+                    @click="() => { store.doorConfig.metalPainting.innerCasingColor = paint.id; showInnerCasingDrawer = false }"
+                    :class="[
+                        'flex flex-col overflow-hidden rounded-2xl border text-left transition-all duration-200 cursor-pointer',
+                        store.doorConfig.metalPainting.innerCasingColor === paint.id
+                            ? 'border-sky-900/60 border-2 bg-sky-900/5'
+                            : 'border-sky-900/10 hover:border-sky-900/30'
+                    ]"
+                >
+                    <div class="w-full aspect-[4/3] bg-neutral-100 overflow-hidden">
+                        <img
+                            :src="getImageUrl(paint.image ?? null)"
+                            :alt="paint.name ?? ''"
+                            class="w-full h-full object-cover"
+                        />
+                    </div>
+                    <div class="flex items-center gap-2 p-2.5 min-w-0">
+                        <p class="font-serif font-medium text-sky-900 text-xs leading-snug line-clamp-2 flex-1 min-w-0">
+                            {{ paint.name }}
+                        </p>
+                        <div class="shrink-0">
+                            <div
+                                v-if="store.doorConfig.metalPainting.innerCasingColor === paint.id"
+                                class="size-6 rounded-full bg-sky-900 flex items-center justify-center"
+                            >
+                                <i class="pi pi-check text-white text-xs" />
+                            </div>
+                            <div v-else class="size-6 rounded-full border border-sky-900/20" />
+                        </div>
+                    </div>
+                </button>
             </div>
         </div>
     </Drawer>

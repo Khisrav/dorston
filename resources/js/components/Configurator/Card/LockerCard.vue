@@ -295,125 +295,139 @@ function securityLevel(value: string): number {
     </ConfiguratorCard>
 
     <!-- DRAWER: Primary cylinder -->
-    <Drawer v-model:visible="showPrimaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+    <Drawer v-model:visible="showPrimaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
         <template #header>
-            <h2 class="font-serif text-lg tracking-tight">Цилиндр основного замка</h2>
+            <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
+                Цилиндр основного замка
+            </h2>
         </template>
-        <div class="space-y-3 p-1">
-            <div
+        <div class="p-1 space-y-3">
+            <button
                 v-for="opt in comfortCylinderDrawerOptions"
                 :key="opt.line"
+                type="button"
                 @click="() => { doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism = opt.resolvedId; showPrimaryCylinderDrawer = false }"
                 :class="[
-                    'flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all duration-200',
+                    'flex items-center gap-3 p-3 rounded-2xl border w-full text-left transition-all duration-200 cursor-pointer',
                     doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism === opt.resolvedId
-                        ? 'border-sky-950 bg-sky-900 text-white'
+                        ? 'border-sky-900/60 border-2 bg-sky-900/5'
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <div class="h-16 w-16 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+                <div class="h-14 w-14 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
                     <img
                         v-if="opt.nomenclature?.image"
                         :src="getImageUrl(opt.nomenclature.image)"
                         :alt="opt.label"
                         class="w-full h-full object-contain p-2"
                     />
-                    <i v-else class="pi pi-circle text-2xl text-neutral-400" />
+                    <i v-else class="pi pi-circle text-xl text-neutral-400" />
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-serif font-semibold truncate"> {{ opt.label }} {{ opt.resolvedId }}</p>
+                    <p class="font-serif font-semibold text-sky-900 truncate">{{ opt.label }}</p>
                     <p
                         v-if="opt.nomenclature"
-                        class="font-serif text-sm mt-0.5"
-                        :class="doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism === opt.resolvedId ? 'text-white/60' : 'text-sky-900/50'"
+                        class="font-serif text-xs mt-0.5 text-sky-900/50"
                     >
                         {{ opt.nomenclature.base_price.toLocaleString('ru-RU') }} ₽
                     </p>
                 </div>
-                <i
-                    v-if="doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism === opt.resolvedId"
-                    class="pi pi-check-circle text-xl text-white"
-                />
-            </div>
+                <div class="shrink-0">
+                    <div
+                        v-if="doorCalcStore.doorConfig.furniture.primaryCylindricalLockMechanism === opt.resolvedId"
+                        class="size-6 rounded-full bg-sky-900 flex items-center justify-center"
+                    >
+                        <i class="pi pi-check text-white text-xs" />
+                    </div>
+                    <div v-else class="size-6 rounded-full border border-sky-900/20" />
+                </div>
+            </button>
         </div>
     </Drawer>
 
     <!-- DRAWER: Secondary cylinder -->
-    <Drawer v-model:visible="showSecondaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+    <Drawer v-model:visible="showSecondaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
         <template #header>
-            <h2 class="font-serif text-lg tracking-tight">Цилиндр дополнительного замка</h2>
+            <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
+                Цилиндр дополнительного замка
+            </h2>
         </template>
-        <div class="space-y-3 p-1">
-            <div
+        <div class="p-1 space-y-3">
+            <button
                 v-for="opt in comfortCylinderDrawerOptions"
                 :key="opt.line"
+                type="button"
                 @click="() => { doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism = opt.resolvedId; showSecondaryCylinderDrawer = false }"
                 :class="[
-                    'flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all duration-200',
+                    'flex items-center gap-3 p-3 rounded-2xl border w-full text-left transition-all duration-200 cursor-pointer',
                     doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism === opt.resolvedId
-                        ? 'border-sky-950 bg-sky-900 text-white'
+                        ? 'border-sky-900/60 border-2 bg-sky-900/5'
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <div class="h-16 w-16 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+                <div class="h-14 w-14 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
                     <img
                         v-if="opt.nomenclature?.image"
                         :src="getImageUrl(opt.nomenclature.image)"
                         :alt="opt.label"
                         class="w-full h-full object-contain p-2"
                     />
-                    <i v-else class="pi pi-circle text-2xl text-neutral-400" />
+                    <i v-else class="pi pi-circle text-xl text-neutral-400" />
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-serif font-semibold truncate">{{ opt.label }}</p>
+                    <p class="font-serif font-semibold text-sky-900 truncate">{{ opt.label }}</p>
                     <p
                         v-if="opt.nomenclature"
-                        class="font-serif text-sm mt-0.5"
-                        :class="doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism === opt.resolvedId ? 'text-white/60' : 'text-sky-900/50'"
+                        class="font-serif text-xs mt-0.5 text-sky-900/50"
                     >
                         {{ opt.nomenclature.base_price.toLocaleString('ru-RU') }} ₽
                     </p>
                 </div>
-                <i
-                    v-if="doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism === opt.resolvedId"
-                    class="pi pi-check-circle text-xl text-white"
-                />
-            </div>
+                <div class="shrink-0">
+                    <div
+                        v-if="doorCalcStore.doorConfig.furniture.secondaryCylindricalLockMechanism === opt.resolvedId"
+                        class="size-6 rounded-full bg-sky-900 flex items-center justify-center"
+                    >
+                        <i class="pi pi-check text-white text-xs" />
+                    </div>
+                    <div v-else class="size-6 rounded-full border border-sky-900/20" />
+                </div>
+            </button>
         </div>
     </Drawer>
 
     <!-- DRAWER: Primary lock -->
-    <Drawer v-model:visible="showPrimaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+    <Drawer v-model:visible="showPrimaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
         <template #header>
-            <h2 class="font-serif text-lg tracking-tight">Основной замок</h2>
+            <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
+                Основной замок
+            </h2>
         </template>
-        <div class="space-y-3 p-1">
-            <div
+        <div class="p-1 space-y-3">
+            <button
                 v-for="lock in primaryLocks"
                 :key="lock.id"
+                type="button"
                 @click="() => { doorCalcStore.doorConfig.furniture.primaryLock = lock.id; showPrimaryLockDrawer = false }"
                 :class="[
-                    'flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all duration-200',
+                    'flex items-center gap-3 p-3 rounded-2xl border w-full text-left transition-all duration-200 cursor-pointer',
                     doorCalcStore.doorConfig.furniture.primaryLock === lock.id
-                        ? 'border-sky-950 bg-sky-900 text-white'
+                        ? 'border-sky-900/60 border-2 bg-sky-900/5'
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <div class="h-16 w-16 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+                <div class="h-14 w-14 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
                     <img
                         v-if="lock.image"
                         :src="getImageUrl(lock.image)"
                         :alt="lock.name"
                         class="w-full h-full object-contain p-2"
                     />
-                    <i v-else class="pi pi-lock text-2xl text-neutral-400" />
+                    <i v-else class="pi pi-lock text-xl text-neutral-400" />
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-serif font-semibold truncate">{{ lock.name }}</p>
-                    <p
-                        class="font-serif text-sm mt-0.5"
-                        :class="doorCalcStore.doorConfig.furniture.primaryLock === lock.id ? 'text-white/60' : 'text-sky-900/50'"
-                    >
+                    <p class="font-serif font-semibold text-sky-900 truncate">{{ lock.name }}</p>
+                    <p class="font-serif text-xs mt-0.5 text-sky-900/50">
                         {{ lock.base_price.toLocaleString('ru-RU') }} ₽
                     </p>
                     <div
@@ -425,19 +439,16 @@ function securityLevel(value: string): number {
                                 v-if="getLockProp(lock, 'Страна')"
                                 class="flex items-center gap-1"
                             >
-                                <span
-                                    class="text-[10px] font-mono font-bold px-1 py-0.5 rounded leading-none"
-                                    :class="doorCalcStore.doorConfig.furniture.primaryLock === lock.id ? 'bg-white/15 text-white/80' : 'bg-sky-900/8 text-sky-900/60'"
-                                >{{ countryAbbr(getLockProp(lock, 'Страна')!) }}</span>
-                                <span
-                                    class="text-xs font-serif"
-                                    :class="doorCalcStore.doorConfig.furniture.primaryLock === lock.id ? 'text-white/60' : 'text-sky-900/50'"
-                                >{{ getLockProp(lock, 'Страна') }}</span>
+                                <span class="text-[10px] font-mono font-bold px-1 py-0.5 rounded leading-none bg-sky-900/8 text-sky-900/60">
+                                    {{ countryAbbr(getLockProp(lock, 'Страна')!) }}
+                                </span>
+                                <span class="text-xs font-serif text-sky-900/50">
+                                    {{ getLockProp(lock, 'Страна') }}
+                                </span>
                             </span>
                             <span
                                 v-if="getLockProp(lock, 'Механизм')"
-                                class="text-xs font-serif px-1.5 py-0.5 rounded-full"
-                                :class="doorCalcStore.doorConfig.furniture.primaryLock === lock.id ? 'bg-white/10 text-white/70' : 'bg-sky-900/5 text-sky-900/60'"
+                                class="text-xs font-serif px-1.5 py-0.5 rounded-full bg-sky-900/5 text-sky-900/60"
                             >{{ getLockProp(lock, 'Механизм') }}</span>
                         </div>
                         <div
@@ -449,52 +460,57 @@ function securityLevel(value: string): number {
                                 :key="i"
                                 :size="10"
                                 :class="i <= securityLevel(getLockProp(lock, 'Безопасность')!)
-                                    ? (doorCalcStore.doorConfig.furniture.primaryLock === lock.id ? 'text-green-300' : 'text-green-500')
-                                    : (doorCalcStore.doorConfig.furniture.primaryLock === lock.id ? 'text-white/20' : 'text-sky-900/15')"
+                                    ? 'text-green-600'
+                                    : 'text-sky-900/15'"
                             />
                         </div>
                     </div>
                 </div>
-                <i
-                    v-if="doorCalcStore.doorConfig.furniture.primaryLock === lock.id"
-                    class="pi pi-check-circle text-xl text-white"
-                />
-            </div>
+                <div class="shrink-0 self-center">
+                    <div
+                        v-if="doorCalcStore.doorConfig.furniture.primaryLock === lock.id"
+                        class="size-6 rounded-full bg-sky-900 flex items-center justify-center"
+                    >
+                        <i class="pi pi-check text-white text-xs" />
+                    </div>
+                    <div v-else class="size-6 rounded-full border border-sky-900/20" />
+                </div>
+            </button>
         </div>
     </Drawer>
 
     <!-- DRAWER: Secondary lock -->
-    <Drawer v-model:visible="showSecondaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+    <Drawer v-model:visible="showSecondaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
         <template #header>
-            <h2 class="font-serif text-lg tracking-tight">Дополнительный замок</h2>
+            <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
+                Дополнительный замок
+            </h2>
         </template>
-        <div class="space-y-3 p-1">
-            <div
+        <div class="p-1 space-y-3">
+            <button
                 v-for="lock in secondaryLocks"
                 :key="lock.id"
+                type="button"
                 @click="() => { doorCalcStore.doorConfig.furniture.secondaryLock = lock.id; showSecondaryLockDrawer = false }"
                 :class="[
-                    'flex items-center gap-4 p-4 rounded-2xl border cursor-pointer transition-all duration-200',
+                    'flex items-center gap-3 p-3 rounded-2xl border w-full text-left transition-all duration-200 cursor-pointer',
                     doorCalcStore.doorConfig.furniture.secondaryLock === lock.id
-                        ? 'border-sky-950 bg-sky-900 text-white'
+                        ? 'border-sky-900/60 border-2 bg-sky-900/5'
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <div class="h-16 w-16 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+                <div class="h-14 w-14 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
                     <img
                         v-if="lock.image"
                         :src="getImageUrl(lock.image)"
                         :alt="lock.name"
                         class="w-full h-full object-contain p-2"
                     />
-                    <i v-else class="pi pi-lock text-2xl text-neutral-400" />
+                    <i v-else class="pi pi-lock text-xl text-neutral-400" />
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="font-serif font-semibold truncate">{{ lock.name }}</p>
-                    <p
-                        class="font-serif text-sm mt-0.5"
-                        :class="doorCalcStore.doorConfig.furniture.secondaryLock === lock.id ? 'text-white/60' : 'text-sky-900/50'"
-                    >
+                    <p class="font-serif font-semibold text-sky-900 truncate">{{ lock.name }}</p>
+                    <p class="font-serif text-xs mt-0.5 text-sky-900/50">
                         {{ lock.base_price.toLocaleString('ru-RU') }} ₽
                     </p>
                     <div
@@ -506,19 +522,16 @@ function securityLevel(value: string): number {
                                 v-if="getLockProp(lock, 'Страна')"
                                 class="flex items-center gap-1"
                             >
-                                <span
-                                    class="text-[10px] font-mono font-bold px-1 py-0.5 rounded leading-none"
-                                    :class="doorCalcStore.doorConfig.furniture.secondaryLock === lock.id ? 'bg-white/15 text-white/80' : 'bg-sky-900/8 text-sky-900/60'"
-                                >{{ countryAbbr(getLockProp(lock, 'Страна')!) }}</span>
-                                <span
-                                    class="text-xs font-serif"
-                                    :class="doorCalcStore.doorConfig.furniture.secondaryLock === lock.id ? 'text-white/60' : 'text-sky-900/50'"
-                                >{{ getLockProp(lock, 'Страна') }}</span>
+                                <span class="text-[10px] font-mono font-bold px-1 py-0.5 rounded leading-none bg-sky-900/8 text-sky-900/60">
+                                    {{ countryAbbr(getLockProp(lock, 'Страна')!) }}
+                                </span>
+                                <span class="text-xs font-serif text-sky-900/50">
+                                    {{ getLockProp(lock, 'Страна') }}
+                                </span>
                             </span>
                             <span
                                 v-if="getLockProp(lock, 'Механизм')"
-                                class="text-xs font-serif px-1.5 py-0.5 rounded-full"
-                                :class="doorCalcStore.doorConfig.furniture.secondaryLock === lock.id ? 'bg-white/10 text-white/70' : 'bg-sky-900/5 text-sky-900/60'"
+                                class="text-xs font-serif px-1.5 py-0.5 rounded-full bg-sky-900/5 text-sky-900/60"
                             >{{ getLockProp(lock, 'Механизм') }}</span>
                         </div>
                         <div
@@ -530,17 +543,22 @@ function securityLevel(value: string): number {
                                 :key="i"
                                 :size="10"
                                 :class="i <= securityLevel(getLockProp(lock, 'Безопасность')!)
-                                    ? (doorCalcStore.doorConfig.furniture.secondaryLock === lock.id ? 'text-green-300' : 'text-green-500')
-                                    : (doorCalcStore.doorConfig.furniture.secondaryLock === lock.id ? 'text-white/20' : 'text-sky-900/15')"
+                                    ? 'text-green-600'
+                                    : 'text-sky-900/15'"
                             />
                         </div>
                     </div>
                 </div>
-                <i
-                    v-if="doorCalcStore.doorConfig.furniture.secondaryLock === lock.id"
-                    class="pi pi-check-circle text-xl text-white"
-                />
-            </div>
+                <div class="shrink-0 self-center">
+                    <div
+                        v-if="doorCalcStore.doorConfig.furniture.secondaryLock === lock.id"
+                        class="size-6 rounded-full bg-sky-900 flex items-center justify-center"
+                    >
+                        <i class="pi pi-check text-white text-xs" />
+                    </div>
+                    <div v-else class="size-6 rounded-full border border-sky-900/20" />
+                </div>
+            </button>
         </div>
     </Drawer>
 </template>

@@ -2,6 +2,7 @@
 import { useTermoDoorCalc } from '@/composables/useTermoDoorCalc'
 import { getDoorModelImage, getImageUrl } from '@/lib/utils'
 import { Drawer } from 'primevue'
+import { Pencil } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import ConfiguratorCard from '../Card/ConfiguratorCard.vue'
 
@@ -37,8 +38,8 @@ const secondaryFilmColor = computed(() =>
     <ConfiguratorCard :step="2" title="Наружная отделка">
 
         <label class="font-serif text-sm inline-block mb-3 text-sky-900/70">Вид снаружи</label>
-        <div class="w-full flex flex-col md:flex-row items-center md:items-stretch justify-between gap-3 p-3 rounded-2xl border border-sky-900/10 hover:border-sky-900/30 text-left transition-all duration-200">
-            <div class="flex items-center gap-3 flex-1 w-full">
+        <div class="w-full flex flex-col md:flex-row items-stretch justify-between gap-3 p-3 rounded-2xl border border-sky-900/10 hover:border-sky-900/30 text-left transition-all duration-200">
+            <div class="flex items-center gap-3 flex-1 min-w-0 w-full">
                 <div class="w-24 h-24 bg-neutral-100 rounded-sm overflow-hidden shrink-0 flex items-center justify-center">
                     <img
                         v-if="selectedModel"
@@ -47,18 +48,26 @@ const secondaryFilmColor = computed(() =>
                         class="h-full"
                     />
                 </div>
-                <div class="min-w-0 flex flex-col">
+                <div class="min-w-0 flex flex-col flex-1">
                     <p class="font-serif text-xs text-sky-900/40 uppercase tracking-wider mb-0.5">Вид снаружи</p>
                     <p class="font-serif font-semibold text-sky-900 truncate">
                         {{ selectedModel?.name ?? 'Не выбрано' }}
                     </p>
                 </div>
+                <button
+                    type="button"
+                    class="md:hidden shrink-0 ml-auto inline-flex items-center justify-center size-9 rounded-xl border border-sky-900/20 text-sky-900/55 hover:border-sky-900/40 hover:text-sky-900 transition-colors"
+                    aria-label="Изменить дизайн"
+                    @click="showModelDrawer = true"
+                >
+                    <Pencil class="size-4" stroke-width="2" />
+                </button>
             </div>
-            <div class="w-full md:w-auto md:flex md:items-center md:justify-end">
+            <div class="hidden md:flex md:items-center md:justify-end md:shrink-0">
                 <Button
                     variant="outlined"
                     size="small"
-                    class="mt-2 md:mt-0 md:ml-4 self-start md:self-center"
+                    class="md:ml-4"
                     label="Изменить дизайн"
                     @click="showModelDrawer = true"
                 />
@@ -95,68 +104,142 @@ const secondaryFilmColor = computed(() =>
     </ConfiguratorCard>
 
     <!-- DRAWER: Panel model -->
-    <Drawer v-model:visible="showModelDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+    <Drawer v-model:visible="showModelDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
         <template #header>
-            <h2 class="font-serif text-lg tracking-tight">Дизайн наружной отделки</h2>
+            <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
+                Дизайн наружной отделки
+            </h2>
         </template>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-1">
-            <div
-                v-for="model in exteriorModels"
-                :key="model.id"
-                @click="() => { store.doorConfig.exterior.panelModel = model.id; showModelDrawer = false }"
-                class="flex flex-col items-center gap-1.5 pb-2 cursor-pointer transition-transform duration-200 hover:scale-[1.02]"
-            >
-                <img :src="getDoorModelImage(model.image)" :alt="model.name" class="w-full rounded-sm" />
-                <p
-                    class="font-serif text-sm text-center px-1 transition-colors"
-                    :class="store.doorConfig.exterior.panelModel === model.id ? 'font-bold text-sky-900' : 'text-neutral-500'"
-                >{{ model.name }}</p>
+        <div class="p-1">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <button
+                    v-for="model in exteriorModels"
+                    :key="model.id"
+                    type="button"
+                    @click="() => { store.doorConfig.exterior.panelModel = model.id; showModelDrawer = false }"
+                    :class="[
+                        'flex flex-col overflow-hidden rounded-none border text-left transition-all duration-200 cursor-pointer',
+                        store.doorConfig.exterior.panelModel === model.id
+                            ? 'border-sky-900/60 border-2 bg-sky-900/5'
+                            : 'border-sky-900/10 hover:border-sky-900/30'
+                    ]"
+                >
+                    <div class="w-full bg-neutral-100 flex items-start justify-center px-0.5 pt-0.5">
+                        <img
+                            :src="getDoorModelImage(model.image)"
+                            :alt="model.name"
+                            class="w-full h-auto max-h-[min(70vh,520px)] object-contain object-top block"
+                        />
+                    </div>
+                    <div class="flex items-center gap-2 p-2 min-w-0">
+                        <p class="font-serif font-medium text-sky-900 text-xs leading-snug line-clamp-2 flex-1 min-w-0">
+                            {{ model.name }}
+                        </p>
+                        <div class="shrink-0">
+                            <div
+                                v-if="store.doorConfig.exterior.panelModel === model.id"
+                                class="size-6 rounded-full bg-sky-900 flex items-center justify-center"
+                            >
+                                <i class="pi pi-check text-white text-xs" />
+                            </div>
+                            <div v-else class="size-6 rounded-full border border-sky-900/20" />
+                        </div>
+                    </div>
+                </button>
             </div>
         </div>
     </Drawer>
 
     <!-- DRAWER: Primary film color -->
-    <Drawer v-model:visible="showPrimaryFilmDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+    <Drawer v-model:visible="showPrimaryFilmDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
         <template #header>
-            <h2 class="font-serif text-lg tracking-tight">Основной цвет плёнки</h2>
+            <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
+                Основной цвет плёнки
+            </h2>
         </template>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-1">
-            <div
-                v-for="color in store.filmColors"
-                :key="color.id"
-                @click="() => { store.doorConfig.exterior.primaryTexture = color.id; showPrimaryFilmDrawer = false }"
-                :class="[
-                    'cursor-pointer border transition-all duration-200 aspect-video',
-                    store.doorConfig.exterior.primaryTexture === color.id
-                        ? 'border-sky-900'
-                        : 'border-transparent hover:border-sky-900/30'
-                ]"
-            >
-                <img :src="getImageUrl(color.image ?? null)" :alt="color.name ?? ''" class="w-full h-full object-cover" />
-                <p class="text-xs text-center p-1 truncate">{{ color.name }}</p>
+        <div class="p-1">
+            <div class="grid grid-cols-2 gap-3">
+                <button
+                    v-for="color in store.filmColors"
+                    :key="color.id"
+                    type="button"
+                    @click="() => { store.doorConfig.exterior.primaryTexture = color.id; showPrimaryFilmDrawer = false }"
+                    :class="[
+                        'flex flex-col overflow-hidden rounded-2xl border text-left transition-all duration-200 cursor-pointer',
+                        store.doorConfig.exterior.primaryTexture === color.id
+                            ? 'border-sky-900/60 border-2 bg-sky-900/5'
+                            : 'border-sky-900/10 hover:border-sky-900/30'
+                    ]"
+                >
+                    <div class="w-full aspect-[4/3] bg-neutral-100 overflow-hidden">
+                        <img
+                            :src="getImageUrl(color.image ?? null)"
+                            :alt="color.name ?? ''"
+                            class="w-full h-full object-cover"
+                        />
+                    </div>
+                    <div class="flex items-center gap-2 p-2.5 min-w-0">
+                        <p class="font-serif font-medium text-sky-900 text-xs leading-snug line-clamp-2 flex-1 min-w-0">
+                            {{ color.name }}
+                        </p>
+                        <div class="shrink-0">
+                            <div
+                                v-if="store.doorConfig.exterior.primaryTexture === color.id"
+                                class="size-6 rounded-full bg-sky-900 flex items-center justify-center"
+                            >
+                                <i class="pi pi-check text-white text-xs" />
+                            </div>
+                            <div v-else class="size-6 rounded-full border border-sky-900/20" />
+                        </div>
+                    </div>
+                </button>
             </div>
         </div>
     </Drawer>
 
     <!-- DRAWER: Secondary film color -->
-    <Drawer v-model:visible="showSecondaryFilmDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+    <Drawer v-model:visible="showSecondaryFilmDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
         <template #header>
-            <h2 class="font-serif text-lg tracking-tight">Дополнительный цвет плёнки</h2>
+            <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
+                Дополнительный цвет плёнки
+            </h2>
         </template>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-1">
-            <div
-                v-for="color in store.filmColors"
-                :key="color.id"
-                @click="() => { store.doorConfig.exterior.secondaryTexture = color.id; showSecondaryFilmDrawer = false }"
-                :class="[
-                    'cursor-pointer border transition-all duration-200 aspect-video',
-                    store.doorConfig.exterior.secondaryTexture === color.id
-                        ? 'border-sky-900'
-                        : 'border-transparent hover:border-sky-900/30'
-                ]"
-            >
-                <img :src="getImageUrl(color.image ?? null)" :alt="color.name ?? ''" class="w-full h-full object-cover" />
-                <p class="text-xs text-center p-1 truncate">{{ color.name }}</p>
+        <div class="p-1">
+            <div class="grid grid-cols-2 gap-3">
+                <button
+                    v-for="color in store.filmColors"
+                    :key="color.id"
+                    type="button"
+                    @click="() => { store.doorConfig.exterior.secondaryTexture = color.id; showSecondaryFilmDrawer = false }"
+                    :class="[
+                        'flex flex-col overflow-hidden rounded-2xl border text-left transition-all duration-200 cursor-pointer',
+                        store.doorConfig.exterior.secondaryTexture === color.id
+                            ? 'border-sky-900/60 border-2 bg-sky-900/5'
+                            : 'border-sky-900/10 hover:border-sky-900/30'
+                    ]"
+                >
+                    <div class="w-full aspect-[4/3] bg-neutral-100 overflow-hidden">
+                        <img
+                            :src="getImageUrl(color.image ?? null)"
+                            :alt="color.name ?? ''"
+                            class="w-full h-full object-cover"
+                        />
+                    </div>
+                    <div class="flex items-center gap-2 p-2.5 min-w-0">
+                        <p class="font-serif font-medium text-sky-900 text-xs leading-snug line-clamp-2 flex-1 min-w-0">
+                            {{ color.name }}
+                        </p>
+                        <div class="shrink-0">
+                            <div
+                                v-if="store.doorConfig.exterior.secondaryTexture === color.id"
+                                class="size-6 rounded-full bg-sky-900 flex items-center justify-center"
+                            >
+                                <i class="pi pi-check text-white text-xs" />
+                            </div>
+                            <div v-else class="size-6 rounded-full border border-sky-900/20" />
+                        </div>
+                    </div>
+                </button>
             </div>
         </div>
     </Drawer>
