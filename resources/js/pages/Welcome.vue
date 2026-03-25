@@ -3,13 +3,53 @@ import PublicLayout from '@/layouts/PublicLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { BoxIcon, CalculatorIcon, ChartLineIcon, CogIcon, EyeIcon, MailIcon, PhoneIcon, PointerIcon, SquarePercentIcon, UserIcon, UsersIcon } from 'lucide-vue-next';
 import { Button, IconField, InputIcon, InputMask, InputText } from 'primevue';
+import axios from 'axios';
 import { ref } from 'vue';
+import { lead as bitrixLead } from '@/routes/bitrix24';
 
 const form = ref({
     name: '',
     phone: '',
     email: '',
 });
+
+const isSubmitting = ref(false);
+const submitError = ref('');
+const submitSuccess = ref('');
+
+async function submit() {
+    if (isSubmitting.value) return;
+
+    submitError.value = '';
+    submitSuccess.value = '';
+
+    const name = form.value.name.trim();
+    const phone = form.value.phone.trim();
+    const email = form.value.email.trim();
+
+    if (!name || !phone || !email) {
+        submitError.value = 'Пожалуйста, заполните все поля.';
+        return;
+    }
+
+    isSubmitting.value = true;
+    try {
+        await axios.post(bitrixLead.url(), { name, phone, email });
+
+        submitSuccess.value = 'Спасибо! Заявка отправлена.';
+        form.value.name = '';
+        form.value.phone = '';
+        form.value.email = '';
+    } catch (err: any) {
+        const message =
+            err?.response?.data?.message ||
+            err?.message ||
+            'Не удалось отправить заявку. Попробуйте ещё раз позже.';
+        submitError.value = message;
+    } finally {
+        isSubmitting.value = false;
+    }
+}
 
 const options = [
     {
@@ -242,7 +282,7 @@ const whatYouGet = [
 					<div class="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl">
 						<h3 class="font-serif text-xl font-bold text-black mb-6">Свяжитесь с нами</h3>
 
-						<form class="flex flex-col gap-4" @submit.prevent>
+						<form class="flex flex-col gap-4" @submit.prevent="submit">
 
 							<!-- Name -->
 							<div class="flex flex-col gap-1.5">
@@ -257,6 +297,7 @@ const whatYouGet = [
 										placeholder="Иван Иванов"
 										autocomplete="name"
 										class="w-full"
+										:disabled="!!submitSuccess"
 									/>
 								</IconField>
 							</div>
@@ -275,6 +316,7 @@ const whatYouGet = [
 										placeholder="+7 (___) ___-__-__"
 										autocomplete="tel"
 										class="w-full"
+										:disabled="!!submitSuccess"
 									/>
 								</IconField>
 							</div>
@@ -293,6 +335,7 @@ const whatYouGet = [
 										placeholder="ivan@example.com"
 										autocomplete="email"
 										class="w-full"
+										:disabled="!!submitSuccess"
 									/>
 								</IconField>
 							</div>
@@ -301,7 +344,12 @@ const whatYouGet = [
 								type="submit"
 								label="Отправить заявку"
 								class="mt-2 w-full"
+								:loading="isSubmitting"
+								:disabled="isSubmitting || !!submitSuccess"
 							/>
+
+							<p v-if="submitError" class="text-center text-red-600">{{ submitError }}</p>
+							<p v-if="submitSuccess" class="text-center text-emerald-600">{{ submitSuccess }}</p>
 
 							<p class="text-center text-xs text-black/40">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</p>
 
