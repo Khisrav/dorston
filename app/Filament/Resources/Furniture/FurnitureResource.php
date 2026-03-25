@@ -21,11 +21,12 @@ class FurnitureResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
     protected static string|UnitEnum|null $navigationGroup = 'Предустановки';
-    protected static ?string $recordTitleAttribute = 'Фурнитура';
     protected static ?string $navigationLabel = 'Фурнитуры';
     protected static ?string $pluralNavigationLabel = 'Фурнитуры';
     protected static ?string $pluralModelLabel = 'Фурнитуры';
     protected static ?string $modelLabel = 'Фурнитура';
+
+    protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Schema $schema): Schema
     {

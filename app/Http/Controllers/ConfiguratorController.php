@@ -12,21 +12,81 @@ class ConfiguratorController extends Controller
 {
     private static function mapFurniture(Furniture $f): array
     {
+        // During deployment/migration there can be a short period where either the
+        // old or the new columns exist. These fallbacks keep the configurator working.
+        $preview = $f->preview ?? $f->preview_image;
+
+        $primaryExteriorCyl = $f->primary_exterior_cylindrical_lock_image ?? $f->exterior_primary_cylindrical_lock_cover_image;
+        $primaryInteriorCyl = $f->primary_interior_cylindrical_lock_image ?? $f->interior_primary_cylindrical_lock_cover_image;
+        $primaryExteriorLev = $f->primary_exterior_lever_lock_image ?? $f->exterior_primary_lever_lock_cover_image;
+        $primaryInteriorLev = $f->primary_interior_lever_lock_image ?? $f->interior_primary_lever_lock_cover_image;
+
+        $secondaryExteriorCyl = $f->secondary_exterior_cylindrical_lock_image ?? $f->exterior_secondary_cylindrical_lock_cover_image;
+        $secondaryInteriorCyl = $f->secondary_interior_cylindrical_lock_image ?? $f->interior_secondary_cylindrical_lock_cover_image;
+        $secondaryExteriorLev = $f->secondary_exterior_lever_lock_image ?? $f->exterior_secondary_lever_lock_cover_image;
+        $secondaryInteriorLev = $f->secondary_interior_lever_lock_image ?? $f->interior_secondary_lever_lock_cover_image;
+
+        $handleExterior = $f->handle_exterior_image ?? $f->handle_cover_image;
+        $handleInterior = $f->handle_interior_image ?? $f->handle_exterior_image ?? $f->handle_cover_image;
+
+        $peepholeExteriorCenter = $f->peephole_exterior_center_image
+            ?? $f->center_peephole_cover_image
+            ?? $f->peephole_cover_image;
+        $peepholeExteriorSide = $f->peephole_exterior_side_image ?? $f->side_peephole_cover_image;
+        $peepholeInteriorCenter = $f->peephole_interior_center_image ?? $peepholeExteriorCenter;
+        $peepholeInteriorSide = $f->peephole_interior_side_image ?? $peepholeExteriorSide;
+
+        $nightLatchTurnerImage = $f->night_latch_turner_image ?? $f->night_latch_turner_cover_image;
+
         return [
             'id'                                    => $f->id,
             'title'                                 => $f->title,
-            'preview_image'                         => $f->preview_image,
+            // New naming (client spec)
+            'preview'                               => $preview,
+            // Backward-compat (frontend pieces still using the old key)
+            'preview_image'                        => $preview,
             'furniture_type'                        => $f->type,
             'shape'                                 => $f->shape,
             'color'                                 => $f->color,
-            'primary_cylindrical_lock_cover_image'  => $f->primary_cylindrical_lock_cover_image,
-            'primary_lever_lock_cover_image'        => $f->primary_lever_lock_cover_image,
-            'secondary_cylindrical_lock_cover_image'=> $f->secondary_cylindrical_lock_cover_image,
-            'secondary_lever_lock_cover_image'      => $f->secondary_lever_lock_cover_image,
-            'peephole_cover_image'                  => $f->peephole_cover_image,
-            'night_latch_turner_cover_image'        => $f->night_latch_turner_cover_image,
+
+            // New image fields (client spec)
+            'handle_exterior_image'                => $handleExterior,
+            'handle_interior_image'                => $handleInterior,
+            'peephole_exterior_center_image'      => $peepholeExteriorCenter,
+            'peephole_exterior_side_image'        => $peepholeExteriorSide,
+            'peephole_interior_center_image'     => $peepholeInteriorCenter,
+            'peephole_interior_side_image'       => $peepholeInteriorSide,
+            'night_latch_turner_image'            => $nightLatchTurnerImage,
+
+            'primary_exterior_cylindrical_lock_image' => $primaryExteriorCyl,
+            'primary_exterior_lever_lock_image'      => $primaryExteriorLev,
+            'primary_interior_cylindrical_lock_image' => $primaryInteriorCyl,
+            'primary_interior_lever_lock_image'      => $primaryInteriorLev,
+
+            'secondary_exterior_cylindrical_lock_image' => $secondaryExteriorCyl,
+            'secondary_exterior_lever_lock_image'       => $secondaryExteriorLev,
+            'secondary_interior_cylindrical_lock_image' => $secondaryInteriorCyl,
+            'secondary_interior_lever_lock_image'       => $secondaryInteriorLev,
+
+            // Legacy image fields required by the current door visualizer
+            'exterior_primary_cylindrical_lock_cover_image' => $primaryExteriorCyl,
+            'interior_primary_cylindrical_lock_cover_image' => $primaryInteriorCyl,
+            'exterior_primary_lever_lock_cover_image'       => $primaryExteriorLev,
+            'interior_primary_lever_lock_cover_image'       => $primaryInteriorLev,
+            'exterior_secondary_cylindrical_lock_cover_image' => $secondaryExteriorCyl,
+            'interior_secondary_cylindrical_lock_cover_image' => $secondaryInteriorCyl,
+            'exterior_secondary_lever_lock_cover_image'       => $secondaryExteriorLev,
+            'interior_secondary_lever_lock_cover_image'       => $secondaryInteriorLev,
+
+            // Peephole: visualizer uses a single set of images and relies on mirroring.
+            'peephole_cover_image'                   => $peepholeExteriorCenter,
+            'side_peephole_cover_image'             => $peepholeExteriorSide,
+            'center_peephole_cover_image'           => $peepholeExteriorCenter,
+
+            'night_latch_turner_cover_image'        => $nightLatchTurnerImage,
             'cylinder_rod_cover_image'              => $f->cylinder_rod_cover_image,
-            'handle_cover_image'                    => $f->handle_cover_image,
+            'handle_cover_image'                    => $handleExterior,
+
             'primary_cylindrical_lock_id'           => $f->primary_cylindrical_lock_id,
             'primary_lever_lock_id'                 => $f->primary_lever_lock_id,
             'secondary_cylindrical_lock_id'         => $f->secondary_cylindrical_lock_id,

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useDoorCalc } from '@/composables/useDoorCalc';
 import { useDoorVisual } from '@/composables/useDoorVisual';
 import { useImage } from 'vue-konva';
 
 const doorVisualStore = useDoorVisual();
+const doorCalcStore = useDoorCalc();
 const exteriorStageRef = ref<any>(null);
 const interiorStageRef = ref<any>(null);
 
@@ -22,7 +24,7 @@ function exportStageImages(): { exteriorImage: string; interiorImage: string } |
 
 defineExpose({ exportStageImages });
 
-const [furnitureShadow] = useImage('/storage/furniture/handle-covers/01KMDN6MZFGAZMHE0VGHB1ZJV6.png');
+// const [furnitureShadow] = useImage('/storage/furniture/handle-covers/01KMDN6MZFGAZMHE0VGHB1ZJV6.png');
 </script>
 
 <template>
@@ -59,18 +61,19 @@ const [furnitureShadow] = useImage('/storage/furniture/handle-covers/01KMDN6MZFG
                         </v-layer>
                         <!-- Furniture overlays -->
                         <v-layer>
-                            <v-image :config="{
+                            <!-- <v-image :config="{
                                 ...doorVisualStore.exteriorImageConfig,
                                 image: furnitureShadow,
-                            }" />
+                            }" /> -->
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorPrimaryCylindricalLockImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorPrimaryLeverLockImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorSecondaryCylindricalLockImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorSecondaryLeverLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furniturePeepholeImage }" />
-                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureNightLatchTurnerImage }" />
-                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureCylinderRodImage }" />
-                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureHandleImage }" />
+                            <v-image
+                                v-if="doorCalcStore.doorConfig.furniture.hasPeephole && doorCalcStore.doorConfig.peepholePosition !== 'None'"
+                                :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorPeepholeImage }"
+                            />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorHandleImage }" />
                         </v-layer>
                     </v-stage>
                 </div>
@@ -88,18 +91,24 @@ const [furnitureShadow] = useImage('/storage/furniture/handle-covers/01KMDN6MZFG
                         </v-layer>
                         <!-- Furniture overlays (mirrored) -->
                         <v-layer>
-                            <v-image :config="{
+                            <!-- <v-image :config="{
                                 ...doorVisualStore.interiorImageConfig,
                                 image: furnitureShadow,
-                            }" />
+                            }" /> -->
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorPrimaryCylindricalLockImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorPrimaryLeverLockImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorSecondaryCylindricalLockImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorSecondaryLeverLockImage }" />
-                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furniturePeepholeImage }" />
-                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureNightLatchTurnerImage }" />
+                            <v-image
+                                v-if="doorCalcStore.doorConfig.furniture.hasPeephole && doorCalcStore.doorConfig.peepholePosition !== 'None'"
+                                :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorPeepholeImage }"
+                            />
+                            <v-image
+                                v-if="doorCalcStore.doorConfig.furniture.hasNightLatchTurner"
+                                :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureNightLatchTurnerImage }"
+                            />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureCylinderRodImage }" />
-                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureHandleImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorHandleImage }" />
                         </v-layer>
                     </v-stage>
                 </div>

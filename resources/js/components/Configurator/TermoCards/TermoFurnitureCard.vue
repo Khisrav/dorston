@@ -221,8 +221,8 @@ watch(drawerShape, autoSelectFirst)
                 >
                     <div class="size-16 shrink-0 rounded-xl bg-neutral-100 overflow-hidden flex items-center justify-center">
                         <img
-                            v-if="selectedSet.preview_image"
-                            :src="getImageUrl(selectedSet.preview_image)"
+                            v-if="selectedSet.preview"
+                            :src="getImageUrl(selectedSet.preview)"
                             :alt="selectedSet.title ?? 'Модель'"
                             class="size-full object-cover"
                         />
@@ -352,8 +352,8 @@ watch(drawerShape, autoSelectFirst)
                 >
                     <div class="w-full aspect-[4/3] bg-neutral-100 overflow-hidden flex items-center justify-center">
                         <img
-                            v-if="furniture.preview_image"
-                            :src="getImageUrl(furniture.preview_image)"
+                            v-if="furniture.preview"
+                            :src="getImageUrl(furniture.preview)"
                             :alt="furniture.title ?? 'Модель'"
                             class="w-full h-full object-cover"
                         />
