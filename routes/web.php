@@ -29,4 +29,8 @@ Route::middleware('auth')->group(function () {
 
 Route::post('/bitrix24/lead', [Bitrix24Controller::class, 'lead'])->name('bitrix24.lead');
 
+Route::get('/request-access', function () {
+    return Inertia::render('auth/RequestAccess');
+})->name('request-access');
+
 require __DIR__.'/settings.php';

@@ -14,6 +14,7 @@ class Bitrix24Controller extends Controller
             'name'  => ['required', 'string', 'min:2', 'max:120'],
             'phone' => ['required', 'string', 'min:5', 'max:40'],
             'email' => ['required', 'string', 'email', 'max:255'],
+            'title' => ['sometimes', 'string', 'max:255'],
         ]);
 
         $webhookUrl = config('services.bitrix24.webhook_url');
@@ -25,7 +26,7 @@ class Bitrix24Controller extends Controller
 
         $payload = [
             'fields' => [
-                'TITLE'      => 'Заявка с config.dorston.ru',
+                'TITLE'      => $validated['title'] ?? 'Заявка с config.dorston.ru',
                 'NAME'       => $validated['name'],
                 'SOURCE_ID'  => 'WEB',            // optional: marks lead source
                 'PHONE'      => [

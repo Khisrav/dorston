@@ -152,7 +152,7 @@ const whatYouGet = [
 											{{ tag }}
 										</Badge>
 									</div>
-									<Button label="Расчитать" size="small" icon="pi pi-arrow-right" icon-pos="right" />
+									<Button label="Рассчитать" size="small" icon="pi pi-arrow-right" icon-pos="right" />
 								</div>
 							</div>
 							<div class="col-span-6">
@@ -351,7 +351,7 @@ const whatYouGet = [
 							<p v-if="submitError" class="text-center text-red-600">{{ submitError }}</p>
 							<p v-if="submitSuccess" class="text-center text-emerald-600">{{ submitSuccess }}</p>
 
-							<p class="text-center text-xs text-black/40">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</p>
+							<p class="text-center text-xs text-black/40">Нажимая кнопку, вы соглашаетесь с <a href="dorston.ru/politics" class="text-sky-900">политикой конфиденциальности</a> и обработкой персональных данных</p>
 
 						</form>
 					</div>

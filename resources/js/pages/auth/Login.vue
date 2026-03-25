@@ -6,12 +6,15 @@ import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 import { Form, Head, Link } from '@inertiajs/vue3';
 import { LockIcon, MailIcon } from 'lucide-vue-next';
-import { Button, IconField, InputIcon, InputText } from 'primevue';
+import { Button, Checkbox, IconField, InputIcon, InputText } from 'primevue';
+import { ref } from 'vue';
 
 defineProps<{
     status?: string;
     canResetPassword: boolean;
 }>();
+
+const remember = ref(false);
 </script>
 
 <template>
@@ -97,14 +100,14 @@ defineProps<{
                         </div>
 
                         <label class="flex items-center gap-2 cursor-pointer select-none">
-                            <input
-                                id="remember"
+                            <Checkbox
+                                v-model="remember"
+                                inputId="remember"
                                 name="remember"
-                                type="checkbox"
                                 :tabindex="3"
-                                class="size-4 rounded border-black/20 text-sky-900 focus:ring-sky-900"
+                                binary
                             />
-                            <span class="text-sm font-serif text-black/60">Запомнить меня</span>
+                            <span class="text-sm font-serif font-medium text-black/70">Запомнить меня</span>
                         </label>
 
                         <Button
@@ -115,10 +118,27 @@ defineProps<{
                             :disabled="processing"
                             icon="pi pi-sign-in"
                             icon-pos="right"
-                            class="mt-2 w-full"
+                            class="w-full"
                             data-test="login-button"
                         />
                     </Form>
+                    <div class="mt-6">
+                        <hr class="border-black/10 my-4">
+                        <p class="font-serif font-medium text-black/70">
+                            Еще не зареганы?
+                        </p>
+                        <p class="font-serif text-xs text-black/40 mt-1">
+                            Оставьте заявку для доступа к конфигуратору
+                        </p>
+                        <Link href="/request-access" class="mt-4 block">
+                            <Button
+                                label="Оставить заявку"
+                                variant="outlined"
+                                icon="pi pi-arrow-right"
+                                icon-pos="right"
+                            />
+                        </Link>
+                    </div>
                 </div>
 
             </div>
