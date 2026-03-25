@@ -85,7 +85,7 @@ class FurnitureForm
                             ->columnSpan(2),
 
                         FileUpload::make('primary_exterior_cylindrical_lock_image')
-                            ->label('Накладка цил. замка — Экстерьер')
+                            ->label('Накладка цил. замка - снаружи')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
@@ -94,7 +94,7 @@ class FurnitureForm
                             ->columnSpan(1),
 
                         FileUpload::make('primary_interior_cylindrical_lock_image')
-                            ->label('Накладка цил. замка — Интерьер')
+                            ->label('Накладка цил. замка - изнутри')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
@@ -112,7 +112,7 @@ class FurnitureForm
                             ->columnSpan(2),
 
                         FileUpload::make('primary_exterior_lever_lock_image')
-                            ->label('Накладка сув. замка — Экстерьер')
+                            ->label('Накладка сув. замка — снаружи')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
@@ -121,7 +121,7 @@ class FurnitureForm
                             ->columnSpan(1),
 
                         FileUpload::make('primary_interior_lever_lock_image')
-                            ->label('Накладка сув. замка — Интерьер')
+                            ->label('Накладка сув. замка — изнутри')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
@@ -147,7 +147,7 @@ class FurnitureForm
                             ->columnSpan(2),
 
                         FileUpload::make('secondary_exterior_cylindrical_lock_image')
-                            ->label('Накладка цил. замка (доп.) — Экстерьер')
+                            ->label('Накладка цил. замка (доп.) - снаружи')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
@@ -156,7 +156,7 @@ class FurnitureForm
                             ->columnSpan(1),
 
                         FileUpload::make('secondary_interior_cylindrical_lock_image')
-                            ->label('Накладка цил. замка (доп.) — Интерьер')
+                            ->label('Накладка цил. замка (доп.) - изнутри')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
@@ -174,7 +174,7 @@ class FurnitureForm
                             ->columnSpan(2),
 
                         FileUpload::make('secondary_exterior_lever_lock_image')
-                            ->label('Накладка сув. замка (доп.) — Экстерьер')
+                            ->label('Накладка сув. замка (доп.) - снаружи')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
@@ -183,7 +183,7 @@ class FurnitureForm
                             ->columnSpan(1),
 
                         FileUpload::make('secondary_interior_lever_lock_image')
-                            ->label('Накладка сув. замка (доп.) — Интерьер')
+                            ->label('Накладка сув. замка (доп.) - изнутри')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
@@ -210,7 +210,7 @@ class FurnitureForm
                             ->columnSpan(2),
 
                         FileUpload::make('peephole_exterior_side_image')
-                            ->label('Глазок — Экстерьер, боковая позиция')
+                            ->label('Глазок - снаружи, боковая позиция')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
@@ -219,7 +219,7 @@ class FurnitureForm
                             ->columnSpan(1),
 
                         FileUpload::make('peephole_exterior_center_image')
-                            ->label('Глазок — Экстерьер, центральная позиция')
+                            ->label('Глазок - снаружи, центральная позиция')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
@@ -228,7 +228,7 @@ class FurnitureForm
                             ->columnSpan(1),
                         
                         FileUpload::make('peephole_interior_side_image')
-                            ->label('Глазок — Интерьер, боковая позиция')
+                            ->label('Глазок - изнутри, боковая позиция')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
@@ -237,7 +237,7 @@ class FurnitureForm
                             ->columnSpan(1),
 
                         FileUpload::make('peephole_interior_center_image')
-                            ->label('Глазок — Интерьер, центральная позиция')
+                            ->label('Глазок - изнутри, центральная позиция')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
@@ -291,7 +291,7 @@ class FurnitureForm
                             ->columnSpan(2),
 
                         FileUpload::make('handle_exterior_image')
-                            ->label('Накладка ручки — Экстерьер')
+                            ->label('Накладка ручки - снаружи')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
@@ -300,7 +300,7 @@ class FurnitureForm
                             ->columnSpan(2),
 
                         FileUpload::make('handle_interior_image')
-                            ->label('Накладка ручки — Интерьер')
+                            ->label('Накладка ручки - изнутри')
                             ->image()
                             ->imageEditor()
                             ->maxSize(2048)
