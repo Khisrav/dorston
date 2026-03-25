@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ConfiguratorController;
+use App\Http\Controllers\Bitrix24Controller;
 use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,5 +26,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('pdf/generate', [PDFController::class, 'generate'])->name('pdf.generate');
 });
+
+Route::post('/bitrix24/lead', [Bitrix24Controller::class, 'lead'])->name('bitrix24.lead');
 
 require __DIR__.'/settings.php';
