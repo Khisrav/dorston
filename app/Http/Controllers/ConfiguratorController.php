@@ -111,7 +111,7 @@ class ConfiguratorController extends Controller
         return Inertia::render('configurator/Index');
     }
 
-    public function termo()
+    public function termo(Request $request)
     {
         return Inertia::render('configurator/Termo', [
             'paints' => Nomenclature::where('nomenclature_category_id', 2)
@@ -154,6 +154,17 @@ class ConfiguratorController extends Controller
                 ->get(),
             'pricing' => Nomenclature::whereIn('nomenclature_category_id', [1, 4, 7, 9, 14, 15, 22])
                 ->pluck('base_price', 'name'),
+            'doorCombinationImages' => Inertia::lazy(function () use ($request) {
+                $modelIds = array_filter(array_map('intval', (array) $request->input('door_model_ids', [])));
+
+                if (empty($modelIds)) {
+                    return [];
+                }
+
+                return DoorCombination::whereIn('door_model_id', $modelIds)
+                    ->select('id', 'image', 'img_purpose as purpose', 'door_model_id', 'film_color_id', 'door_type')
+                    ->get();
+            }),
         ]);
     }
 

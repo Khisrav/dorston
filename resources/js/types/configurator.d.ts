@@ -212,7 +212,8 @@ export interface Furniture {
 export interface DoorCombinationImage {
     id: number;
     image: string;
-    purpose: 'Наличник' | 'Полотно' | 'Вставка наличника' | 'Вставка полотна';
+    purpose: 'Наличник' | 'Полотно' | 'Вставка наличника' | 'Вставка полотна' | 'Петли';
     door_model_id: number;
     film_color_id: number;
+    door_type?: 'apartment' | 'termo';
 }

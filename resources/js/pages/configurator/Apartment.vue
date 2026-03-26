@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import DoorVisualizer from '@/components/Configurator/DoorVisualizer.vue';
 import ConstructiveCard from '@/components/Configurator/Card/ConstructiveCard.vue';
+import OrderDialog from '@/components/Configurator/OrderDialog.vue';
 import { useDoorCalc } from '@/composables/useDoorCalc';
 import { useDoorVisual } from '@/composables/useDoorVisual';
 import PublicLayout from '@/layouts/PublicLayout.vue';
@@ -10,7 +11,7 @@ import { DoorModel, Nomenclature, Furniture, DoorCombinationImage } from '@/type
 import { Link, router, usePage } from '@inertiajs/vue3';
 import { Head } from '@inertiajs/vue3';
 import { SelectButton, InputNumber, Drawer, Button } from 'primevue';
-import { computed, ref, watch, onMounted } from 'vue';
+import { computed, ref, watch, onMounted, reactive } from 'vue';
 import axios from 'axios';
 import { generate as generatePdf } from '@/routes/pdf';
 import ExteriorCard from '@/components/Configurator/Card/ExteriorCard.vue';
@@ -74,9 +75,32 @@ const exteriorDoorModel = computed(() => {
     return doorCalcStore.getDoorModelInfo(modelId);
 });
 
+const tweenedPrice = reactive({ value: 0 });
+
+watch(
+    () => doorCalcStore.total_price,
+    (newPrice) => {
+        const start = tweenedPrice.value;
+        const end = newPrice;
+        const duration = 400;
+        const startTime = performance.now();
+
+        function step(now: number) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            tweenedPrice.value = start + (end - start) * ease;
+            if (progress < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+    },
+);
+
 const doorVisualStore = useDoorVisual();
 const doorVisualizerRef = ref<InstanceType<typeof DoorVisualizer> | null>(null);
 const isGeneratingPdf = ref(false);
+const showOrderDialog = ref(false);
 
 async function downloadPdf() {
     if (!doorVisualizerRef.value) return;
@@ -88,6 +112,43 @@ async function downloadPdf() {
 
     const dash = (v: string | null | undefined) => (v && v.trim() !== '' ? v : '—');
     const yesNo = (v: boolean | undefined) => (v === undefined ? '—' : v ? 'Да' : 'Нет');
+    const translateDoorHandleSide = (v: unknown): string => {
+        if (v === 'Left') return 'Левая'
+        if (v === 'Right') return 'Правая'
+        return typeof v === 'string' && v.trim() !== '' ? v : '—'
+    }
+    const translateDoorBoxDesign = (v: unknown): string => {
+        if (v === 'Closed') return 'Закрытый'
+        if (v === 'Opened') return 'Открытый'
+        return typeof v === 'string' && v.trim() !== '' ? v : '—'
+    }
+    const translatePeepholePosition = (v: unknown): string => {
+        if (v === 'None') return 'Нет'
+        if (v === 'Side') return 'Сбоку'
+        if (v === 'Center') return 'По центру'
+        return typeof v === 'string' && v.trim() !== '' ? v : '—'
+    }
+    // Furniture translations should match `app/Filament/Resources/Furniture/Schemas/FurnitureForm.php`
+    const translateFurnitureType = (v: unknown): string => {
+        if (v === 'push') return 'Нажимная'
+        if (v === 'pull') return 'Бугельная'
+        if (v === 'electronic') return 'Электронная'
+        return typeof v === 'string' && v.trim() !== '' ? v : '—'
+    }
+    const translateFurnitureColor = (v: unknown): string => {
+        if (v === 'black') return 'Матовый чёрный'
+        if (v === 'chrome') return 'Хром'
+        if (v === 'matte-chrome') return 'Матовый хром'
+        if (v === 'gold') return 'Золотой'
+        if (v === 'bronze') return 'Бронзовый'
+        return typeof v === 'string' && v.trim() !== '' ? v : '—'
+    }
+    const translateFurnitureShape = (v: unknown): string => {
+        if (v === 'rectangular') return 'Прямоугольная'
+        if (v === 'oval') return 'Овальная'
+        if (v === 'other') return 'Другая'
+        return typeof v === 'string' && v.trim() !== '' ? v : '—'
+    }
     const resolveFilmName = (id: number | undefined) =>
         id !== undefined && id !== -1 ? doorCalcStore.getFilmColor(id)?.name ?? null : null;
     const resolvePaintName = (id: number | undefined) =>
@@ -134,12 +195,12 @@ async function downloadPdf() {
                 rows: [
                     { label: 'Конструктив', value: dash(doorConfig.doorConstructive) },
                     { label: 'Размеры', value: `${doorConfig.doorWidth} x ${doorConfig.doorHeight} мм` },
-                    { label: 'Сторона открывания', value: dash(doorConfig.doorHandleSide) },
-                    { label: 'Вид короба', value: dash(doorConfig.doorBoxDesign) },
+                    { label: 'Сторона открывания', value: translateDoorHandleSide(doorConfig.doorHandleSide) },
+                    { label: 'Вид короба', value: translateDoorBoxDesign(doorConfig.doorBoxDesign) },
                     {
                         label: 'Глазок',
                         value: doorConfig.furniture.hasPeephole
-                            ? `Да (${dash(doorConfig.peepholePosition ?? 'Center')})`
+                            ? `Да (${translatePeepholePosition(doorConfig.peepholePosition ?? 'Center')})`
                             : 'Нет',
                     },
                     { label: 'Порог из нержавейки', value: yesNo(doorConfig.stainlessSteelDoorsill) },
@@ -175,9 +236,9 @@ async function downloadPdf() {
                 title: 'Фурнитура',
                 rows: [
                     { label: 'Комплект', value: dash(furnitureSet?.title ?? null) },
-                    { label: 'Тип фурнитуры', value: dash(doorConfig.furniture.furnitureType ?? null) },
-                    { label: 'Цвет фурнитуры', value: dash(doorConfig.furniture.furnitureColor ?? null) },
-                    { label: 'Форма', value: dash(doorConfig.furniture.furnitureShape ?? null) },
+                    { label: 'Тип фурнитуры', value: translateFurnitureType(doorConfig.furniture.furnitureType ?? null) },
+                    { label: 'Цвет фурнитуры', value: translateFurnitureColor(doorConfig.furniture.furnitureColor ?? null) },
+                    { label: 'Форма', value: translateFurnitureShape(doorConfig.furniture.furnitureShape ?? null) },
                     { label: 'Ночник', value: yesNo(doorConfig.furniture.hasNightLatchTurner) },
                     { label: 'Дополнительный замок', value: yesNo(doorConfig.furniture.hasSecondaryLock) },
                 ],
@@ -219,6 +280,7 @@ async function downloadPdf() {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+        showOrderDialog.value = false;
     } finally {
         isGeneratingPdf.value = false;
     }
@@ -246,6 +308,7 @@ function fetchDoorCombinations(exteriorModelId: number | undefined, interiorMode
 
 onMounted(() => {
     doorCalcStore.initializeDefaultConfig()
+    tweenedPrice.value = doorCalcStore.total_price;
     fetchDoorCombinations(doorCalcStore.doorConfig.exterior.panelModel, doorCalcStore.doorConfig.interior.panelModel);
 });
 
@@ -296,11 +359,11 @@ watch(
 
                         <div class="border border-sky-900/10 shadow-md shadow-sky-800/5 rounded-3xl p-4">
                             <div class="border-b border-sky-900/10 pb-2">
-                                <p class="font-bold text-xl"><span class="font-bold text-sky-900">Итого: </span> <span>{{ doorCalcStore.total_price.toFixed(2) }} ₽</span></p>
+                                <p class="font-bold text-xl"><span class="font-bold text-sky-900">Итого: </span> <span>{{ tweenedPrice.value.toFixed(2) }} ₽</span></p>
                             </div>
                             <div class="flex gap-4 mt-4">
-                                <Button label="Оформить заказ" variant="" icon="pi pi-shopping-cart" size="small" />
-                                <Button label="Скачать PDF" variant="outlined" icon="pi pi-file-pdf" size="small" :loading="isGeneratingPdf" @click="downloadPdf" />
+                                <Button label="Оформить заказ" icon="pi pi-shopping-cart" size="small" @click="showOrderDialog = true" />
+                                <Button label="Скачать PDF" variant="outlined" icon="pi pi-file-pdf" size="small" @click="showOrderDialog = true" />
                             </div>
                         </div>
                     </div>
@@ -505,6 +568,12 @@ watch(
             </div>
         </div>
     </Drawer>
+
+    <OrderDialog
+        v-model:visible="showOrderDialog"
+        :is-generating-pdf="isGeneratingPdf"
+        @download-pdf="downloadPdf"
+    />
 
 </template>
 <style scoped>

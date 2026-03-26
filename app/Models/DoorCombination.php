@@ -13,6 +13,7 @@ class DoorCombination extends Model
         'film_color_id',
         'img_purpose',
         'image',
+        'door_type',
     ];
 
     public function doorModel(): BelongsTo

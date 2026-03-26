@@ -17,6 +17,9 @@ class DoorCombinationsTable
     {
         return $table
             ->groups([
+                Group::make('door_type')
+                    ->collapsible()
+                    ->label('Тип двери'),
                 Group::make('doorModel.name')
                     ->collapsible()
                     ->label('Модель двери'),
@@ -28,19 +31,32 @@ class DoorCombinationsTable
                     ->label('Назначение'),
             ])
             ->columns([
-                TextColumn::make('doorModel.name')
-                    ->label('Модель двери')
-                    ->searchable(),
-                TextColumn::make('filmColor.name')
-                    ->label('Цвет')
-                    ->searchable(),
-                TextColumn::make('img_purpose')
-                    ->label('Назначение')
-                    ->badge(),
+                TextColumn::make('id')
+                    ->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->sortable(),
                 ImageColumn::make('image')
                     ->label('Изображение')
                     ->disk('public')
-                    ->height(100),
+                    ->height(100)
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('door_type')
+                    ->label('Тип двери')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => $state === 'apartment' ? 'Квартирная' : 'Термо')
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('doorModel.name')
+                    ->label('Модель двери')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('filmColor.name')
+                    ->label('Цвет')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('img_purpose')
+                    ->label('Назначение')
+                    ->badge()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -308,7 +308,7 @@ function securityLevel(value: string): number {
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <div class="h-14 w-14 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
+                <div class="h-14 w-14 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
                     <img
                         v-if="cyl.image"
                         :src="getImageUrl(cyl.image)"
@@ -356,7 +356,7 @@ function securityLevel(value: string): number {
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <div class="h-14 w-14 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
+                <div class="h-14 w-14 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
                     <img
                         v-if="cyl.image"
                         :src="getImageUrl(cyl.image)"
@@ -404,7 +404,7 @@ function securityLevel(value: string): number {
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <div class="h-14 w-14 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
+                <div class="h-14 w-14 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
                     <img
                         v-if="lock.image"
                         :src="getImageUrl(lock.image)"
@@ -487,7 +487,7 @@ function securityLevel(value: string): number {
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <div class="h-14 w-14 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
+                <div class="h-14 w-14 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
                     <img
                         v-if="lock.image"
                         :src="getImageUrl(lock.image)"
