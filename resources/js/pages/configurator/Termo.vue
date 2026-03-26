@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import PublicLayout from '@/layouts/PublicLayout.vue';
+import DoorVisualizerTermo from '@/components/Configurator/DoorVisualizerTermo.vue';
+import OrderDialog from '@/components/Configurator/OrderDialog.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/vue3';
-import type { DoorModel, Furniture, Nomenclature } from '@/types/configurator';
+import { Head, Link, usePage, router } from '@inertiajs/vue3';
+import type { DoorModel, Furniture, Nomenclature, DoorCombinationImage } from '@/types/configurator';
 import { Button } from 'primevue';
-import { ref } from 'vue';
+import { ref, reactive, watch, onMounted } from 'vue';
 import { useTermoDoorCalc } from '@/composables/useTermoDoorCalc';
+import { useTermoDoorVisual } from '@/composables/useTermoDoorVisual';
 import TermoParametersCard from '@/components/Configurator/TermoCards/TermoParametersCard.vue';
 import TermoExteriorCard from '@/components/Configurator/TermoCards/TermoExteriorCard.vue';
 import TermoInteriorCard from '@/components/Configurator/TermoCards/TermoInteriorCard.vue';
@@ -21,6 +24,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 ]
 
 const store = useTermoDoorCalc()
+const visualStore = useTermoDoorVisual()
+const showOrderDialog = ref(false)
+const isGeneratingPdf = ref(false)
 
 const paints = ref(usePage().props.paints as Nomenclature[])
 const doorModels = ref(usePage().props.doorModels as DoorModel[])
@@ -38,6 +44,79 @@ store.handles = handles.value
 store.locks = locks.value
 store.cylinders = cylinders.value
 store.initializeDefaultConfig()
+
+// ── Tweened price animation ───────────────────────────────────────────────────
+
+const tweenedPrice = reactive({ value: 0 });
+
+watch(
+    () => store.total_price,
+    (newPrice) => {
+        const start = tweenedPrice.value;
+        const end = newPrice;
+        const duration = 400;
+        const startTime = performance.now();
+
+        function step(now: number) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const ease = 1 - Math.pow(1 - progress, 3);
+            tweenedPrice.value = start + (end - start) * ease;
+            if (progress < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+    },
+);
+
+// ── PDF download ──────────────────────────────────────────────────────────────
+
+async function downloadPdf() {
+    // TODO: implement Termo PDF generation (route + controller not yet built)
+    isGeneratingPdf.value = true;
+    try {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        showOrderDialog.value = false;
+    } finally {
+        isGeneratingPdf.value = false;
+    }
+}
+
+// ── Combination image fetching ────────────────────────────────────────────────
+
+function fetchDoorCombinations(exteriorModelId: number | undefined, interiorModelId: number | undefined) {
+    const modelIds = [exteriorModelId, interiorModelId].filter((id): id is number => !!id && id !== -1);
+    if (!modelIds.length) return;
+
+    visualStore.isCombinationsLoading = true;
+
+    router.reload({
+        data: { door_model_ids: modelIds },
+        only: ['doorCombinationImages'],
+        onSuccess: (page) => {
+            visualStore.doorCombinationImages = (page.props.doorCombinationImages as DoorCombinationImage[]) ?? [];
+        },
+        onFinish: () => {
+            visualStore.isCombinationsLoading = false;
+        },
+    });
+}
+
+onMounted(() => {
+    store.initializeDefaultConfig();
+    tweenedPrice.value = store.total_price;
+    fetchDoorCombinations(store.doorConfig.exterior.panelModel, store.doorConfig.interior.panelModel);
+});
+
+watch(
+    [
+        () => store.doorConfig.exterior.panelModel,
+        () => store.doorConfig.interior.panelModel,
+    ],
+    ([exteriorModelId, interiorModelId]) => {
+        fetchDoorCombinations(exteriorModelId, interiorModelId);
+    },
+);
 </script>
 
 <template>
@@ -64,29 +143,23 @@ store.initializeDefaultConfig()
             <!-- Main Grid -->
             <div class="grid gap-4 lg:grid-cols-12">
 
-                <!-- Left Column: Preview & Price -->
+                <!-- Left Column: Visualizer & Price -->
                 <div class="lg:col-span-6 lg:sticky lg:top-4 lg:self-start space-y-4">
 
-                    <!-- Visualization placeholder -->
-                    <div class="border border-sky-900/10 rounded-3xl flex items-center justify-center min-h-72 bg-sky-900/[0.03] shadow-md shadow-sky-800/5">
-                        <!-- <div class="text-center">
-                            <p class="font-serif text-xs uppercase tracking-widest text-sky-900/30 mb-3">Termo</p>
-                            <p class="font-serif text-lg text-sky-900/40">Визуализатор</p>
-                            <p class="text-xs text-sky-900/25 font-sans mt-1">В разработке</p>
-                        </div> -->
-                    </div>
+                    <!-- Visualizer -->
+                    <DoorVisualizerTermo />
 
                     <!-- Price & actions -->
                     <div class="border border-sky-900/10 shadow-md shadow-sky-800/5 rounded-3xl p-4">
                         <div class="border-b border-sky-900/10 pb-2">
                             <p class="font-bold text-xl">
                                 <span class="font-bold text-sky-900">Итого: </span>
-                                <span>{{ store.total_price.toFixed(2) }} ₽</span>
+                                <span>{{ tweenedPrice.value.toFixed(2) }} ₽</span>
                             </p>
                         </div>
                         <div class="flex gap-4 mt-4">
-                            <Button label="Оформить заказ" icon="pi pi-shopping-cart" size="small" />
-                            <Button label="Скачать PDF" variant="outlined" icon="pi pi-file-pdf" size="small" />
+                            <Button label="Оформить заказ" icon="pi pi-shopping-cart" size="small" @click="showOrderDialog = true" />
+                            <Button label="Скачать PDF" variant="outlined" icon="pi pi-file-pdf" size="small" @click="showOrderDialog = true" />
                         </div>
                     </div>
                 </div>
@@ -105,4 +178,10 @@ store.initializeDefaultConfig()
             </div>
         </div>
     </PublicLayout>
+
+    <OrderDialog
+        v-model:visible="showOrderDialog"
+        :is-generating-pdf="isGeneratingPdf"
+        @download-pdf="downloadPdf"
+    />
 </template>
