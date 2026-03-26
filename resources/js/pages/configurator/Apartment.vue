@@ -88,6 +88,43 @@ async function downloadPdf() {
 
     const dash = (v: string | null | undefined) => (v && v.trim() !== '' ? v : '—');
     const yesNo = (v: boolean | undefined) => (v === undefined ? '—' : v ? 'Да' : 'Нет');
+    const translateDoorHandleSide = (v: unknown): string => {
+        if (v === 'Left') return 'Левая'
+        if (v === 'Right') return 'Правая'
+        return typeof v === 'string' && v.trim() !== '' ? v : '—'
+    }
+    const translateDoorBoxDesign = (v: unknown): string => {
+        if (v === 'Closed') return 'Закрытый'
+        if (v === 'Opened') return 'Открытый'
+        return typeof v === 'string' && v.trim() !== '' ? v : '—'
+    }
+    const translatePeepholePosition = (v: unknown): string => {
+        if (v === 'None') return 'Нет'
+        if (v === 'Side') return 'Сбоку'
+        if (v === 'Center') return 'По центру'
+        return typeof v === 'string' && v.trim() !== '' ? v : '—'
+    }
+    // Furniture translations should match `app/Filament/Resources/Furniture/Schemas/FurnitureForm.php`
+    const translateFurnitureType = (v: unknown): string => {
+        if (v === 'push') return 'Нажимная'
+        if (v === 'pull') return 'Бугельная'
+        if (v === 'electronic') return 'Электронная'
+        return typeof v === 'string' && v.trim() !== '' ? v : '—'
+    }
+    const translateFurnitureColor = (v: unknown): string => {
+        if (v === 'black') return 'Матовый чёрный'
+        if (v === 'chrome') return 'Хром'
+        if (v === 'matte-chrome') return 'Матовый хром'
+        if (v === 'gold') return 'Золотой'
+        if (v === 'bronze') return 'Бронзовый'
+        return typeof v === 'string' && v.trim() !== '' ? v : '—'
+    }
+    const translateFurnitureShape = (v: unknown): string => {
+        if (v === 'rectangular') return 'Прямоугольная'
+        if (v === 'oval') return 'Овальная'
+        if (v === 'other') return 'Другая'
+        return typeof v === 'string' && v.trim() !== '' ? v : '—'
+    }
     const resolveFilmName = (id: number | undefined) =>
         id !== undefined && id !== -1 ? doorCalcStore.getFilmColor(id)?.name ?? null : null;
     const resolvePaintName = (id: number | undefined) =>
@@ -134,12 +171,12 @@ async function downloadPdf() {
                 rows: [
                     { label: 'Конструктив', value: dash(doorConfig.doorConstructive) },
                     { label: 'Размеры', value: `${doorConfig.doorWidth} x ${doorConfig.doorHeight} мм` },
-                    { label: 'Сторона открывания', value: dash(doorConfig.doorHandleSide) },
-                    { label: 'Вид короба', value: dash(doorConfig.doorBoxDesign) },
+                    { label: 'Сторона открывания', value: translateDoorHandleSide(doorConfig.doorHandleSide) },
+                    { label: 'Вид короба', value: translateDoorBoxDesign(doorConfig.doorBoxDesign) },
                     {
                         label: 'Глазок',
                         value: doorConfig.furniture.hasPeephole
-                            ? `Да (${dash(doorConfig.peepholePosition ?? 'Center')})`
+                            ? `Да (${translatePeepholePosition(doorConfig.peepholePosition ?? 'Center')})`
                             : 'Нет',
                     },
                     { label: 'Порог из нержавейки', value: yesNo(doorConfig.stainlessSteelDoorsill) },
@@ -175,9 +212,9 @@ async function downloadPdf() {
                 title: 'Фурнитура',
                 rows: [
                     { label: 'Комплект', value: dash(furnitureSet?.title ?? null) },
-                    { label: 'Тип фурнитуры', value: dash(doorConfig.furniture.furnitureType ?? null) },
-                    { label: 'Цвет фурнитуры', value: dash(doorConfig.furniture.furnitureColor ?? null) },
-                    { label: 'Форма', value: dash(doorConfig.furniture.furnitureShape ?? null) },
+                    { label: 'Тип фурнитуры', value: translateFurnitureType(doorConfig.furniture.furnitureType ?? null) },
+                    { label: 'Цвет фурнитуры', value: translateFurnitureColor(doorConfig.furniture.furnitureColor ?? null) },
+                    { label: 'Форма', value: translateFurnitureShape(doorConfig.furniture.furnitureShape ?? null) },
                     { label: 'Ночник', value: yesNo(doorConfig.furniture.hasNightLatchTurner) },
                     { label: 'Дополнительный замок', value: yesNo(doorConfig.furniture.hasSecondaryLock) },
                 ],
