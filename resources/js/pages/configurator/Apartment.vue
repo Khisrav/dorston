@@ -84,11 +84,131 @@ async function downloadPdf() {
     const images = doorVisualizerRef.value.exportStageImages();
     if (!images) return;
 
+    const doorConfig = doorCalcStore.doorConfig;
+
+    const dash = (v: string | null | undefined) => (v && v.trim() !== '' ? v : '—');
+    const yesNo = (v: boolean | undefined) => (v === undefined ? '—' : v ? 'Да' : 'Нет');
+    const resolveFilmName = (id: number | undefined) =>
+        id !== undefined && id !== -1 ? doorCalcStore.getFilmColor(id)?.name ?? null : null;
+    const resolvePaintName = (id: number | undefined) =>
+        id !== undefined && id !== -1 ? doorCalcStore.getPaintColor(id)?.name ?? null : null;
+    const resolveDoorModelName = (id: number) => doorCalcStore.getDoorModelInfo(id)?.name ?? null;
+
+    const exteriorModelName = resolveDoorModelName(doorConfig.exterior.panelModel);
+    const interiorModelName = resolveDoorModelName(doorConfig.interior.panelModel);
+
+    const furnitureSet = doorConfig.furniture.furnitureSetId !== undefined && doorConfig.furniture.furnitureSetId !== -1
+        ? doorCalcStore.getFurnitureSet(doorConfig.furniture.furnitureSetId) ?? null
+        : null;
+
+    const selectedPrimaryLock =
+        doorConfig.furniture.primaryLock !== undefined && doorConfig.furniture.primaryLock !== -1
+            ? doorCalcStore.locks.primary.find((l) => l.id === doorConfig.furniture.primaryLock) ?? null
+            : null;
+    const selectedSecondaryLock =
+        doorConfig.furniture.hasSecondaryLock && doorConfig.furniture.secondaryLock !== undefined && doorConfig.furniture.secondaryLock !== -1
+            ? doorCalcStore.locks.secondary.find((l) => l.id === doorConfig.furniture.secondaryLock) ?? null
+            : null;
+
+    const selectedPrimaryCylinder =
+        doorConfig.furniture.primaryCylindricalLockMechanism !== undefined &&
+        doorConfig.furniture.primaryCylindricalLockMechanism !== -1
+            ? doorCalcStore.cylinders.find(
+                  (c) => c.id === doorConfig.furniture.primaryCylindricalLockMechanism,
+              ) ?? null
+            : null;
+
+    const selectedSecondaryCylinder =
+        doorConfig.furniture.hasSecondaryLock &&
+        doorConfig.furniture.secondaryCylindricalLockMechanism !== undefined &&
+        doorConfig.furniture.secondaryCylindricalLockMechanism !== -1
+            ? doorCalcStore.cylinders.find(
+                  (c) => c.id === doorConfig.furniture.secondaryCylindricalLockMechanism,
+              ) ?? null
+            : null;
+
+    const config = {
+        sections: [
+            {
+                title: 'Конструктив',
+                rows: [
+                    { label: 'Конструктив', value: dash(doorConfig.doorConstructive) },
+                    { label: 'Размеры', value: `${doorConfig.doorWidth} x ${doorConfig.doorHeight} мм` },
+                    { label: 'Сторона открывания', value: dash(doorConfig.doorHandleSide) },
+                    { label: 'Вид короба', value: dash(doorConfig.doorBoxDesign) },
+                    {
+                        label: 'Глазок',
+                        value: doorConfig.furniture.hasPeephole
+                            ? `Да (${dash(doorConfig.peepholePosition ?? 'Center')})`
+                            : 'Нет',
+                    },
+                    { label: 'Порог из нержавейки', value: yesNo(doorConfig.stainlessSteelDoorsill) },
+                ],
+            },
+            {
+                title: 'Внешняя отделка',
+                rows: [
+                    { label: 'Модель', value: dash(exteriorModelName) },
+                    { label: 'Плёнка основная', value: dash(resolveFilmName(doorConfig.exterior.primaryTexture)) },
+                    { label: 'Плёнка дополнительная', value: dash(resolveFilmName(doorConfig.exterior.secondaryTexture)) },
+                    { label: 'Наличник', value: dash(resolveFilmName(doorConfig.exterior.casingTexture)) },
+                ],
+            },
+            {
+                title: 'Внутренняя отделка',
+                rows: [
+                    { label: 'Модель', value: dash(interiorModelName) },
+                    { label: 'Плёнка основная', value: dash(resolveFilmName(doorConfig.interior.primaryTexture)) },
+                    { label: 'Плёнка дополнительная', value: dash(resolveFilmName(doorConfig.interior.secondaryTexture)) },
+                    { label: 'Наличник', value: dash(resolveFilmName(doorConfig.interior.casingTexture)) },
+                ],
+            },
+            {
+                title: 'Покраска металла',
+                rows: [
+                    { label: 'Подложка (цинкогрунт)', value: yesNo(doorConfig.metalPainting.undercoat) },
+                    { label: 'Основной цвет', value: dash(resolvePaintName(doorConfig.metalPainting.primaryColor)) },
+                    { label: 'Дополнительный цвет', value: dash(resolvePaintName(doorConfig.metalPainting.secondaryColor)) },
+                ],
+            },
+            {
+                title: 'Фурнитура',
+                rows: [
+                    { label: 'Комплект', value: dash(furnitureSet?.title ?? null) },
+                    { label: 'Тип фурнитуры', value: dash(doorConfig.furniture.furnitureType ?? null) },
+                    { label: 'Цвет фурнитуры', value: dash(doorConfig.furniture.furnitureColor ?? null) },
+                    { label: 'Форма', value: dash(doorConfig.furniture.furnitureShape ?? null) },
+                    { label: 'Ночник', value: yesNo(doorConfig.furniture.hasNightLatchTurner) },
+                    { label: 'Дополнительный замок', value: yesNo(doorConfig.furniture.hasSecondaryLock) },
+                ],
+            },
+            {
+                title: 'Замки и цилиндры',
+                rows: [
+                    { label: 'Основной замок', value: dash(selectedPrimaryLock?.name) },
+                    {
+                        label: 'Цилиндр (основной)',
+                        value: dash(selectedPrimaryCylinder?.name ?? null),
+                    },
+                    { label: 'Дополнительный замок', value: dash(selectedSecondaryLock?.name ?? null) },
+                    {
+                        label: 'Цилиндр (дополнительный)',
+                        value: dash(selectedSecondaryCylinder?.name ?? null),
+                    },
+                ],
+            },
+        ],
+    };
+
     isGeneratingPdf.value = true;
     try {
         const response = await axios.post(generatePdf.url(), {
             exterior_image: images.exteriorImage,
             interior_image: images.interiorImage,
+            exterior_model_name: exteriorModelName ?? '',
+            interior_model_name: interiorModelName ?? '',
+            constructive_name: doorConfig.doorConstructive,
+            config,
         }, { responseType: 'blob' });
 
         const url = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
