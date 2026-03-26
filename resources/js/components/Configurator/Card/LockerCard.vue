@@ -163,7 +163,7 @@ function securityLevel(value: string): number {
                     : 'border-sky-900/10 hover:border-sky-900/30 cursor-pointer'
             ]"
         >
-            <div class="w-12 h-12 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+            <div class="w-14 h-14 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
                 <img
                     v-if="selectedPrimaryLock?.image"
                     :src="getImageUrl(selectedPrimaryLock.image)"
@@ -202,12 +202,12 @@ function securityLevel(value: string): number {
             @click="showSecondaryLockDrawer = true"
             class="w-full flex items-center gap-3 p-3 rounded-2xl border border-sky-900/10 hover:border-sky-900/30 text-left transition-all duration-200 mt-4"
         >
-            <div class="w-12 h-12 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+            <div class="w-14 h-14 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
                 <img
                     v-if="selectedSecondaryLock?.image"
                     :src="getImageUrl(selectedSecondaryLock.image)"
                     :alt="selectedSecondaryLock.name"
-                    class="w-full h-full object-contain p-1"
+                    class="w-full h-full object-contain"
                 />
                 <i v-else class="pi pi-lock text-xl text-neutral-400" />
             </div>
@@ -237,7 +237,7 @@ function securityLevel(value: string): number {
                             : 'border-sky-900/10 hover:border-sky-900/30 cursor-pointer'
                     ]"
                 >
-                    <div class="w-10 h-10 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+                    <div class="w-12 h-12 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
                         <img
                             v-if="selectedPrimaryCylinder?.image"
                             :src="getImageUrl(selectedPrimaryCylinder.image)"
@@ -270,7 +270,7 @@ function securityLevel(value: string): number {
                             : 'border-sky-900/10 hover:border-sky-900/30 cursor-pointer'
                     ]"
                 >
-                    <div class="w-10 h-10 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
+                    <div class="w-12 h-12 bg-neutral-100 rounded-md shrink-0 overflow-hidden flex items-center justify-center">
                         <img
                             v-if="selectedSecondaryCylinder?.image"
                             :src="getImageUrl(selectedSecondaryCylinder.image)"
@@ -295,7 +295,7 @@ function securityLevel(value: string): number {
     </ConfiguratorCard>
 
     <!-- DRAWER: Primary cylinder -->
-    <Drawer v-model:visible="showPrimaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showPrimaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Цилиндр основного замка
@@ -314,12 +314,12 @@ function securityLevel(value: string): number {
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <div class="h-14 w-14 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
+                <div class="h-24 w-24 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
                     <img
                         v-if="opt.nomenclature?.image"
                         :src="getImageUrl(opt.nomenclature.image)"
                         :alt="opt.label"
-                        class="w-full h-full object-contain p-2"
+                        class="w-full h-full object-contain"
                     />
                     <i v-else class="pi pi-circle text-xl text-neutral-400" />
                 </div>
@@ -346,7 +346,7 @@ function securityLevel(value: string): number {
     </Drawer>
 
     <!-- DRAWER: Secondary cylinder -->
-    <Drawer v-model:visible="showSecondaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showSecondaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Цилиндр дополнительного замка
@@ -365,12 +365,12 @@ function securityLevel(value: string): number {
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <div class="h-14 w-14 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
+                <div class="h-24 w-24 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
                     <img
                         v-if="opt.nomenclature?.image"
                         :src="getImageUrl(opt.nomenclature.image)"
                         :alt="opt.label"
-                        class="w-full h-full object-contain p-2"
+                        class="w-full h-full object-contain"
                     />
                     <i v-else class="pi pi-circle text-xl text-neutral-400" />
                 </div>
@@ -397,7 +397,7 @@ function securityLevel(value: string): number {
     </Drawer>
 
     <!-- DRAWER: Primary lock -->
-    <Drawer v-model:visible="showPrimaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showPrimaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Основной замок
@@ -416,12 +416,12 @@ function securityLevel(value: string): number {
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <div class="h-14 w-14 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
+                <div class="h-24 w-24 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
                     <img
                         v-if="lock.image"
                         :src="getImageUrl(lock.image)"
                         :alt="lock.name"
-                        class="w-full h-full object-contain p-2"
+                        class="w-full h-full object-contain"
                     />
                     <i v-else class="pi pi-lock text-xl text-neutral-400" />
                 </div>
@@ -480,7 +480,7 @@ function securityLevel(value: string): number {
     </Drawer>
 
     <!-- DRAWER: Secondary lock -->
-    <Drawer v-model:visible="showSecondaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showSecondaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Дополнительный замок
@@ -499,12 +499,12 @@ function securityLevel(value: string): number {
                         : 'border-sky-900/10 hover:border-sky-900/30'
                 ]"
             >
-                <div class="h-14 w-14 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
+                <div class="h-24 w-24 bg-neutral-100 rounded-xl shrink-0 overflow-hidden flex items-center justify-center">
                     <img
                         v-if="lock.image"
                         :src="getImageUrl(lock.image)"
                         :alt="lock.name"
-                        class="w-full h-full object-contain p-2"
+                        class="w-full h-full object-contain"
                     />
                     <i v-else class="pi pi-lock text-xl text-neutral-400" />
                 </div>

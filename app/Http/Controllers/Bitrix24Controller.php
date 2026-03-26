@@ -22,53 +22,61 @@ class Bitrix24Controller extends Controller
             return response()->json(['message' => 'Bitrix24 webhook URL is not configured.'], 500);
         }
 
-        $endpoint = rtrim($webhookUrl, '/') . '/crm.lead.add.json';
+        $base = rtrim($webhookUrl, '/');
 
-        $payload = [
+        // Step 1: Create a Contact
+        $contactResponse = Http::timeout(10)->post("{$base}/crm.contact.add.json", [
             'fields' => [
-                'TITLE'      => $validated['title'] ?? 'Заявка с config.dorston.ru',
-                'NAME'       => $validated['name'],
-                'SOURCE_ID'  => 'WEB',            // optional: marks lead source
-                'PHONE'      => [
-                    [
-                        'VALUE'      => $validated['phone'],
-                        'VALUE_TYPE' => 'WORK',
-                    ],
-                ],
-                'EMAIL'      => [
-                    [
-                        'VALUE'      => $validated['email'],
-                        'VALUE_TYPE' => 'WORK',
-                    ],
-                ],
+                'NAME'  => $validated['name'],
+                'PHONE' => [['VALUE' => $validated['phone'], 'VALUE_TYPE' => 'WORK']],
+                'EMAIL' => [['VALUE' => $validated['email'], 'VALUE_TYPE' => 'WORK']],
             ],
-            'params' => [
-                'REGISTER_SONET_EVENT' => 'Y', // optional: notify in activity stream
-            ],
-        ];
+        ]);
 
-        $response = Http::timeout(10)->post($endpoint, $payload);
-
-        if ($response->failed()) {
-            return response()->json([
-                'message'         => 'Failed to send data to Bitrix24.',
-                'bitrix_status'   => $response->status(),
-                'bitrix_response' => $response->body(),
-            ], 502);
+        if ($contactResponse->failed()) {
+            return response()->json(['message' => 'Failed to create Bitrix24 contact.'], 502);
         }
 
-        $body = $response->json();
-        if (isset($body['error'])) {
+        $contactBody = $contactResponse->json();
+        if (isset($contactBody['error'])) {
             return response()->json([
-                'message'       => 'Bitrix24 rejected the request.',
-                'bitrix_error'  => $body['error'],
-                'bitrix_detail' => $body['error_description'] ?? null,
+                'message'       => 'Bitrix24 rejected the contact.',
+                'bitrix_error'  => $contactBody['error'],
+                'bitrix_detail' => $contactBody['error_description'] ?? null,
+            ], 422);
+        }
+
+        $contactId = $contactBody['result'];
+
+        // Step 2: Create a Deal linked to that Contact
+        $dealResponse = Http::timeout(10)->post("{$base}/crm.deal.add.json", [
+            'fields' => [
+                'TITLE'      => $validated['title'] ?? 'Заявка с config.dorston.ru',
+                'SOURCE_ID'  => 'WEB',
+                'CONTACT_ID' => $contactId,
+            ],
+            'params' => [
+                'REGISTER_SONET_EVENT' => 'Y',
+            ],
+        ]);
+
+        if ($dealResponse->failed()) {
+            return response()->json(['message' => 'Failed to create Bitrix24 deal.'], 502);
+        }
+
+        $dealBody = $dealResponse->json();
+        if (isset($dealBody['error'])) {
+            return response()->json([
+                'message'       => 'Bitrix24 rejected the deal.',
+                'bitrix_error'  => $dealBody['error'],
+                'bitrix_detail' => $dealBody['error_description'] ?? null,
             ], 422);
         }
 
         return response()->json([
-            'message' => 'ok',
-            'lead_id' => $body['result'] ?? null, // Bitrix24 returns the new lead ID here
+            'message'    => 'ok',
+            'deal_id'    => $dealBody['result'] ?? null,
+            'contact_id' => $contactId,
         ]);
     }
 }

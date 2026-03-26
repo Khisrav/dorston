@@ -308,7 +308,7 @@ watch(drawerShape, autoSelectFirst)
     <Drawer
         v-model:visible="showSetDrawer"
         position="right"
-        class="!w-full sm:!w-[90vw] md:!w-[520px]"
+        class="!w-full sm:!w-[90vw] md:!w-[720px]"
     >
         <template #header>
             <div class="flex items-center gap-3">
