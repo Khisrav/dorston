@@ -157,7 +157,7 @@ const casingFilmColor = computed(() =>
     </ConfiguratorCard>
 
     <!-- DRAWER: Panel model -->
-    <Drawer v-model:visible="showModelDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showModelDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Модель внутренней панели
@@ -204,7 +204,7 @@ const casingFilmColor = computed(() =>
     </Drawer>
 
     <!-- DRAWER: Primary film color -->
-    <Drawer v-model:visible="showPrimaryFilmDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showPrimaryFilmDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Основной цвет плёнки
@@ -251,7 +251,7 @@ const casingFilmColor = computed(() =>
     </Drawer>
 
     <!-- DRAWER: Secondary film color -->
-    <Drawer v-model:visible="showSecondaryFilmDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showSecondaryFilmDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Дополнительный цвет плёнки
@@ -298,7 +298,7 @@ const casingFilmColor = computed(() =>
     </Drawer>
 
     <!-- DRAWER: Casing film color -->
-    <Drawer v-model:visible="showCasingFilmDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showCasingFilmDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Цвет плёнки наличника

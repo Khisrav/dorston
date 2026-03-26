@@ -110,7 +110,7 @@ watch(isUndercoatActive, (active) => {
     </ConfiguratorCard>
 
     <!-- DRAWER: Primary color -->
-    <Drawer v-model:visible="showPrimaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showPrimaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Покраска металла: основной цвет
@@ -157,7 +157,7 @@ watch(isUndercoatActive, (active) => {
     </Drawer>
 
     <!-- DRAWER: Secondary color (Nova) -->
-    <Drawer v-model:visible="showSecondaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showSecondaryDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Дополнительный цвет (Nova)
@@ -204,7 +204,7 @@ watch(isUndercoatActive, (active) => {
     </Drawer>
 
     <!-- DRAWER: Inner casing color -->
-    <Drawer v-model:visible="showInnerCasingDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showInnerCasingDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Цвет внутреннего обрамления

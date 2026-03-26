@@ -289,7 +289,7 @@ function securityLevel(value: string): number {
     </ConfiguratorCard>
 
     <!-- DRAWER: Primary cylinder -->
-    <Drawer v-model:visible="showPrimaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showPrimaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Цилиндр основного замка
@@ -337,7 +337,7 @@ function securityLevel(value: string): number {
     </Drawer>
 
     <!-- DRAWER: Secondary cylinder -->
-    <Drawer v-model:visible="showSecondaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showSecondaryCylinderDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Цилиндр дополнительного замка
@@ -385,7 +385,7 @@ function securityLevel(value: string): number {
     </Drawer>
 
     <!-- DRAWER: Primary lock -->
-    <Drawer v-model:visible="showPrimaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showPrimaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Основной замок
@@ -468,7 +468,7 @@ function securityLevel(value: string): number {
     </Drawer>
 
     <!-- DRAWER: Secondary lock -->
-    <Drawer v-model:visible="showSecondaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[520px]">
+    <Drawer v-model:visible="showSecondaryLockDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg font-bold text-black tracking-tight leading-none">
                 Дополнительный замок

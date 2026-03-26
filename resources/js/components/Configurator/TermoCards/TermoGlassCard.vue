@@ -48,7 +48,7 @@ const showInteriorDrawer = ref(false)
     </ConfiguratorCard>
 
     <!-- DRAWER: Glass exterior (tinted glass options — coming soon) -->
-    <Drawer v-model:visible="showExteriorDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+    <Drawer v-model:visible="showExteriorDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg tracking-tight">Тонировка стекла: Снаружи</h2>
         </template>
@@ -60,7 +60,7 @@ const showInteriorDrawer = ref(false)
     </Drawer>
 
     <!-- DRAWER: Glass interior (tinted glass options — coming soon) -->
-    <Drawer v-model:visible="showInteriorDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[600px] lg:!w-[700px] xl:!w-[800px]">
+    <Drawer v-model:visible="showInteriorDrawer" position="right" class="!w-full sm:!w-[90vw] md:!w-[720px]">
         <template #header>
             <h2 class="font-serif text-lg tracking-tight">Тонировка стекла: Внутри</h2>
         </template>
