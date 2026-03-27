@@ -20,6 +20,29 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const stageWidth = doorDimensions.width;
     const stageHeight = doorDimensions.height;
 
+    const interiorCasingImages = ref<string[]>([
+        'Наличник внутренний_Муар чёрный 9005.png',
+        'Наличник внутренний_Муар металлик чёрный.png',
+        'Наличник внутренний_Антик бронза.png',
+        'Наличник внутренний_Антик медь.png',   
+        'Наличник внутренний_Антик серебро.png',    
+        'Наличник внутренний_Антик синий.png',
+        'Наличник внутренний_Белая шагрень.png',
+        'Наличник внутренний_Букле опал.png',
+        'Наличник внутренний_Букле серый.png',
+        'Наличник внутренний_Букле чёрный.png',
+        'Наличник внутренний_Золото на белом.png',
+        'Наличник внутренний_Муар 1019.png',
+        'Наличник внутренний_Муар 6028.png',
+        'Наличник внутренний_Муар 7021.png',
+        'Наличник внутренний_Муар 7024.png',
+        'Наличник внутренний_Муар 9003.png',
+        'Наличник внутренний_Муар металлик 8019.png',
+        'Наличник внутренний_Муар металлик бронзовый.png',
+        'Наличник внутренний_Муар металлик серый.png',
+        'Наличник внутренний_Муар металлик синий.png',
+    ])
+
     const doorCombinationImages = ref<DoorCombinationImage[]>([]);
     const isCombinationsLoading = ref(false);
 
@@ -63,6 +86,11 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const interiorDoorUrl = computed(() =>
         findComboUrl('Полотно', doorCalcStore.doorConfig.interior.panelModel, doorCalcStore.doorConfig.interior.primaryTexture)
     );
+    const interiorCasingUrl = computed(() => {
+        const paintName = doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.primaryColor ?? -1)?.name;
+        if (!paintName) return '';
+        return `/assets/casings/Наличник внутренний_${paintName}.png`;
+    });
 
     // ── Door image loading ────────────────────────────────────────────────────
 
@@ -72,7 +100,8 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const [additionalCasingElementImage] = useImage(exteriorAdditionalCasingUrl);
     const [additionalDoorElementImage] = useImage(exteriorAdditionalDoorUrl);
     const [interiorDoorImage] = useImage(interiorDoorUrl);
-    const [interiorCasingImage] = useImage('/assets/temp/Короб.png');
+    // const [interiorCasingImage] = useImage('/assets/temp/Короб.png');
+    const [interiorCasingImage] = useImage(interiorCasingUrl);
 
     // ── Furniture image URL helper ────────────────────────────────────────────
 
@@ -198,6 +227,45 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         makeFlipConfig(doorCalcStore.doorConfig.doorHandleSide !== 'Right')
     );
 
+    const exteriorPeepholeImageConfig = computed(() => {
+        const handleSide = doorCalcStore.doorConfig.doorHandleSide;
+        
+        if (doorCalcStore.doorConfig.peepholePosition === 'Side') {
+            return {
+                x: ((handleSide === 'Right' ? 313 : -313) / stageWidth) * stageWidth,
+                y: 0,
+                width: stageWidth,
+                height: stageHeight,
+            };
+        } else {
+            return {
+                x: 0,
+                y: 0,
+                width: stageWidth,
+                height: stageHeight,
+            };
+        }
+    });
+
+    const interiorPeepholeImageConfig = computed(() => {
+        const handleSide = doorCalcStore.doorConfig.doorHandleSide;
+        
+        if (doorCalcStore.doorConfig.peepholePosition === 'Side') {
+            return {
+                x: ((handleSide === 'Right' ? -313 : 313) / stageWidth) * stageWidth,
+                y: 0,
+                width: stageWidth,
+                height: stageHeight,
+            };
+        } else {
+            return {
+                x: 0,
+                y: 0,
+                width: stageWidth,
+                height: stageHeight,
+            };
+        }
+    });
     // ── Background rect config (symmetric — no flip needed) ──────────────────
 
     const backgroundConfig = computed(() => ({
@@ -248,6 +316,8 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         // Configs
         exteriorImageConfig,
         interiorImageConfig,
+        exteriorPeepholeImageConfig,
+        interiorPeepholeImageConfig,
         backgroundConfig,
     }
 });
