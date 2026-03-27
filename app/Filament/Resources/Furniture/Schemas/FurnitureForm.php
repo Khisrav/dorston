@@ -6,7 +6,6 @@ use App\Models\Nomenclature;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -29,8 +28,8 @@ class FurnitureForm
                         Select::make('type')
                             ->label('Тип ручки')
                             ->options([
-                                'push'       => 'Нажимная',
-                                'pull'       => 'Бугельная',
+                                'push' => 'Нажимная',
+                                'pull' => 'Бугельная',
                                 'electronic' => 'Электронная',
                             ])
                             ->required()
@@ -40,8 +39,8 @@ class FurnitureForm
                             ->label('Форма')
                             ->options([
                                 'rectangular' => 'Прямоугольная',
-                                'oval'        => 'Овальная',
-                                'other'       => 'Другая',
+                                'oval' => 'Овальная',
+                                'other' => 'Другая',
                             ])
                             ->required()
                             ->native(false),
@@ -49,11 +48,11 @@ class FurnitureForm
                         Select::make('color')
                             ->label('Цвет')
                             ->options([
-                                'black'        => 'Матовый чёрный',
-                                'chrome'       => 'Хром',
+                                'black' => 'Матовый чёрный',
+                                'chrome' => 'Хром',
                                 'matte-chrome' => 'Матовый хром',
-                                'gold'         => 'Золотой',
-                                'bronze'       => 'Бронзовый',
+                                'gold' => 'Золотой',
+                                'bronze' => 'Бронзовый',
                             ])
                             ->required()
                             ->native(false),
@@ -65,8 +64,16 @@ class FurnitureForm
                             ->imageEditorAspectRatios(['4:3', '1:1'])
                             ->maxSize(2048)
                             ->disk('public')
-                            ->directory('furniture/previews')
-                            ->columnSpanFull(),
+                            ->directory('furniture/previews'),
+
+                        FileUpload::make('peephole_preview')
+                            ->label('Превью глазка')
+                            ->image()
+                            ->imageEditor()
+                            ->imageEditorAspectRatios(['4:3', '1:1'])
+                            ->maxSize(2048)
+                            ->disk('public')
+                            ->directory('furniture/peephole-previews'),
                     ])
                     ->columns(3)
                     ->columnSpanFull(),
@@ -226,7 +233,7 @@ class FurnitureForm
                             ->disk('public')
                             ->directory('furniture/peephole-covers/exterior/center')
                             ->columnSpan(1),
-                        
+
                         FileUpload::make('peephole_interior_side_image')
                             ->label('Глазок - изнутри, боковая позиция')
                             ->image()

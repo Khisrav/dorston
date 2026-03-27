@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Furniture extends Model
 {
     protected $table = 'furnitures';
-    
+
     protected $fillable = [
         'type',
         'preview',
+        'peephole_preview',
         'title',
         'shape',
         'color',

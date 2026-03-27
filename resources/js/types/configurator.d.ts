@@ -150,7 +150,7 @@ export interface Furniture {
     id: number;
     title?: string | null;
     preview?: string | null;
-    preview_image?: string | null;
+    peephole_preview?: string | null;
     furniture_type: 'push' | 'pull' | 'electronic';
     shape: 'rectangular' | 'oval' | 'other';
     color: 'black' | 'chrome' | 'gold' | 'bronze' | 'matte-chrome';
