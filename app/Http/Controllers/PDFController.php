@@ -5,56 +5,49 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
-use Mpdf\Mpdf;
 use InvalidArgumentException;
+use Mpdf\Config\ConfigVariables;
+use Mpdf\Config\FontVariables;
+use Mpdf\Mpdf;
 
 class PDFController extends Controller
 {
     public function generate(Request $request): Response
     {
         $request->validate([
-            'exterior_image'      => ['required', 'string', 'starts_with:data:image/png'],
-            'interior_image'      => ['required', 'string', 'starts_with:data:image/png'],
+            'exterior_image' => ['required', 'string', 'starts_with:data:image/png'],
+            'interior_image' => ['required', 'string', 'starts_with:data:image/png'],
             'exterior_model_name' => ['nullable', 'string', 'max:120'],
             'interior_model_name' => ['nullable', 'string', 'max:120'],
-            'constructive_name'   => ['nullable', 'string', 'max:120'],
-            'phone'               => ['nullable', 'string', 'max:40'],
-            'config'              => ['nullable'],
+            'constructive_name' => ['nullable', 'string', 'max:120'],
+            'phone' => ['nullable', 'string', 'max:40'],
+            'config' => ['nullable'],
 
             // Extra buyer / order fields for the spec table (page 3)
-            'order_number'        => ['nullable', 'string', 'max:120'],
-            'salon_address'       => ['nullable', 'string', 'max:255'],
-            'buyer_name'          => ['nullable', 'string', 'max:255'],
-            'buyer_phone'         => ['nullable', 'string', 'max:40'],
-            'object_address'      => ['nullable', 'string', 'max:255'],
-            'seller_name'         => ['nullable', 'string', 'max:255'],
+            'order_number' => ['nullable', 'string', 'max:120'],
+            'salon_address' => ['nullable', 'string', 'max:255'],
+            'buyer_name' => ['nullable', 'string', 'max:255'],
+            'buyer_phone' => ['nullable', 'string', 'max:40'],
+            'object_address' => ['nullable', 'string', 'max:255'],
+            'seller_name' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $mpdf = new Mpdf([
-            'tempDir'       => storage_path('app/mpdf'),
-            'format'        => 'A4',
-            'orientation'   => 'P',
-            'margin_top'    => 38,   // room for custom header
-            'margin_bottom' => 12,
-            'margin_left'   => 0,
-            'margin_right'  => 0,
-            'img_dpi'       => 192,
-        ]);
+        $mpdf = $this->makeMpdf();
 
-        $exteriorImage    = $request->input('exterior_image');
-        $interiorImage    = $request->input('interior_image');
-        $exteriorModel    = trim((string) $request->input('exterior_model_name', ''));
-        $interiorModel    = trim((string) $request->input('interior_model_name', ''));
-        $constructive     = trim((string) $request->input('constructive_name', ''));
-        $config           = $this->normalizeConfig($request->input('config'));
+        $exteriorImage = $request->input('exterior_image');
+        $interiorImage = $request->input('interior_image');
+        $exteriorModel = trim((string) $request->input('exterior_model_name', ''));
+        $interiorModel = trim((string) $request->input('interior_model_name', ''));
+        $constructive = trim((string) $request->input('constructive_name', ''));
+        $config = $this->normalizeConfig($request->input('config'));
 
         // Buyer / order meta
-        $orderNumber   = trim((string) $request->input('order_number', ''));
-        $salonAddress  = trim((string) $request->input('salon_address', ''));
-        $buyerName     = trim((string) $request->input('buyer_name', ''));
-        $buyerPhone    = trim((string) $request->input('buyer_phone', ''));
+        $orderNumber = trim((string) $request->input('order_number', ''));
+        $salonAddress = trim((string) $request->input('salon_address', ''));
+        $buyerName = trim((string) $request->input('buyer_name', ''));
+        $buyerPhone = trim((string) $request->input('buyer_phone', ''));
         $objectAddress = trim((string) $request->input('object_address', ''));
-        $sellerName    = trim((string) $request->input('seller_name', ''));
+        $sellerName = trim((string) $request->input('seller_name', ''));
 
         $mpdf->SetTitle('DORSTON — Спецификация');
         $mpdf->SetAuthor('DORSTON');
@@ -102,8 +95,44 @@ class PDFController extends Controller
         }
 
         return response($pdfContent, 200, [
-            'Content-Type'        => 'application/pdf',
+            'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="door-config.pdf"',
+        ]);
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // mPDF instance (Montserrat default)
+    // ──────────────────────────────────────────────────────────────────────────
+
+    private function makeMpdf(): Mpdf
+    {
+        $configDefaults = (new ConfigVariables)->getDefaults();
+        $fontDefaults = (new FontVariables)->getDefaults();
+
+        $fontdata = $fontDefaults['fontdata'];
+        $fontdata['montserrat'] = [
+            'R' => 'Montserrat-Regular.ttf',
+            'B' => 'Montserrat-Bold.ttf',
+            'I' => 'Montserrat-Regular.ttf',
+            'BI' => 'Montserrat-BoldItalic.ttf',
+        ];
+
+        $sansFonts = $fontDefaults['sans_fonts'];
+        array_unshift($sansFonts, 'montserrat');
+
+        return new Mpdf([
+            'tempDir' => storage_path('app/mpdf'),
+            'format' => 'A4',
+            'orientation' => 'P',
+            'margin_top' => 38,   // room for custom header
+            'margin_bottom' => 12,
+            'margin_left' => 0,
+            'margin_right' => 0,
+            'img_dpi' => 192,
+            'fontDir' => array_merge($configDefaults['fontDir'], [public_path('assets/fonts/montserrat')]),
+            'fontdata' => $fontdata,
+            'sans_fonts' => $sansFonts,
+            'default_font' => 'montserrat',
         ]);
     }
 
@@ -125,11 +154,11 @@ class PDFController extends Controller
             : '';
 
         $logoImgHtml = $logoSrc !== ''
-            ? '<img src="' . $logoSrc . '" style="height: 6mm; width: auto;border:0px solid #ffffff" />'
+            ? '<img src="'.$logoSrc.'" style="height: 6mm; width: auto;border:0px solid #ffffff" />'
             : '';
 
         return <<<HTML
-        <div class="header" style="font-family: DejaVu Sans, Arial, sans-serif; padding: 5mm 0 3mm 0; border-bottom: 1pt solid #111827;">
+        <div class="header" style="font-family: montserrat, sans-serif; padding: 5mm 0 3mm 0; border-bottom: 1pt solid #111827;">
             <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
                 <tr>
                     <td style="text-align:left; vertical-align:middle; width:50%;">
@@ -156,7 +185,7 @@ class PDFController extends Controller
             return '';
         }
 
-        return 'data:image/png;base64,' . base64_encode($binary);
+        return 'data:image/png;base64,'.base64_encode($binary);
     }
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -165,11 +194,11 @@ class PDFController extends Controller
 
     private function buildBaseStyles(): string
     {
-        return <<<HTML
+        return <<<'HTML'
         <style>
             * { box-sizing: border-box; }
             body {
-                font-family: DejaVu Sans, Arial, sans-serif;
+                font-family: montserrat, sans-serif;
                 color: #111827;
                 margin: 0;
                 padding: 0;
@@ -190,8 +219,9 @@ class PDFController extends Controller
 
             /* ── Page 1 & 2 ── */
             .page-title {
-                font-size: 20pt;
-                font-weight: 700;
+                font-size: 32pt;
+                font-weight: bold;
+                letter-spacing: 1mm;
                 text-align: center;
                 margin: 4mm 0 2mm 0;
                 letter-spacing: -0.01em;
@@ -288,7 +318,7 @@ class PDFController extends Controller
         string $interiorModelName,
         string $constructiveName,
     ): string {
-        $src      = htmlspecialchars($absoluteExteriorImagePath, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $src = htmlspecialchars($absoluteExteriorImagePath, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $modelStr = '';
         if ($constructiveName !== '' || $exteriorModelName !== '' || $interiorModelName !== '') {
             $parts = array_filter([$constructiveName, trim($exteriorModelName.'/'.$interiorModelName, '/')]);
@@ -297,10 +327,10 @@ class PDFController extends Controller
 
         return $this->buildBaseStyles().<<<HTML
         <div style="margin-top: 38mm;">
-            <div class="page-title">Ваша дверь спроектирована</div>
+            <div class="page-title">ВАША ДВЕРЬ</div>
             {$this->optionalSubtitle($modelStr)}
 
-            <div class="section-label">Внешний вид двери (со стороны улицы)</div>
+            <div class="section-label">Внешняя сторона</div>
 
             <div class="img-wrap">
                 <img src="{$src}" />
@@ -320,12 +350,12 @@ class PDFController extends Controller
 
         return $this->buildBaseStyles().<<<HTML
         <div style="margin-top: 38mm;">
-            <div class="section-label" style="font-size:13pt; margin-bottom:4mm;">
-                Внутренний вид двери (со стороны помещения)
+            <div class="section-label">
+                Внутренняя сторона
             </div>
             <div class="img-wrap">
                 <img src="{$src}" />
-                <div class="img-caption">Итоговый внутренний вид изделия</div>
+                <div class="img-caption">Итоговый внутренний вид</div>
             </div>
         </div>
         HTML;
@@ -352,7 +382,7 @@ class PDFController extends Controller
             ['№ заказа',          $orderNumber],
             ['Адрес салона',      $salonAddress],
             ['Ф.И.О. покупателя', $buyerName],
-            ['Телефон покупателя',$buyerPhone],
+            ['Телефон покупателя', $buyerPhone],
             ['Адрес объекта',     $objectAddress],
         ];
 
@@ -371,11 +401,14 @@ class PDFController extends Controller
             $rows = $section['rows'] ?? [];
             if (! is_array($rows) || $rows === []) {
                 $rowsHtml .= '<tr><td class="label-cell">—</td><td class="value-cell">—</td></tr>';
+
                 continue;
             }
 
             foreach ($rows as $row) {
-                if (! is_array($row)) continue;
+                if (! is_array($row)) {
+                    continue;
+                }
                 $k = htmlspecialchars((string) ($row['label'] ?? '—'), ENT_QUOTES | ENT_HTML5, 'UTF-8');
                 $v = htmlspecialchars((string) ($row['value'] ?? '—'), ENT_QUOTES | ENT_HTML5, 'UTF-8');
                 $rowsHtml .= '<tr><td class="label-cell">'.$k.'</td><td class="value-cell">'.$v.'</td></tr>';
@@ -412,7 +445,10 @@ class PDFController extends Controller
 
     private function optionalSubtitle(string $text): string
     {
-        if ($text === '') return '';
+        if ($text === '') {
+            return '';
+        }
+
         return '<div class="page-subtitle">'.$text.'</div>';
     }
 
@@ -467,16 +503,22 @@ class PDFController extends Controller
         if (isset($config['sections']) && is_array($config['sections'])) {
             $sections = [];
             foreach ($config['sections'] as $section) {
-                if (! is_array($section)) continue;
-                $title  = trim((string) ($section['title'] ?? ''));
+                if (! is_array($section)) {
+                    continue;
+                }
+                $title = trim((string) ($section['title'] ?? ''));
                 $rowsIn = $section['rows'] ?? [];
-                $rows   = [];
+                $rows = [];
                 if (is_array($rowsIn)) {
                     foreach ($rowsIn as $r) {
-                        if (! is_array($r)) continue;
+                        if (! is_array($r)) {
+                            continue;
+                        }
                         $label = trim((string) ($r['label'] ?? ''));
                         $value = (string) ($r['value'] ?? '');
-                        if ($label === '' && $value === '') continue;
+                        if ($label === '' && $value === '') {
+                            continue;
+                        }
                         $rows[] = [
                             'label' => $label !== '' ? $label : '—',
                             'value' => $value !== '' ? $value : '—',
@@ -485,9 +527,10 @@ class PDFController extends Controller
                 }
                 $sections[] = [
                     'title' => $title !== '' ? $title : '—',
-                    'rows'  => $rows,
+                    'rows' => $rows,
                 ];
             }
+
             return $sections !== [] ? $sections : [['title' => 'Спецификация', 'rows' => []]];
         }
 
@@ -505,7 +548,9 @@ class PDFController extends Controller
         $rows = [];
         foreach ($config as $k => $v) {
             $label = trim((string) $k);
-            if ($label === '') continue;
+            if ($label === '') {
+                continue;
+            }
             $value = is_scalar($v) ? (string) $v : json_encode($v, JSON_UNESCAPED_UNICODE);
             $rows[] = ['label' => $label, 'value' => trim($value) !== '' ? trim($value) : '—'];
         }

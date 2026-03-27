@@ -210,7 +210,7 @@ watch(drawerShape, autoSelectFirst)
             </div>
 
             <!-- ── Step 3: Set picker (only when color is selected) ── -->
-            <div class="border-t border-sky-900/5 pt-4">
+            <div v-if="selectedColor" class="border-t border-sky-900/5 pt-4">
                 <p class="font-serif text-sm text-sky-900/70 mb-3">Модель фурнитуры</p>
 
                 <!-- Selected set preview -->
@@ -233,6 +233,7 @@ watch(drawerShape, autoSelectFirst)
                             {{ selectedSet.title ?? 'Модель без названия' }}
                         </p>
                     </div>
+                    <!-- <Button variant="outlined" size="small" label="Изменить" class="shrink-0" /> -->
                     <i class="pi pi-chevron-right text-sky-900/20 ml-auto text-sm" />
                 </div>
 
@@ -272,34 +273,45 @@ watch(drawerShape, autoSelectFirst)
 
         <div class="border-t border-sky-900/5 my-4" />
 
-        <!-- ── Peephole position ───────────────────────────────────── -->
-        <p class="font-serif text-sm text-sky-900/70 mb-3">Глазок</p>
-
-        <!-- Mobile: radio buttons -->
-        <div class="flex flex-col gap-2 md:hidden">
-            <label
-                v-for="opt in peepholeOptions"
-                :key="opt.value"
-                class="flex items-center gap-3 cursor-pointer select-none"
+        <div class="flex items-center gap-4">
+            <div
+                v-if="selectedSet?.peephole_preview"
+                class="flex-shrink-0"
             >
-                <RadioButton
-                    v-model="store.doorConfig.peepholePosition"
-                    :value="opt.value"
+                <img
+                    :src="getImageUrl(selectedSet.peephole_preview)"
+                    :alt="selectedSet.title ? `Глазок — ${selectedSet.title}` : 'Глазок'"
+                    class="w-24 h-24 md:w-20 md:h-20 rounded-xl object-cover border border-sky-100 shadow-sm bg-white"
                 />
-                <span class="text-sm text-sky-900/80">{{ opt.label }}</span>
-            </label>
-        </div>
-
-        <!-- Desktop: segmented SelectButton -->
-        <div class="hidden md:flex">
-            <SelectButton
-                v-model="store.doorConfig.peepholePosition"
-                :options="peepholeOptions"
-                option-label="label"
-                option-value="value"
-                size="small"
-                fluid
-            />
+            </div>
+            <div class="flex-1">
+                <p class="font-serif text-sm text-sky-900/70 mb-2">Глазок</p>
+                <!-- Mobile: radio buttons -->
+                <div class="flex flex-col gap-2 md:hidden">
+                    <label
+                        v-for="opt in peepholeOptions"
+                        :key="opt.value"
+                        class="flex items-center gap-3 cursor-pointer select-none"
+                    >
+                        <RadioButton
+                            v-model="store.doorConfig.peepholePosition"
+                            :value="opt.value"
+                        />
+                        <span class="text-sm text-sky-900/80">{{ opt.label }}</span>
+                    </label>
+                </div>
+                <!-- Desktop: segmented SelectButton -->
+                <div class="hidden md:flex">
+                    <SelectButton
+                        v-model="store.doorConfig.peepholePosition"
+                        :options="peepholeOptions"
+                        option-label="label"
+                        option-value="value"
+                        size="small"
+                        fluid
+                    />
+                </div>
+            </div>
         </div>
 
     </ConfiguratorCard>
@@ -358,12 +370,12 @@ watch(drawerShape, autoSelectFirst)
                             : 'border-sky-900/10 hover:border-sky-900/30'
                     ]"
                 >
-                    <div class="w-full aspect-[4/3] bg-neutral-100 overflow-hidden flex items-center justify-center">
+                    <div class="w-full bg-neutral-100 overflow-hidden flex items-center justify-center">
                         <img
                             v-if="furniture.preview"
                             :src="getImageUrl(furniture.preview)"
                             :alt="furniture.title ?? 'Модель'"
-                            class="w-full h-full object-cover"
+                            class="w-full h-full"
                         />
                         <span v-else class="text-xs text-neutral-400 font-serif text-center px-2">Нет фото</span>
                     </div>

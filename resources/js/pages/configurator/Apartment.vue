@@ -102,7 +102,7 @@ const doorVisualizerRef = ref<InstanceType<typeof DoorVisualizer> | null>(null);
 const isGeneratingPdf = ref(false);
 const showOrderDialog = ref(false);
 
-async function downloadPdf() {
+async function downloadPdf(form: { fullname: string; phone: string; address: string }) {
     if (!doorVisualizerRef.value) return;
 
     const images = doorVisualizerRef.value.exportStageImages();
@@ -269,6 +269,9 @@ async function downloadPdf() {
             exterior_model_name: exteriorModelName ?? '',
             interior_model_name: interiorModelName ?? '',
             constructive_name: doorConfig.doorConstructive,
+            buyer_name: form.fullname,
+            buyer_phone: form.phone,
+            object_address: form.address,
             config,
         }, { responseType: 'blob' });
 
