@@ -198,7 +198,7 @@ watch(drawerShape, autoSelectFirst)
                     >
                         <div
                             :class="[
-                                'size-14 rounded-full transition-all duration-200',
+                                'size-14 md:size-16 rounded-full transition-all duration-200',
                                 selectedColor === opt.value
                                     ? 'ring-2 ring-sky-900 ring-offset-2'
                                     : 'ring-1 ring-black/10 hover:ring-sky-900/40 hover:ring-offset-1'
@@ -221,7 +221,7 @@ watch(drawerShape, autoSelectFirst)
                     class="flex items-center gap-3 p-3 rounded-2xl border border-sky-900/10 mb-3 cursor-pointer hover:border-sky-900/30 transition-colors w-[calc(100vw-64px)] md:w-auto"
                     @click="openSetDrawer"
                 >
-                    <div class="size-16 shrink-0 rounded-xl bg-neutral-100 overflow-hidden flex items-center justify-center">
+                    <div class="w-20 md:w-24 shrink-0 rounded-xl bg-neutral-100 overflow-hidden flex items-center justify-center">
                         <img
                             v-if="selectedSet.preview"
                             :src="getImageUrl(selectedSet.preview)"
@@ -230,13 +230,13 @@ watch(drawerShape, autoSelectFirst)
                         />
                         <span v-else class="text-xs text-neutral-400 font-serif text-center px-1">Нет фото</span>
                     </div>
-                    <div class="flex-1 min-w-0 overflow-hidden">
+                    <div class="flex-1 min-w-0 overflow-hidden space-y-4">
                         <p class="font-serif font-semibold text-sky-900 text-sm truncate line-clamp-1">
                             {{ selectedSet.title ?? 'Модель без названия' }}
                         </p>
+                        <Button variant="outlined" size="small" label="Изменить" class="shrink-0" />
                     </div>
-                    <!-- <Button variant="outlined" size="small" label="Изменить" class="shrink-0" /> -->
-                    <i class="pi pi-chevron-right text-sky-900/20 ml-auto text-sm" />
+                    <!-- <i class="pi pi-chevron-right text-sky-900/20 ml-auto text-sm" /> -->
                 </div>
 
                 <!-- No set selected -->
@@ -283,7 +283,7 @@ watch(drawerShape, autoSelectFirst)
                 <img
                     :src="getImageUrl(selectedSet.peephole_preview)"
                     :alt="selectedSet.title ? `Глазок — ${selectedSet.title}` : 'Глазок'"
-                    class="w-24 h-24 md:w-20 md:h-20 rounded-xl object-cover border border-sky-100 shadow-sm bg-white"
+                    class="w-28 rounded-xl object-cover border border-sky-100 shadow-sm bg-white"
                 />
             </div>
             <div class="flex-1">

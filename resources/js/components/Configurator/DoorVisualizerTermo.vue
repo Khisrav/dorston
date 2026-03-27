@@ -58,7 +58,7 @@ defineExpose({ exportStageImages });
                             <v-image :config="{ ...visualStore.exteriorImageConfig, image: visualStore.furnitureExteriorSecondaryLeverLockImage }" />
                             <v-image
                                 v-if="doorCalcStore.doorConfig.furniture.hasPeephole && doorCalcStore.doorConfig.peepholePosition !== 'None'"
-                                :config="{ ...visualStore.exteriorImageConfig, image: visualStore.furnitureExteriorPeepholeImage }"
+                                :config="{ ...visualStore.exteriorPeepholeImageConfig, image: visualStore.furnitureExteriorPeepholeImage }"
                             />
                             <v-image :config="{ ...visualStore.exteriorImageConfig, image: visualStore.furnitureExteriorHandleImage }" />
                         </v-layer>
@@ -86,7 +86,7 @@ defineExpose({ exportStageImages });
                             <v-image :config="{ ...visualStore.interiorImageConfig, image: visualStore.furnitureInteriorSecondaryLeverLockImage }" />
                             <v-image
                                 v-if="doorCalcStore.doorConfig.furniture.hasPeephole && doorCalcStore.doorConfig.peepholePosition !== 'None'"
-                                :config="{ ...visualStore.interiorImageConfig, image: visualStore.furnitureInteriorPeepholeImage }"
+                                :config="{ ...visualStore.interiorPeepholeImageConfig, image: visualStore.furnitureInteriorPeepholeImage }"
                             />
                             <v-image
                                 v-if="doorCalcStore.doorConfig.furniture.hasNightLatchTurner"
