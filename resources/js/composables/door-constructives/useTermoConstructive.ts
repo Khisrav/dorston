@@ -47,6 +47,13 @@ export const useTermoConstructive = defineStore('termoConstructive', () => {
         total_price.value += doubleGlazedGlassPriceValue(doorConfig, doorCalcStore);
         console.log('Стеклопакет:', doubleGlazedGlassPriceValue(doorConfig, doorCalcStore));
 
+        total_price.value += (doorConfig.isModular && doorConfig.modules?.top.size && doorConfig.modules?.top.size > 0 ? modulePriceValue(doorConfig, 'top') : 0);
+        console.log('Модуль верхний:', (doorConfig.isModular && doorConfig.modules?.top.size && doorConfig.modules?.top.size > 0 ? modulePriceValue(doorConfig, 'top') : 0));
+        total_price.value += (doorConfig.isModular && doorConfig.modules?.left.size && doorConfig.modules?.left.size > 0 ? modulePriceValue(doorConfig, 'left') : 0);
+        console.log('Модуль левый:', (doorConfig.isModular && doorConfig.modules?.left.size && doorConfig.modules?.left.size > 0 ? modulePriceValue(doorConfig, 'left') : 0));
+        total_price.value += (doorConfig.isModular && doorConfig.modules?.right.size && doorConfig.modules?.right.size > 0 ? modulePriceValue(doorConfig, 'right') : 0);
+        console.log('Модуль правый:', (doorConfig.isModular && doorConfig.modules?.right.size && doorConfig.modules?.right.size > 0 ? modulePriceValue(doorConfig, 'right') : 0));
+
         return total_price.value;
     };
 
@@ -490,6 +497,92 @@ export const useTermoConstructive = defineStore('termoConstructive', () => {
         }
 
         sum += group[panelId ?? 0]
+
+        return sum
+    }
+
+    const modulePriceValue = (doorConfig: TermoDoorConfig, position: 'top' | 'left' | 'right') => {
+        let sum = 0
+
+        if (!doorConfig.isModular) return 0
+        
+        let moduleWidth = doorConfig.width + (doorConfig.modules?.left.size ?? 0) + (doorConfig.modules?.right.size ?? 0)
+        let moduleHeight = doorConfig.height + (doorConfig.modules?.top.size ?? 0)
+
+        if (position === 'left') {
+            moduleWidth = doorConfig.height
+            moduleHeight = doorConfig.width + (doorConfig.modules?.left.size ?? 0)
+        }
+        else if (position === 'right') {
+            moduleWidth = doorConfig.height
+            moduleHeight = doorConfig.width + (doorConfig.modules?.right.size ?? 0)
+        }
+
+        console.log('--- MODULE SIZES (WxH) ---:', moduleWidth, moduleHeight);
+
+        const hasTopModule = doorConfig.modules?.top.size && doorConfig.modules?.top.size > 0
+
+        const w = doorConfig.width - 60, h = doorConfig.height - 60
+        const isStd = (h > 1999 && w > 909 ? false : true)
+
+        const prices: Record<number, Record<string, Record<string, number>>> = {
+            61: { nonModular: { std: 13900, nonStd: 15200}, modular: { std: 8600, nonStd: 9400 } },
+            62: { nonModular: { std: 14900, nonStd: 16200}, modular: { std: 9300, nonStd: 10100 } },
+            63: { nonModular: { std: 13900, nonStd: 15200}, modular: { std: 8600, nonStd: 9400 } },
+            64: { nonModular: { std: 15000, nonStd: 16200}, modular: { std: 9400, nonStd: 10100 } },
+            65: { nonModular: { std: 14100, nonStd: 16200}, modular: { std: 10200, nonStd: 11800 } },
+            66: { nonModular: { std: 17000, nonStd: 19300}, modular: { std: 11000, nonStd: 12700 } },
+            70: { nonModular: { std: 15400, nonStd: 16700}, modular: { std: 9300, nonStd: 10100 } },
+            71: { nonModular: { std: 13300, nonStd: 14400}, modular: { std: 7900, nonStd: 8600 } },
+            74: { nonModular: { std: 15200, nonStd: 17000}, modular: { std: 8800, nonStd: 10100 } },
+            75: { nonModular: { std: 16700, nonStd: 18600}, modular: { std: 9600, nonStd: 10900 } },
+            76: { nonModular: { std: 15600, nonStd: 18200}, modular: { std: 8700, nonStd: 11500 } },
+            72: { nonModular: { std: 15000, nonStd: 16200}, modular: { std: 9300, nonStd: 10100 } },
+            73: { nonModular: { std: 13300, nonStd: 14400}, modular: { std: 7900, nonStd: 8600 } },
+            67: { nonModular: { std: 16600, nonStd: 18900}, modular: { std: 10700, nonStd: 12400 } },
+            68: { nonModular: { std: 15500, nonStd: 17700}, modular: { std: 9900, nonStd: 11500 } },
+            69: { nonModular: { std: 14800, nonStd: 17000}, modular: { std: 9400, nonStd: 11000 } },
+        }
+
+        const metalZagotovka1mm = (moduleWidth > 299 ? 10.8 : 0) * 84
+        sum += metalZagotovka1mm
+        console.log('Метал 1.1mm:', metalZagotovka1mm);
+        //metal 1.2mm
+        sum += (moduleWidth >= 2050 && metalZagotovka1mm > 399 && hasTopModule ? 29.44 : 25.91) * 84
+        console.log('Метал 1.2mm:', (moduleWidth >= 2050 && metalZagotovka1mm > 399 && hasTopModule ? 29.44 : 25.91) * 84);
+        //metal 1.4mm. formula: =ЕСЛИ(C410>600; (ЕСЛИ(ИЛИ(C410>=400; B410>2050); 34,35; 30,23)) * 1,5; ЕСЛИ(ИЛИ(C410>=400; B410>2050); 34,35; 30,23))
+        sum += ((moduleHeight >= 400 || moduleWidth > 2050) ? 34.35 : 30.23) * (moduleHeight > 600 ? 1.5 : 1) * 84
+        console.log('Метал 1.4mm:', ((moduleHeight >= 400 || moduleWidth > 2050) ? 34.35 : 30.23) * (moduleHeight > 600 ? 1.5 : 1) * 84)
+        //glass 75mm
+        // sum += ((moduleWidth - 165) / 1000 * (moduleHeight - 165) / 1000) * 7000
+        console.log('Стекло 75mm:', ((moduleWidth - 165) / 1000 * (moduleHeight - 165) / 1000) * 7000);
+        sum += (hasTopModule ? 13.5 : 0) * 24.95
+        console.log('13.5*24.95:', (hasTopModule ? 13.5 : 0) * 24.95);
+        sum += (hasTopModule ? 12 : 0) * 45
+        console.log('12*45:', (hasTopModule ? 12 : 0) * 45);
+        sum += (hasTopModule ? 14 : 0) * 4
+        console.log('14*4:', (hasTopModule ? 14 : 0) * 4);
+        sum += (hasTopModule ? 14 : 0) * 0.96
+        console.log('14*0.96:', (hasTopModule ? 14 : 0) * 0.96);
+        sum += (hasTopModule ? 14 : 0) * 1.60
+        console.log('14*1.60:', (hasTopModule ? 14 : 0) * 1.60);
+        sum += (hasTopModule ? 12 : 0) * 4.65
+        console.log('12*4.65:', (hasTopModule ? 12 : 0) * 4.65);
+        sum += (hasTopModule ? 12 : 0) * 8.13
+        console.log('12*8.13:', (hasTopModule ? 12 : 0) * 8.13);
+        sum += (hasTopModule ? 3 : 0) * 7.42
+        console.log('3*7.42:', (hasTopModule ? 3 : 0) * 7.42);
+        sum += (hasTopModule ? 3 : 0) * 0.61
+        console.log('3*0.61:', (hasTopModule ? 3 : 0) * 0.61);
+        sum += (hasTopModule ? 96 : 0) * 0.22
+        console.log('96*0.22:', (hasTopModule ? 96 : 0) * 0.22);
+        sum += (hasTopModule ? 3500 : 0) * 1
+        console.log('3500*1:', (hasTopModule ? 3500 : 0) * 1);
+        sum += (hasTopModule ? 0.07 : 0) * 1826
+        console.log('0.07*1826:', (hasTopModule ? 0.07 : 0) * 1826);
+
+        // const HPLPrice = prices[doorConfig.exterior.panelModel ?? 0]?.['modular']?.[isStd ? 'std' : 'nonStd'] ?? 0
+        // sum += isNaN(moduleWidth) || isNaN(moduleHeight) ? 0 : moduleHeight <= 2050 ? (moduleWidth <= 400 ? HPLPrice * 0.5 : HPLPrice) : moduleHeight > 600 ? HPLPrice * 1.2 : HPLPrice
 
         return sum
     }

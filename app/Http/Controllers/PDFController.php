@@ -36,8 +36,8 @@ class PDFController extends Controller
             'orientation'   => 'P',
             'margin_top'    => 38,   // room for custom header
             'margin_bottom' => 12,
-            'margin_left'   => 14,
-            'margin_right'  => 14,
+            'margin_left'   => 0,
+            'margin_right'  => 0,
             'img_dpi'       => 192,
         ]);
 
@@ -129,7 +129,7 @@ class PDFController extends Controller
             : '';
 
         return <<<HTML
-        <div style="font-family: DejaVu Sans, Arial, sans-serif; padding: 5mm 0 3mm 0; border-bottom: 1pt solid #111827;">
+        <div class="header" style="font-family: DejaVu Sans, Arial, sans-serif; padding: 5mm 0 3mm 0; border-bottom: 1pt solid #111827;">
             <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
                 <tr>
                     <td style="text-align:left; vertical-align:middle; width:50%;">
@@ -173,6 +173,19 @@ class PDFController extends Controller
                 color: #111827;
                 margin: 0;
                 padding: 0;
+                background: #ffffff;
+            }
+
+            .header {
+                margin-top: 38mm;
+                margin-bottom: 12mm;
+                margin-left: 14mm;
+                margin-right: 14mm;
+            }
+
+            .container {
+                margin-left: 14mm;
+                margin-right: 14mm;
             }
 
             /* ── Page 1 & 2 ── */
@@ -197,19 +210,22 @@ class PDFController extends Controller
             }
             .img-wrap {
                 text-align: center;
-                margin: 2mm 0 0 0;
+                margin: 12mm 0 0 0;
             }
             .img-wrap img {
-                max-width: 62%;
-                max-height: 188mm;
-                border-radius: 1.5mm;
+                max-width: 66%;
+                max-height: 220mm;
+                border-radius: 0mm;
                 display: inline-block;
             }
             .img-caption {
-                font-size: 9pt;
+                /* font-size: 9pt; */
                 color: #6B7280;
                 text-align: center;
-                margin-top: 2.5mm;
+                padding-top: 10mm;
+                border-top:0.5pt solid #D0D3D8;
+                padding-bottom: 30mm;
+                background: lradial-gradient(ellipse at top center, #efefef 3%, transparent 75%, transparent 100%);
             }
 
             /* ── Page 3 spec table ── */
@@ -280,7 +296,7 @@ class PDFController extends Controller
         }
 
         return $this->buildBaseStyles().<<<HTML
-        <div>
+        <div style="margin-top: 38mm;">
             <div class="page-title">Ваша дверь спроектирована</div>
             {$this->optionalSubtitle($modelStr)}
 
@@ -303,7 +319,7 @@ class PDFController extends Controller
         $src = htmlspecialchars($absoluteInteriorImagePath, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
         return $this->buildBaseStyles().<<<HTML
-        <div>
+        <div style="margin-top: 38mm;">
             <div class="section-label" style="font-size:13pt; margin-bottom:4mm;">
                 Внутренний вид двери (со стороны помещения)
             </div>
@@ -381,7 +397,7 @@ class PDFController extends Controller
         }
 
         return $this->buildBaseStyles().<<<HTML
-        <div>
+        <div class="container">
             <div class="spec-heading">Спецификация</div>
             <table class="spec" cellpadding="0" cellspacing="0">
                 {$rowsHtml}
