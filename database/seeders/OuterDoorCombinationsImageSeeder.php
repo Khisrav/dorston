@@ -102,7 +102,7 @@ class OuterDoorCombinationsImageSeeder extends Seeder
                     ['image' => $storagePath]
                 );
 
-                $this->command?->info("Импортировано: {$filename}");
+                $this->command?->info("Импортировано: " . $model->name . " - {$filename}");
                 $imported++;
             }
         }
