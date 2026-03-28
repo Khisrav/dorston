@@ -20,28 +20,10 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const stageWidth = doorDimensions.width;
     const stageHeight = doorDimensions.height;
 
-    const interiorCasingImages = ref<string[]>([
-        'Наличник внутренний_Муар чёрный 9005.png',
-        'Наличник внутренний_Муар металлик чёрный.png',
-        'Наличник внутренний_Антик бронза.png',
-        'Наличник внутренний_Антик медь.png',   
-        'Наличник внутренний_Антик серебро.png',    
-        'Наличник внутренний_Антик синий.png',
-        'Наличник внутренний_Белая шагрень.png',
-        'Наличник внутренний_Букле опал.png',
-        'Наличник внутренний_Букле серый.png',
-        'Наличник внутренний_Букле чёрный.png',
-        'Наличник внутренний_Золото на белом.png',
-        'Наличник внутренний_Муар 1019.png',
-        'Наличник внутренний_Муар 6028.png',
-        'Наличник внутренний_Муар 7021.png',
-        'Наличник внутренний_Муар 7024.png',
-        'Наличник внутренний_Муар 9003.png',
-        'Наличник внутренний_Муар металлик 8019.png',
-        'Наличник внутренний_Муар металлик бронзовый.png',
-        'Наличник внутренний_Муар металлик серый.png',
-        'Наличник внутренний_Муар металлик синий.png',
-    ])
+    /** Paint IDs that have a matching `public/assets/casings/{id}.png` asset. */
+    const interiorCasingPaintIds = new Set([
+        192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 205, 208, 209, 210, 211, 212, 385, 386, 387,
+    ]);
 
     const doorCombinationImages = ref<DoorCombinationImage[]>([]);
     const isCombinationsLoading = ref(false);
@@ -87,9 +69,9 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         findComboUrl('Полотно', doorCalcStore.doorConfig.interior.panelModel, doorCalcStore.doorConfig.interior.primaryTexture)
     );
     const interiorCasingUrl = computed(() => {
-        const paintName = doorCalcStore.getPaintColor(doorCalcStore.doorConfig.metalPainting.primaryColor ?? -1)?.name;
-        if (!paintName) return '';
-        return `/assets/casings/Наличник внутренний_${paintName}.png`;
+        const paintId = doorCalcStore.doorConfig.metalPainting.primaryColor;
+        if (paintId == null || paintId < 0 || !interiorCasingPaintIds.has(paintId)) return '';
+        return `/assets/casings/${paintId}.png`;
     });
 
     // ── Door image loading ────────────────────────────────────────────────────
