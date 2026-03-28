@@ -23,12 +23,6 @@ function clampSnapModuleSize(n: number): number {
     return Math.min(MODULE_SIZE_MAX, MODULE_SIZE_MIN + k * MODULE_SIZE_STEP)
 }
 
-function ensureSideDefaultWhenEnabled(enabled: boolean, getSize: () => number, setSize: (v: number) => void) {
-    if (enabled && getSize() === 0) {
-        setSize(MODULE_DEFAULT)
-    }
-}
-
 watch(() => store.doorConfig.isModular, (enabled) => {
     if (enabled) {
         store.doorConfig.modules ??= {
@@ -43,20 +37,22 @@ watch(() => store.doorConfig.isModular, (enabled) => {
     }
 }, { immediate: true })
 
+// Set size to MODULE_DEFAULT when enabled so it counts in price,
+// reset to 0 when disabled so the price calculator excludes it.
 watch(hasTop, (on) => {
     const m = store.doorConfig.modules
     if (!m) return
-    ensureSideDefaultWhenEnabled(on, () => m.top.size, (v) => { m.top.size = v })
+    m.top.size = on ? MODULE_DEFAULT : 0
 })
 watch(hasLeft, (on) => {
     const m = store.doorConfig.modules
     if (!m) return
-    ensureSideDefaultWhenEnabled(on, () => m.left.size, (v) => { m.left.size = v })
+    m.left.size = on ? MODULE_DEFAULT : 0
 })
 watch(hasRight, (on) => {
     const m = store.doorConfig.modules
     if (!m) return
-    ensureSideDefaultWhenEnabled(on, () => m.right.size, (v) => { m.right.size = v })
+    m.right.size = on ? MODULE_DEFAULT : 0
 })
 
 const extraLeft = computed(() => (hasLeft.value ? store.doorConfig.modules?.left.size ?? 0 : 0))

@@ -13,6 +13,7 @@ class Furniture extends Model
         'type',
         'preview',
         'peephole_preview',
+        'night_latch_preview',
         'title',
         'shape',
         'color',

@@ -75,16 +75,24 @@ function toggleConstructiveInfo(opt: typeof constructiveOptions[0], event: Mouse
                 v-for="opt in constructiveOptions"
                 :key="opt.value"
                 type="button"
-                @click="store.doorConfig.constructive = opt.value"
+                :disabled="opt.value === 'Termo Premium'"
+                @click="opt.value !== 'Termo Premium' && (store.doorConfig.constructive = opt.value)"
                 :class="[
-                    'flex items-center gap-3 rounded-2xl p-3 border text-left transition-all duration-200 cursor-pointer',
+                    'flex items-center gap-3 rounded-2xl p-3 border text-left transition-all duration-200',
+                    opt.value === 'Termo Premium'
+                        ? 'cursor-not-allowed opacity-40 border-sky-900/5 select-none'
+                        : 'cursor-pointer',
                     store.doorConfig.constructive === opt.value
                         ? 'border-sky-900/60 border-2 bg-sky-900/5'
-                        : 'border-sky-900/10 hover:border-sky-900/30'
+                        : opt.value !== 'Termo Premium' ? 'border-sky-900/10 hover:border-sky-900/30' : 'border-sky-900/5'
                 ]"
             >
-                <p class="font-serif font-semibold flex-1 text-sky-900">{{ opt.label }}</p>
+                <div class="flex-1">
+                    <p class="font-serif font-semibold text-sky-900">{{ opt.label }}</p>
+                    <p v-if="opt.value === 'Termo Premium'" class="font-serif text-xs text-sky-900/40 mt-0.5">Скоро</p>
+                </div>
                 <button
+                    v-if="opt.value !== 'Termo Premium'"
                     type="button"
                     @click.stop="toggleConstructiveInfo(opt, $event)"
                     class="p-1 rounded-lg transition-colors cursor-pointer"

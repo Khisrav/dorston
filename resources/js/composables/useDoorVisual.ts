@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, computed, ComputedRef } from 'vue';
+import { ref, computed, ComputedRef, Ref } from 'vue';
 import { useImage } from 'vue-konva';
 import { useDoorCalc } from "./useDoorCalc";
 import { DoorCombinationImage, Furniture } from "@/types/configurator";
@@ -86,18 +86,31 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         return '';
     });
 
+    // ── Image loading helper ──────────────────────────────────────────────────
+
+    /**
+     * useImage wrapper that returns undefined when the URL is empty.
+     * useImage from vue-konva retains the previously loaded HTMLImageElement
+     * when the src changes to '', so this wrapper ensures a blank URL always
+     * produces undefined (Konva renders nothing for undefined images).
+     */
+    function useImageCleared(url: Ref<string>) {
+        const [img] = useImage(url);
+        return computed(() => url.value ? img.value : undefined);
+    }
+
     // ── Door image loading ────────────────────────────────────────────────────
 
-    const [casingImage] = useImage(exteriorCasingUrl);
-    const [doorImage] = useImage(exteriorDoorUrl);
     const [exteriorHingeImage] = useImage('/assets/temp/Петли.png');
-    const [additionalCasingElementImage] = useImage(exteriorAdditionalCasingUrl);
-    const [additionalDoorElementImage] = useImage(exteriorAdditionalDoorUrl);
-    const [interiorDoorImage] = useImage(interiorDoorUrl);
-    // const [interiorCasingImage] = useImage('/assets/temp/Короб.png');
-    const [interiorCasingImage] = useImage(interiorCasingUrl);
-    const [doorsillImage] = useImage(doorsillUrl);
-    const [interiorDoorsillImage] = useImage(interiorDoorsillUrl);
+    const casingImage = useImageCleared(exteriorCasingUrl);
+    const doorImage = useImageCleared(exteriorDoorUrl);
+    const additionalCasingElementImage = useImageCleared(exteriorAdditionalCasingUrl);
+    const additionalDoorElementImage = useImageCleared(exteriorAdditionalDoorUrl);
+    const interiorDoorImage = useImageCleared(interiorDoorUrl);
+    // const interiorCasingImage = useImageCleared(ref('/assets/temp/Короб.png'));
+    const interiorCasingImage = useImageCleared(interiorCasingUrl);
+    const doorsillImage = useImageCleared(doorsillUrl);
+    const interiorDoorsillImage = useImageCleared(interiorDoorsillUrl);
     // ── Furniture image URL helper ────────────────────────────────────────────
 
     function makeFurnitureUrl(
@@ -150,9 +163,10 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const furnitureExteriorPeepholeUrl = makeFurnitureUrl(
         f => {
             const pos = doorCalcStore.doorConfig.peepholePosition;
-            if (pos === 'Side') return f.peephole_exterior_side_image ?? f.side_peephole_cover_image;
-            if (pos === 'Center') return f.peephole_exterior_center_image ?? f.center_peephole_cover_image;
-            return f.peephole_exterior_center_image ?? f.peephole_cover_image;
+            const centerFallback = f.peephole_exterior_center_image ?? f.center_peephole_cover_image ?? f.peephole_cover_image;
+            if (pos === 'Side') return f.peephole_exterior_side_image ?? f.side_peephole_cover_image ?? centerFallback;
+            if (pos === 'Center') return centerFallback;
+            return centerFallback;
         },
         () => !!doorCalcStore.doorConfig.furniture.hasPeephole && doorCalcStore.doorConfig.peepholePosition !== 'None',
     );
@@ -160,9 +174,10 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const furnitureInteriorPeepholeUrl = makeFurnitureUrl(
         f => {
             const pos = doorCalcStore.doorConfig.peepholePosition;
-            if (pos === 'Side') return f.peephole_interior_side_image ?? f.side_peephole_cover_image;
-            if (pos === 'Center') return f.peephole_interior_center_image ?? f.center_peephole_cover_image;
-            return f.peephole_interior_center_image ?? f.peephole_cover_image;
+            const centerFallback = f.peephole_interior_center_image ?? f.center_peephole_cover_image ?? f.peephole_cover_image;
+            if (pos === 'Side') return f.peephole_interior_side_image ?? f.side_peephole_cover_image ?? centerFallback;
+            if (pos === 'Center') return centerFallback;
+            return centerFallback;
         },
         () => !!doorCalcStore.doorConfig.furniture.hasPeephole && doorCalcStore.doorConfig.peepholePosition !== 'None',
     );
@@ -182,22 +197,22 @@ export const useDoorVisual = defineStore('doorVisual', () => {
 
     // ── Furniture image loading ───────────────────────────────────────────────
 
-    const [furnitureExteriorPrimaryCylindricalLockImage] = useImage(furnitureExteriorPrimaryCylindricalLockUrl);
-    const [furnitureExteriorPrimaryLeverLockImage] = useImage(furnitureExteriorPrimaryLeverLockUrl);
-    const [furnitureExteriorSecondaryCylindricalLockImage] = useImage(furnitureExteriorSecondaryCylindricalLockUrl);
-    const [furnitureExteriorSecondaryLeverLockImage] = useImage(furnitureExteriorSecondaryLeverLockUrl);
+    const furnitureExteriorPrimaryCylindricalLockImage = useImageCleared(furnitureExteriorPrimaryCylindricalLockUrl);
+    const furnitureExteriorPrimaryLeverLockImage = useImageCleared(furnitureExteriorPrimaryLeverLockUrl);
+    const furnitureExteriorSecondaryCylindricalLockImage = useImageCleared(furnitureExteriorSecondaryCylindricalLockUrl);
+    const furnitureExteriorSecondaryLeverLockImage = useImageCleared(furnitureExteriorSecondaryLeverLockUrl);
 
-    const [furnitureInteriorPrimaryCylindricalLockImage] = useImage(furnitureInteriorPrimaryCylindricalLockUrl);
-    const [furnitureInteriorPrimaryLeverLockImage] = useImage(furnitureInteriorPrimaryLeverLockUrl);
-    const [furnitureInteriorSecondaryCylindricalLockImage] = useImage(furnitureInteriorSecondaryCylindricalLockUrl);
-    const [furnitureInteriorSecondaryLeverLockImage] = useImage(furnitureInteriorSecondaryLeverLockUrl);
+    const furnitureInteriorPrimaryCylindricalLockImage = useImageCleared(furnitureInteriorPrimaryCylindricalLockUrl);
+    const furnitureInteriorPrimaryLeverLockImage = useImageCleared(furnitureInteriorPrimaryLeverLockUrl);
+    const furnitureInteriorSecondaryCylindricalLockImage = useImageCleared(furnitureInteriorSecondaryCylindricalLockUrl);
+    const furnitureInteriorSecondaryLeverLockImage = useImageCleared(furnitureInteriorSecondaryLeverLockUrl);
 
-    const [furnitureExteriorPeepholeImage] = useImage(furnitureExteriorPeepholeUrl);
-    const [furnitureInteriorPeepholeImage] = useImage(furnitureInteriorPeepholeUrl);
-    const [furnitureNightLatchTurnerImage] = useImage(furnitureNightLatchTurnerUrl);
-    const [furnitureCylinderRodImage] = useImage(furnitureCylinderRodUrl);
-    const [furnitureExteriorHandleImage] = useImage(furnitureExteriorHandleUrl);
-    const [furnitureInteriorHandleImage] = useImage(furnitureInteriorHandleUrl);
+    const furnitureExteriorPeepholeImage = useImageCleared(furnitureExteriorPeepholeUrl);
+    const furnitureInteriorPeepholeImage = useImageCleared(furnitureInteriorPeepholeUrl);
+    const furnitureNightLatchTurnerImage = useImageCleared(furnitureNightLatchTurnerUrl);
+    const furnitureCylinderRodImage = useImageCleared(furnitureCylinderRodUrl);
+    const furnitureExteriorHandleImage = useImageCleared(furnitureExteriorHandleUrl);
+    const furnitureInteriorHandleImage = useImageCleared(furnitureInteriorHandleUrl);
 
     // ── Handle-side flip configs ──────────────────────────────────────────────
     // Images are authored with the handle on the right side (from exterior).
