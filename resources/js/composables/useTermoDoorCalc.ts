@@ -30,13 +30,13 @@ export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
             primaryTexture: -1,
         },
         exterior: {
-            panelModel: 83, //Imperato
+            panelModel: 78, //Credo
             primaryTexture: -1,
             secondaryTexture: -1,
         },
         metalPainting: {
             undercoat: true,
-            primaryColor: -1,
+            primaryColor: 193,
             secondaryColor: -1,
             innerCasingColor: -1,
         },
