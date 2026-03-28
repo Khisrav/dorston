@@ -15,6 +15,7 @@ import TermoInteriorCard from '@/components/Configurator/TermoCards/TermoInterio
 import TermoMetalCard from '@/components/Configurator/TermoCards/TermoMetalCard.vue';
 import TermoGlassCard from '@/components/Configurator/TermoCards/TermoGlassCard.vue';
 import TermoLockerCard from '@/components/Configurator/TermoCards/TermoLockerCard.vue';
+import TermoAdditionalsCard from '@/components/Configurator/TermoCards/TermoAdditionalsCard.vue';
 import TermoFurnitureCard from '@/components/Configurator/TermoCards/TermoFurnitureCard.vue';
 import TermoModularCard from '@/components/Configurator/TermoCards/TermoModularCard.vue';
 import axios from 'axios';
@@ -381,6 +382,7 @@ watch(
                     <TermoGlassCard />
                     <TermoFurnitureCard />
                     <TermoLockerCard />
+                    <TermoAdditionalsCard />
                 </div>
             </div>
         </div>

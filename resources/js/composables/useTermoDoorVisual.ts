@@ -49,6 +49,13 @@ export const useTermoDoorVisual = defineStore('termoDoorVisual', () => {
         ),
     );
 
+    const doorsillUrl = computed(() => {
+        if (doorCalcStore.doorConfig.hasStainlessSteelDoorsill) {
+            return '/assets/porog-exterior.webp';
+        }
+        return '';
+    });
+
     const doorUrl = computed(() =>
         findComboUrl(
             'Полотно',
@@ -81,14 +88,23 @@ export const useTermoDoorVisual = defineStore('termoDoorVisual', () => {
         return `/assets/casings/${paintId}.png`;
     });
 
+    const interiorDoorsillUrl = computed(() => {
+        if (doorCalcStore.doorConfig.hasStainlessSteelDoorsill) {
+            return '/assets/porog-interior.webp';
+        }
+        return '';
+    });
+
     // ── Konva image refs ──────────────────────────────────────────────────────
 
     const [casingImage] = useImage(casingUrl);
+    const [doorsillImage] = useImage(doorsillUrl);
     const [doorImage] = useImage(doorUrl);
     const [hingeImage] = useImage(hingeUrl);
     const [interiorDoorImage] = useImage(interiorDoorUrl);
     // const [interiorCasingImage] = useImage('/assets/temp/Короб.png');
     const [interiorCasingImage] = useImage(interiorCasingUrl);
+    const [interiorDoorsillImage] = useImage(interiorDoorsillUrl);
 
     // ── Furniture image URL helper ────────────────────────────────────────────
 
@@ -268,10 +284,12 @@ export const useTermoDoorVisual = defineStore('termoDoorVisual', () => {
         casingImage,
         doorImage,
         hingeImage,
+        doorsillImage,
 
         // Interior door images
         interiorDoorImage,
         interiorCasingImage,
+        interiorDoorsillImage,
 
         // Exterior furniture images
         furnitureExteriorPrimaryCylindricalLockImage,

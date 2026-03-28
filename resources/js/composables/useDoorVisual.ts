@@ -62,6 +62,12 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const exteriorAdditionalDoorUrl = computed(() =>
         findComboUrl('Вставка полотна', doorCalcStore.doorConfig.exterior.panelModel, doorCalcStore.doorConfig.exterior.secondaryTexture)
     );
+    const doorsillUrl = computed(() => {
+        if (doorCalcStore.doorConfig.stainlessSteelDoorsill) {
+            return '/assets/porog-exterior.webp';
+        }
+        return '';
+    });
 
     // ── Interior door URLs ────────────────────────────────────────────────────
 
@@ -72,6 +78,12 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         const paintId = doorCalcStore.doorConfig.metalPainting.primaryColor;
         if (paintId == null || paintId < 0 || !interiorCasingPaintIds.has(paintId)) return '';
         return `/assets/casings/${paintId}.png`;
+    });
+    const interiorDoorsillUrl = computed(() => {
+        if (doorCalcStore.doorConfig.stainlessSteelDoorsill) {
+            return '/assets/porog-interior.webp';
+        }
+        return '';
     });
 
     // ── Door image loading ────────────────────────────────────────────────────
@@ -84,7 +96,8 @@ export const useDoorVisual = defineStore('doorVisual', () => {
     const [interiorDoorImage] = useImage(interiorDoorUrl);
     // const [interiorCasingImage] = useImage('/assets/temp/Короб.png');
     const [interiorCasingImage] = useImage(interiorCasingUrl);
-
+    const [doorsillImage] = useImage(doorsillUrl);
+    const [interiorDoorsillImage] = useImage(interiorDoorsillUrl);
     // ── Furniture image URL helper ────────────────────────────────────────────
 
     function makeFurnitureUrl(
@@ -274,7 +287,8 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         additionalDoorElementImage,
         interiorCasingImage,
         interiorDoorImage,
-
+        doorsillImage,
+        interiorDoorsillImage,
         // Furniture images — exterior
         furnitureExteriorPrimaryCylindricalLockImage,
         furnitureExteriorPrimaryLeverLockImage,

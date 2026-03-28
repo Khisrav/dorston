@@ -38,6 +38,7 @@ defineExpose({ exportStageImages });
                         <!-- Наличник (casing / trim) — behind door panel -->
                         <v-layer>
                             <v-image :config="{ ...visualStore.exteriorImageConfig, image: visualStore.casingImage }" />
+                            <v-image :config="{ ...visualStore.exteriorImageConfig, image: visualStore.doorsillImage }" />
                         </v-layer>
 
                         <!-- Полотно (door panel) -->
@@ -76,6 +77,7 @@ defineExpose({ exportStageImages });
                         <!-- Casing / box (Короб) -->
                         <v-layer>
                             <v-image :config="{ ...visualStore.interiorImageConfig, image: visualStore.interiorCasingImage }" />
+                            <v-image :config="{ ...visualStore.interiorImageConfig, image: visualStore.interiorDoorsillImage }" />
                         </v-layer>
 
                         <!-- Furniture overlays (mirrored) -->
