@@ -47,14 +47,14 @@ export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
         furniture: {
             furnitureSetId: -1,
             furnitureType: 'push' as 'push' | 'pull' | 'electronic',
-            furnitureShape: undefined,
-            furnitureColor: undefined,
+            furnitureShape: 'rectangular',
+            furnitureColor: 'bronze',
             primaryLock: -1,
             primaryCylindricalLockMechanism: -1,
             hasSecondaryLock: false,
             secondaryLock: -1,
             secondaryCylindricalLockMechanism: -1,
-            hasPeephole: true,
+            hasPeephole: false,
             hasNightLatchTurner: false,
         },
     })
@@ -71,15 +71,22 @@ export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
     }
 
     const initializeDefaultConfig = () => {
-        const defaultExteriorModel = getDoorModelInfo(83)
-        const defaultInteriorModel = getDoorModelInfo(2)
+        if (furnitures.value.length === 0) return
 
-        // Auto-select furniture if only one available
-        if (furnitures.value.length === 1) {
-            doorConfig.value.furniture.furnitureShape = furnitures.value[0].shape
-            doorConfig.value.furniture.furnitureColor = furnitures.value[0].color
-            doorConfig.value.furniture.furnitureSetId = furnitures.value[0].id
-        }
+        // Auto-select the first furniture that matches the pre-configured type + color.
+        // Fall back to the overall first furniture if no match is found.
+        const type  = doorConfig.value.furniture.furnitureType
+        const color = doorConfig.value.furniture.furnitureColor
+        let candidates = furnitures.value.filter(
+            f => f.furniture_type === type && f.color === color
+        )
+        if (!candidates.length) candidates = furnitures.value
+
+        const first = candidates[0]
+        doorConfig.value.furniture.furnitureSetId  = first.id
+        doorConfig.value.furniture.furnitureShape  = first.shape
+        doorConfig.value.furniture.furnitureColor  = first.color
+        doorConfig.value.furniture.furnitureType   = first.furniture_type
     }
 
     const applyDoorModelConfig = (modelId: number, type: 'exterior' | 'interior') => {
@@ -130,30 +137,6 @@ export const useTermoDoorCalc = defineStore('termoDoorCalc', () => {
         }
     })
 
-    // Auto-select furniture set when color is selected
-    watch(
-        () => doorConfig.value.furniture.furnitureColor,
-        (color) => {
-            if (color) {
-                const matchingFurniture = furnitures.value.filter(f => f.color === color)
-                if (matchingFurniture.length === 1) {
-                    // Only one furniture set with this color, auto-select it
-                    doorConfig.value.furniture.furnitureSetId = matchingFurniture[0].id
-                    doorConfig.value.furniture.furnitureShape = matchingFurniture[0].shape
-                } else if (matchingFurniture.length > 1) {
-                    // Multiple options, select the first one
-                    doorConfig.value.furniture.furnitureSetId = matchingFurniture[0].id
-                    doorConfig.value.furniture.furnitureShape = matchingFurniture[0].shape
-                } else {
-                    doorConfig.value.furniture.furnitureSetId = -1
-                    doorConfig.value.furniture.furnitureShape = undefined
-                }
-            } else {
-                doorConfig.value.furniture.furnitureSetId = -1
-                doorConfig.value.furniture.furnitureShape = undefined
-            }
-        }
-    )
 
 
     return {

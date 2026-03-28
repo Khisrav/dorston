@@ -3,7 +3,7 @@ import { useDoorCalc } from '@/composables/useDoorCalc'
 import { getImageUrl } from '@/lib/utils'
 import { type Furniture, type peepholePosition } from '@/types/configurator'
 import { Button, Drawer, RadioButton, SelectButton, ToggleSwitch } from 'primevue'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import ConfiguratorCard from './ConfiguratorCard.vue'
 
 const doorCalcStore = useDoorCalc()
@@ -146,6 +146,13 @@ function openSetDrawer() {
 
 // Re-run auto-select when shape filter changes inside the drawer
 watch(drawerShape, autoSelectFirst)
+
+// Keep hasPeephole in sync with the position selector
+watch(
+    () => doorCalcStore.doorConfig.peepholePosition,
+    (pos) => { doorCalcStore.doorConfig.furniture.hasPeephole = pos !== 'None' },
+    { immediate: true },
+)
 </script>
 
 <template>
@@ -262,15 +269,24 @@ watch(drawerShape, autoSelectFirst)
         <!-- ── Night latch turner ──────────────────────────────────── -->
         <div class="flex items-center justify-between gap-4">
             <div class="flex items-center gap-3 min-w-0">
-                <!-- Placeholder: actual night latch turner image will be different -->
                 <div
-                    class="size-14 rounded-xl bg-neutral-100 shrink-0"
-                    :class="doorCalcStore.doorConfig.furniture.hasNightLatchTurner ? 'opacity-100' : 'opacity-60'"
-                    aria-hidden="true"
-                />
-                <p class="font-serif text-sm text-sky-900/70">Ночная задвижка + вертушок</p>
+                    class="w-26 rounded-xl overflow-hidden shrink-0 bg-neutral-100 border border-sky-100 transition-opacity"
+                >
+                    <img
+                        v-if="selectedSet?.night_latch_preview"
+                        :src="getImageUrl(selectedSet.night_latch_preview)"
+                        :alt="selectedSet.title ? `Ночная задвижка — ${selectedSet.title}` : 'Ночная задвижка'"
+                        class="w-full object-cover"
+                    />
+                    <div v-else class="flex items-center justify-center py-3">
+                        <i class="pi pi-lock text-neutral-300 text-base" />
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <p class="font-serif text-sm text-sky-900/70">Ночная задвижка + вертушок</p>
+                <ToggleSwitch v-model="doorCalcStore.doorConfig.furniture.hasNightLatchTurner" />
+                </div>
             </div>
-            <ToggleSwitch v-model="doorCalcStore.doorConfig.furniture.hasNightLatchTurner" />
         </div>
 
         <div class="border-t border-sky-900/5 my-4" />
@@ -283,7 +299,7 @@ watch(drawerShape, autoSelectFirst)
                 <img
                     :src="getImageUrl(selectedSet.peephole_preview)"
                     :alt="selectedSet.title ? `Глазок — ${selectedSet.title}` : 'Глазок'"
-                    class="w-28 rounded-xl object-cover border border-sky-100 shadow-sm bg-white"
+                    class="w-26 rounded-xl object-cover border border-sky-100 shadow-sm bg-white"
                 />
             </div>
             <div class="flex-1">

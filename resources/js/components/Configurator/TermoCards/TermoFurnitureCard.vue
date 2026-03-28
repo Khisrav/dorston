@@ -2,7 +2,7 @@
 import { useTermoDoorCalc } from '@/composables/useTermoDoorCalc'
 import { getImageUrl } from '@/lib/utils'
 import { type Furniture, type peepholePosition } from '@/types/configurator'
-import { Drawer, RadioButton, SelectButton, ToggleSwitch } from 'primevue'
+import { Button, Drawer, RadioButton, SelectButton, ToggleSwitch } from 'primevue'
 import { computed, ref, watch } from 'vue'
 import ConfiguratorCard from '../Card/ConfiguratorCard.vue'
 
@@ -144,6 +144,13 @@ function openSetDrawer() {
 }
 
 watch(drawerShape, autoSelectFirst)
+
+// Keep hasPeephole in sync with the position selector
+watch(
+    () => store.doorConfig.peepholePosition,
+    (pos) => { store.doorConfig.furniture.hasPeephole = pos !== 'None' },
+    { immediate: true },
+)
 </script>
 
 <template>
@@ -260,56 +267,22 @@ watch(drawerShape, autoSelectFirst)
         <!-- ── Night latch turner ──────────────────────────────────── -->
         <div class="flex items-center justify-between gap-4">
             <div class="flex items-center gap-3 min-w-0">
-                <!-- Placeholder: actual night latch turner image will be different -->
                 <div
-                    class="size-14 rounded-xl bg-neutral-100 shrink-0"
-                    :class="store.doorConfig.furniture.hasNightLatchTurner ? 'opacity-100' : 'opacity-60'"
-                    aria-hidden="true"
-                />
-                <p class="font-serif text-sm text-sky-900/70">Ночная задвижка + вертушок</p>
-            </div>
-            <ToggleSwitch v-model="store.doorConfig.furniture.hasNightLatchTurner" />
-        </div>
-
-        <div class="border-t border-sky-900/5 my-4" />
-
-        <div class="flex items-center gap-4">
-            <div
-                v-if="selectedSet?.peephole_preview"
-                class="flex-shrink-0"
-            >
-                <img
-                    :src="getImageUrl(selectedSet.peephole_preview)"
-                    :alt="selectedSet.title ? `Глазок — ${selectedSet.title}` : 'Глазок'"
-                    class="w-28 rounded-xl object-cover border border-sky-100 shadow-sm bg-white"
-                />
-            </div>
-            <div class="flex-1">
-                <p class="font-serif text-sm text-sky-900/70 mb-2">Глазок</p>
-                <!-- Mobile: radio buttons -->
-                <div class="flex flex-col gap-2 md:hidden">
-                    <label
-                        v-for="opt in peepholeOptions"
-                        :key="opt.value"
-                        class="flex items-center gap-3 cursor-pointer select-none"
-                    >
-                        <RadioButton
-                            v-model="store.doorConfig.peepholePosition"
-                            :value="opt.value"
-                        />
-                        <span class="text-sm text-sky-900/80">{{ opt.label }}</span>
-                    </label>
-                </div>
-                <!-- Desktop: segmented SelectButton -->
-                <div class="hidden md:flex">
-                    <SelectButton
-                        v-model="store.doorConfig.peepholePosition"
-                        :options="peepholeOptions"
-                        option-label="label"
-                        option-value="value"
-                        size="small"
-                        fluid
+                    class="w-26 rounded-xl overflow-hidden shrink-0 bg-neutral-100 border border-sky-100 transition-opacity"
+                >
+                    <img
+                        v-if="selectedSet?.night_latch_preview"
+                        :src="getImageUrl(selectedSet.night_latch_preview)"
+                        :alt="selectedSet.title ? `Ночная задвижка — ${selectedSet.title}` : 'Ночная задвижка'"
+                        class="w-full object-cover"
                     />
+                    <div v-else class="flex items-center justify-center py-3">
+                        <i class="pi pi-lock text-neutral-300 text-base" />
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <p class="font-serif text-sm text-sky-900/70">Ночная задвижка + вертушок</p>
+                    <ToggleSwitch v-model="store.doorConfig.furniture.hasNightLatchTurner" />
                 </div>
             </div>
         </div>

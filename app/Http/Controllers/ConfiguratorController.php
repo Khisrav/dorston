@@ -17,6 +17,7 @@ class ConfiguratorController extends Controller
         // old or the new columns exist. These fallbacks keep the configurator working.
         $preview = $f->preview ?? $f->preview_image;
         $peepholePreview = $f->peephole_preview ?? $f->peephole_preview_image;
+        $nightLatchPreview = $f->night_latch_preview ?? null;
 
         $primaryExteriorCyl = $f->primary_exterior_cylindrical_lock_image ?? $f->exterior_primary_cylindrical_lock_cover_image;
         $primaryInteriorCyl = $f->primary_interior_cylindrical_lock_image ?? $f->interior_primary_cylindrical_lock_cover_image;
@@ -47,6 +48,7 @@ class ConfiguratorController extends Controller
             'preview' => $preview,
             // Backward-compat (frontend pieces still using the old key)
             'peephole_preview' => $peepholePreview,
+            'night_latch_preview' => $nightLatchPreview,
             'furniture_type' => $f->type,
             'shape' => $f->shape,
             'color' => $f->color,
@@ -181,7 +183,10 @@ class ConfiguratorController extends Controller
             'paints' => Nomenclature::where('nomenclature_category_id', 2)
                 ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id')
                 ->get(),
-            'doorModels' => DoorModel::all(),
+            'doorModels' => DoorModel::where('type', 'interior')->orWhere(function ($query) {
+                $query->where('type', 'exterior')
+                    ->where('is_thermally_resistant', false);
+            })->get(),
             'filmColors' => Nomenclature::where('nomenclature_category_id', 13)
                 ->select('id', 'name', 'base_price', 'unit', 'image', 'nomenclature_category_id')
                 ->get(),

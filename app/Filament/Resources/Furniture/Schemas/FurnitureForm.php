@@ -74,6 +74,15 @@ class FurnitureForm
                             ->maxSize(2048)
                             ->disk('public')
                             ->directory('furniture/peephole-previews'),
+
+                        FileUpload::make('night_latch_preview')
+                            ->label('Превью ночной задвижки')
+                            ->image()
+                            ->imageEditor()
+                            ->imageEditorAspectRatios(['4:3', '1:1'])
+                            ->maxSize(2048)
+                            ->disk('public')
+                            ->directory('furniture/night-latch-previews'),
                     ])
                     ->columns(3)
                     ->columnSpanFull(),
