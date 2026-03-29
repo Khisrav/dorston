@@ -86,6 +86,28 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         return '';
     });
 
+    // shadows
+    const shadowImageFolder = computed(() => {
+        const furnitureSet = doorCalcStore.getFurnitureSet(doorCalcStore.doorConfig.furniture.furnitureSetId ?? -1);
+        const shadowsFolder = '/assets/shadows/'
+        if (furnitureSet?.title === 'TOR' && doorCalcStore.doorConfig.furniture.furnitureShape === 'rectangular') {
+            return shadowsFolder + 'rectangular/';
+        } else if (doorCalcStore.doorConfig.furniture.furnitureShape === 'oval') {
+            return shadowsFolder + 'oval/';
+        } 
+        return shadowsFolder + 'sharp/';
+    });
+
+    const peepholeShadowImageUrl = computed(() => shadowImageFolder.value + 'shadow-peephole.png');
+    const nightLatchTurnerShadowImageUrl = computed(() => shadowImageFolder.value + 'shadow-night-latch.png');
+    const exteriorShadowImageUrl = computed(() => shadowImageFolder.value + 'shadow-exterior.png');
+    const interiorShadowImageUrl = computed(() => shadowImageFolder.value + 'shadow-interior.png');
+    //load images
+    const peepholeShadowImage = useImageCleared(peepholeShadowImageUrl);
+    const nightLatchTurnerShadowImage = useImageCleared(nightLatchTurnerShadowImageUrl);
+    const exteriorShadowImage = useImageCleared(exteriorShadowImageUrl);
+    const interiorShadowImage = useImageCleared(interiorShadowImageUrl);
+
     // ── Image loading helper ──────────────────────────────────────────────────
 
     /**
@@ -330,5 +352,11 @@ export const useDoorVisual = defineStore('doorVisual', () => {
         exteriorPeepholeImageConfig,
         interiorPeepholeImageConfig,
         backgroundConfig,
+
+        // Shadows
+        peepholeShadowImage,
+        nightLatchTurnerShadowImage,
+        exteriorShadowImage,
+        interiorShadowImage,
     }
 });
