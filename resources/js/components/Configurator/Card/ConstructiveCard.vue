@@ -36,13 +36,13 @@ const boxDesignOptions: { value: doorBoxDesign; label: string; image: string; de
     {
         value: 'Closed',
         label: 'Закрытый',
-        image: '/assets/ui/box-design-closed.jpg',
+        image: '/assets/ui/box-design-closed.webp',
         description: 'С утеплением',
     },
     {
         value: 'Opened',
         label: 'Открытый',
-        image: '/assets/ui/box-design-opened.jpg',
+        image: '/assets/ui/box-design-opened.webp',
         description: 'Без утепления',
     },
 ]
