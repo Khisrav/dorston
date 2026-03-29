@@ -66,6 +66,9 @@ defineExpose({ exportStageImages });
                                 ...doorVisualStore.exteriorImageConfig,
                                 image: furnitureShadow,
                             }" /> -->
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.peepholeShadowImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.nightLatchTurnerShadowImage }" />
+                            <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.exteriorShadowImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorPrimaryCylindricalLockImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorPrimaryLeverLockImage }" />
                             <v-image :config="{ ...doorVisualStore.exteriorImageConfig, image: doorVisualStore.furnitureExteriorSecondaryCylindricalLockImage }" />
@@ -97,6 +100,9 @@ defineExpose({ exportStageImages });
                                 ...doorVisualStore.interiorImageConfig,
                                 image: furnitureShadow,
                             }" /> -->
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.peepholeShadowImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.nightLatchTurnerShadowImage }" />
+                            <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.interiorShadowImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorPrimaryCylindricalLockImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorPrimaryLeverLockImage }" />
                             <v-image :config="{ ...doorVisualStore.interiorImageConfig, image: doorVisualStore.furnitureInteriorSecondaryCylindricalLockImage }" />
